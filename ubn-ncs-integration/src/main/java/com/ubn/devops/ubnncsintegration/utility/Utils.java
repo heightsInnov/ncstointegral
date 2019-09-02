@@ -9,15 +9,14 @@ import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.ubn.devops.ubnncsintegration.config.FilePathsConfig;
-import com.ubn.devops.ubnncsintegration.model.EAssessmentNoticeEntity;
+import com.ubn.devops.ubnncsintegration.model.PaymentModel;
 import com.ubn.devops.ubnncsintegration.ncsschema.EAssessmentNotice;
 import com.ubn.devops.ubnncsintegration.ncsschema.Info;
 import com.ubn.devops.ubnncsintegration.ncsschema.SadAsmt;
 import com.ubn.devops.ubnncsintegration.ncsschema.TRS;
 import com.ubn.devops.ubnncsintegration.ncsschema.TransactionResponse;
-import com.ubn.devops.ubnncsintegration.service.EAssessmentNoticeService;
+import com.ubn.devops.ubnncsintegration.service.PaymentService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,18 +28,17 @@ public class Utils {
 	private FilePathsConfig filePathConfig;
 
 	@Autowired
-	private EAssessmentNoticeService noticeService;
-
-	@Autowired
 	private WatchService watchService;
+	
+	@Autowired
+	private PaymentService paymentService;
 
 	public void watchFolder() {
 		EAssessmentNotice eAssessmentNotice = null;
-		XmlMapper mapper = new XmlMapper();
 		String assessmentPath = null;
-		String paymentRequestPath = null;
+		String paymentResponsePath = null;
 		File assessmentXmlFile = null;
-		File paymentRequestFile = null;
+		File paymentResponseFile = null;
 		try {
 			WatchKey watchKey;
 			while ((watchKey = watchService.take()) != null) {
@@ -48,15 +46,10 @@ public class Utils {
 					assessmentPath = filePathConfig.getAssessmentnotice() + event.context();
 					if (isFileExists(assessmentPath)) {
 						assessmentXmlFile = new File(assessmentPath);
-						try {
-							eAssessmentNotice = CustomMarshaller.unmarshall(assessmentXmlFile, EAssessmentNotice.class);
-						} catch (Exception ex) {
-							log.error("Error occured while trying to unmarshall assessmentxml file because: "
-									+ ex.getMessage());
-						}
+						eAssessmentNotice = CustomMarshaller.unmarshall(assessmentXmlFile, EAssessmentNotice.class);
 						if (eAssessmentNotice != null) {
 							// Persist eAssessmentNotice to database
-							noticeService.saveAssessmentNotice(eAssessmentNotice);
+							paymentService.savePaymentDetails(eAssessmentNotice);
 							// Then go ahead and confirm that the notice receipt
 							TransactionResponse response = new TransactionResponse();
 							response.setCustomsCode(eAssessmentNotice.getCustomsCode());
@@ -70,20 +63,23 @@ public class Utils {
 							sadAsmt.setSadAssessmentSerial(eAssessmentNotice.getSadAssessmentSerial());
 							sadAsmt.setSadYear(eAssessmentNotice.getSadYear());
 							response.setSadAsmt(sadAsmt);
-							//create xml of transaction respons in the transaction response folder
+							// create xml of transaction response in the transaction response folder
 							CustomMarshaller.marshall(response, filePathConfig.getTransactionresponse());
-							
+
 						}
-						// file.delete();
 					}
-					paymentRequestPath = filePathConfig.getPaymentrequest() + event.context();
-					if (isFileExists(paymentRequestPath)) {
-						paymentRequestFile = new File(paymentRequestPath);
-						try {
+					paymentResponsePath = filePathConfig.getPaymentresponse() + event.context();
+					if (isFileExists(paymentResponsePath)) {
+						paymentResponseFile = new File(paymentResponsePath);
 
-						} catch (Exception ex) {
-
+						// read paymentresponse file
+						TransactionResponse response = CustomMarshaller.unmarshall(paymentResponseFile,
+								TransactionResponse.class);
+						if (response != null) {
+							// update payment response
+							paymentService.updatePaymentDetailsWithResponse(response);
 						}
+
 					}
 
 				}
@@ -110,12 +106,12 @@ public class Utils {
 		return exists;
 	}
 
-	public EAssessmentNoticeEntity convertReturnedAssessmentToEassesssmentEntity(EAssessmentNotice notice) {
-		EAssessmentNoticeEntity assessmentNotice = null;
+	public PaymentModel convertReturnedAssessmentToEassesssmentEntity(EAssessmentNotice notice) {
+		PaymentModel assessmentNotice = null;
 		try {
-			 if(notice!=null) {
-				 assessmentNotice = new EAssessmentNoticeEntity(notice);
-			 }
+			if (notice != null) {
+				assessmentNotice = new PaymentModel(notice);
+			}
 		} catch (Exception ex) {
 			log.error("error occured while getting Eassessment because: " + ex.getMessage());
 		}

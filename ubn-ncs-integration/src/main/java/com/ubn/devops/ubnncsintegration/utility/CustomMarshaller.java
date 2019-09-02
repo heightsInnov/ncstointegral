@@ -17,7 +17,7 @@ public class CustomMarshaller {
 		try {
 			obj = mapper.readValue(xmlFile, clazz); // clazz.cast(unmarshaller.unmarshal(xmlFile));
 		} catch (Exception ex) {
-			log.error("Error occured while marshalling xmlfile to " + clazz.getName() + " because: ", ex.getMessage());
+			log.error("Error occured while marshalling xmlfile to " + clazz.getName() + " because: "+ ex.getMessage(),ex);
 		}
 		return obj;
 	}

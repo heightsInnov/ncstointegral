@@ -25,10 +25,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
-@Table(name="NCS_ASSESSMENT_NOTICE")
+@Table(name="NCS_PAYMENTS")
 @Entity
 @Data
-public class EAssessmentNoticeEntity {
+public class PaymentModel {
 	
 	@Transient
 	private EAssessmentNotice assessmentNotice;
@@ -51,18 +51,25 @@ public class EAssessmentNoticeEntity {
     private String bankCode;
     private String bankBranchCode;
     private String formMNumber;
+    
+    private String meansOfPayment;
+	private String reference;
+	private double amount;
+	private String transactionstatus;
+	private String responseMessage;
+	
+	
     @XmlTransient
     @JsonIgnore(false)
     private boolean isPaid = false;
     @OneToMany(fetch = FetchType.EAGER)
     private List<TaxEntity> taxes=new ArrayList<>();
-    @Transient
     private double totalAmountToBePaid;
     @DateTimeFormat(pattern = "dd-MM-yyyy")
     private Date createdDate = new Date();
     
     
-    public EAssessmentNoticeEntity(EAssessmentNotice assessmentNotice) {
+    public PaymentModel(EAssessmentNotice assessmentNotice) {
     	if(assessmentNotice!=null) {
     		double amount = 0;
     		this.sadYear=assessmentNotice.getSadYear();
@@ -88,18 +95,5 @@ public class EAssessmentNoticeEntity {
     			
     	}
     }
-	
-	public double getTotalAmountToBePaid() {
-		return totalAmountToBePaid;
-	}
-	
-	public void setTotalAmountToBePaid() {
-		double amount = 0;
-		for(TaxEntity t:taxes) {
-			amount+=t.getTaxAmount();
-		}
-		this.totalAmountToBePaid = amount;
-	}
-    
     
 }

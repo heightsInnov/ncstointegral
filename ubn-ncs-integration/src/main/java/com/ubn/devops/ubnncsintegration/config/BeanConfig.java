@@ -28,8 +28,8 @@ public class BeanConfig {
 			watchService = FileSystems.getDefault().newWatchService();
 			Path path = Paths.get(filePathConfig.getAssessmentnotice());
 			path.register(watchService, kind);
-			Path paymentPath = Paths.get(filePathConfig.getPaymentrequest());
-			paymentPath.register(watchService, kind);
+			Path paymentResponsePath = Paths.get(filePathConfig.getPaymentresponse());
+			paymentResponsePath.register(watchService, kind);
 		} catch (Exception ex) {
 			log.error("Unable to create watchservice bean because: " + ex.getMessage());
 		}
