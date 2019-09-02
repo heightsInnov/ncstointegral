@@ -17,6 +17,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ubn.devops.ubnncsintegration.ncsschema.EAssessmentNotice;
 import com.ubn.devops.ubnncsintegration.ncsschema.Tax;
@@ -65,7 +66,8 @@ public class PaymentModel {
     @OneToMany(fetch = FetchType.EAGER)
     private List<TaxEntity> taxes=new ArrayList<>();
     private double totalAmountToBePaid;
-    @DateTimeFormat(pattern = "dd-MM-yyyy")
+    @JsonFormat(pattern = "dd-MM-yyyy hh:mm:ss a")
+    @DateTimeFormat(pattern = "dd-MM-yyyy hh:mm:ss a")
     private Date createdDate = new Date();
     
     
