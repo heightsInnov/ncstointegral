@@ -1,7 +1,6 @@
 package com.ubn.devops.ubnncsintegration;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -11,7 +10,7 @@ import com.ubn.devops.ubnncsintegration.utility.Utils;
 
 @EnableScheduling
 @SpringBootApplication
-public class UbnNcsIntegrationApplication implements CommandLineRunner{
+public class UbnNcsIntegrationApplication {//implements CommandLineRunner{
 
 	@Autowired
 	private Utils utilities;
@@ -26,10 +25,5 @@ public class UbnNcsIntegrationApplication implements CommandLineRunner{
 		utilities.watchFolder();
 	}
 
-
-	@Override
-	public void run(String... args) throws Exception {
-		
-	}
 
 }

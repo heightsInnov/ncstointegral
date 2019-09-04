@@ -31,9 +31,8 @@ public class PaymentController {
 	}
 		
 	@GetMapping("/details")
-	public ResponseEntity<ApiResponse> getPaymentDetails(@RequestParam String declarantCode){
-		ApiResponse response= paymentService.fetchPaymentDetails(declarantCode);
-		return new ResponseEntity<ApiResponse>(response,HttpStatus.OK);
+	public ApiResponse getPaymentDetails(@RequestParam String declarantCode){
+		return paymentService.fetchPaymentDetails(declarantCode);
 	}
 	
 	@PostMapping("/send-query-request")

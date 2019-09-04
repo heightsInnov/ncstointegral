@@ -4,14 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -26,8 +18,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
-@Table(name="NCS_PAYMENTS")
-@Entity
 @Data
 public class PaymentModel {
 	
@@ -36,9 +26,6 @@ public class PaymentModel {
 	
 	@XmlTransient
 	@JsonIgnore(false)
-	@Id
-	@GeneratedValue(generator = "noticegen",strategy = GenerationType.IDENTITY)
-	@SequenceGenerator(allocationSize = 1,initialValue = 1,sequenceName = "noticegen",name="noticegen")
 	private Long id;
     private int sadYear;
     private String customsCode;
@@ -59,11 +46,21 @@ public class PaymentModel {
 	private String transactionstatus;
 	private String responseMessage;
 	
+	private String paymentChannelCode;
+	private String fcubsPostingRef;
+	private String isSweepedToTsa;
+	private String sweepFcubsPostRef;
+	private Date sweepDate;
+	private String hashValue;
+	private String customerEmail;
+	private String isPaymentReversed;
+	private String reversalFcubsRef;
+	private Date reversalDate;
+	
 	
     @XmlTransient
     @JsonIgnore(false)
     private boolean isPaid = false;
-    @OneToMany(fetch = FetchType.EAGER)
     private List<TaxEntity> taxes=new ArrayList<>();
     private double totalAmountToBePaid;
     @JsonFormat(pattern = "dd-MM-yyyy hh:mm:ss a")

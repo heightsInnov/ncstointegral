@@ -16,6 +16,8 @@ public interface PaymentService {
 
 	public ApiResponse fetchPaymentDetails(String declarantCode);
 	
+	public void acknowledgePaymentDetails(String declarantCode);
+	
 	/*
 	 
 	 * public void queryTransaction(EPaymentQuery query);

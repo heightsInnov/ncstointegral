@@ -49,23 +49,28 @@ public class Utils {
 						eAssessmentNotice = CustomMarshaller.unmarshall(assessmentXmlFile, EAssessmentNotice.class);
 						if (eAssessmentNotice != null) {
 							// Persist eAssessmentNotice to database
-							paymentService.savePaymentDetails(eAssessmentNotice);
-							// Then go ahead and confirm that the notice receipt
-							TransactionResponse response = new TransactionResponse();
-							response.setCustomsCode(eAssessmentNotice.getCustomsCode());
-							response.setDeclarantCode(eAssessmentNotice.getDeclarantCode());
-							response.setTransactionStatus(TRS.OK);
-							Info info = new Info();
-							info.setMessage(Arrays.asList("Successfully received the assessment notice"));
-							response.setInfo(info);
-							SadAsmt sadAsmt = new SadAsmt();
-							sadAsmt.setSadAssessmentNumber(eAssessmentNotice.getSadAssessmentNumber());
-							sadAsmt.setSadAssessmentSerial(eAssessmentNotice.getSadAssessmentSerial());
-							sadAsmt.setSadYear(eAssessmentNotice.getSadYear());
-							response.setSadAsmt(sadAsmt);
-							// create xml of transaction response in the transaction response folder
-							CustomMarshaller.marshall(response, filePathConfig.getTransactionresponse());
-
+							PaymentModel paymentModel = paymentService.savePaymentDetails(eAssessmentNotice);
+							if(paymentModel!=null) {
+								//if the paymentdetails was successfully saved then go ahead and confirm that the notice receipt
+								TransactionResponse response = new TransactionResponse();
+								response.setCustomsCode(paymentModel.getCustomsCode());
+								response.setDeclarantCode(paymentModel.getDeclarantCode());
+								response.setTransactionStatus(TRS.OK);
+								Info info = new Info();
+								info.setMessage(Arrays.asList("Successfully received the assessment notice"));
+								response.setInfo(info);
+								SadAsmt sadAsmt = new SadAsmt();
+								sadAsmt.setSadAssessmentNumber(paymentModel.getSadAssessmentNumber());
+								sadAsmt.setSadAssessmentSerial(paymentModel.getSadAssessmentSerial());
+								sadAsmt.setSadYear(paymentModel.getSadYear());
+								response.setSadAsmt(sadAsmt);
+								// create xml of transaction response in the transaction response folder
+								int isResponseXmlCreated = CustomMarshaller.marshall(response, filePathConfig.getTransactionresponse());
+								if(isResponseXmlCreated==1) {
+									paymentService.acknowledgePaymentDetails(paymentModel.getDeclarantCode());
+								}
+							}
+			
 						}
 					}
 					paymentResponsePath = filePathConfig.getPaymentresponse() + event.context();
