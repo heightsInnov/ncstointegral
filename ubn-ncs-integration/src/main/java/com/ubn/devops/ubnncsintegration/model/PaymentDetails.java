@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Data
-public class PaymentModel {
+public class PaymentDetails {
 	
 	@Transient
 	private EAssessmentNotice assessmentNotice;
@@ -68,7 +68,7 @@ public class PaymentModel {
     private Date createdDate = new Date();
     
     
-    public PaymentModel(EAssessmentNotice assessmentNotice) {
+    public PaymentDetails(EAssessmentNotice assessmentNotice) {
     	if(assessmentNotice!=null) {
     		double amount = 0;
     		this.sadYear=assessmentNotice.getSadYear();

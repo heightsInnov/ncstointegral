@@ -7,15 +7,15 @@ import java.util.List;
 
 import org.springframework.jdbc.core.RowMapper;
 
-import com.ubn.devops.ubnncsintegration.model.PaymentModel;
+import com.ubn.devops.ubnncsintegration.model.PaymentDetails;
 
-public class ResultSetMapper implements RowMapper<PaymentModel>{
+public class ResultSetMapper implements RowMapper<PaymentDetails>{
 
 	
-	public static List<PaymentModel> mapRow(ResultSet rs) throws SQLException {
-		List<PaymentModel> payments = new ArrayList<>();
+	public static List<PaymentDetails> mapRow(ResultSet rs) throws SQLException {
+		List<PaymentDetails> payments = new ArrayList<>();
 		while(rs.next()) {
-			PaymentModel payment = new PaymentModel();
+			PaymentDetails payment = new PaymentDetails();
 			payment.setAmount((rs.getBigDecimal("AMOUNT")).doubleValue());
 			payment.setBankBranchCode(rs.getString("BANK_BRANCH_CODE"));
 			payment.setBankCode(rs.getString("BANK_CODE"));
@@ -53,8 +53,8 @@ public class ResultSetMapper implements RowMapper<PaymentModel>{
 	}
 
 	@Override
-	public PaymentModel mapRow(ResultSet rs, int rowNum) throws SQLException {
-		PaymentModel payment = new PaymentModel();
+	public PaymentDetails mapRow(ResultSet rs, int rowNum) throws SQLException {
+		PaymentDetails payment = new PaymentDetails();
 		payment.setAmount((rs.getBigDecimal("AMOUNT")).doubleValue());
 		payment.setBankBranchCode(rs.getString("BANK_BRANCH_CODE"));
 		payment.setBankCode(rs.getString("BANK_CODE"));

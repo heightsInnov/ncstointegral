@@ -10,13 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.ubn.devops.ubnncsintegration.config.FilePathsConfig;
-import com.ubn.devops.ubnncsintegration.model.PaymentModel;
+import com.ubn.devops.ubnncsintegration.model.PaymentDetails;
 import com.ubn.devops.ubnncsintegration.ncsschema.EAssessmentNotice;
 import com.ubn.devops.ubnncsintegration.ncsschema.Info;
 import com.ubn.devops.ubnncsintegration.ncsschema.SadAsmt;
 import com.ubn.devops.ubnncsintegration.ncsschema.TRS;
 import com.ubn.devops.ubnncsintegration.ncsschema.TransactionResponse;
-import com.ubn.devops.ubnncsintegration.service.PaymentService;
+import com.ubn.devops.ubnncsintegration.service.PaymentDetailsService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,7 +31,7 @@ public class Utils {
 	private WatchService watchService;
 	
 	@Autowired
-	private PaymentService paymentService;
+	private PaymentDetailsService paymentDetailsService;
 
 	public void watchFolder() {
 		EAssessmentNotice eAssessmentNotice = null;
@@ -49,25 +49,25 @@ public class Utils {
 						eAssessmentNotice = CustomMarshaller.unmarshall(assessmentXmlFile, EAssessmentNotice.class);
 						if (eAssessmentNotice != null) {
 							// Persist eAssessmentNotice to database
-							PaymentModel paymentModel = paymentService.savePaymentDetails(eAssessmentNotice);
-							if(paymentModel!=null) {
+							PaymentDetails paymentDetails = paymentDetailsService.savePaymentDetails(eAssessmentNotice);
+							if(paymentDetails!=null) {
 								//if the paymentdetails was successfully saved then go ahead and confirm that the notice receipt
 								TransactionResponse response = new TransactionResponse();
-								response.setCustomsCode(paymentModel.getCustomsCode());
-								response.setDeclarantCode(paymentModel.getDeclarantCode());
+								response.setCustomsCode(paymentDetails.getCustomsCode());
+								response.setDeclarantCode(paymentDetails.getDeclarantCode());
 								response.setTransactionStatus(TRS.OK);
 								Info info = new Info();
 								info.setMessage(Arrays.asList("Successfully received the assessment notice"));
 								response.setInfo(info);
 								SadAsmt sadAsmt = new SadAsmt();
-								sadAsmt.setSadAssessmentNumber(paymentModel.getSadAssessmentNumber());
-								sadAsmt.setSadAssessmentSerial(paymentModel.getSadAssessmentSerial());
-								sadAsmt.setSadYear(paymentModel.getSadYear());
+								sadAsmt.setSadAssessmentNumber(paymentDetails.getSadAssessmentNumber());
+								sadAsmt.setSadAssessmentSerial(paymentDetails.getSadAssessmentSerial());
+								sadAsmt.setSadYear(paymentDetails.getSadYear());
 								response.setSadAsmt(sadAsmt);
 								// create xml of transaction response in the transaction response folder
 								int isResponseXmlCreated = CustomMarshaller.marshall(response, filePathConfig.getTransactionresponse());
 								if(isResponseXmlCreated==1) {
-									paymentService.acknowledgePaymentDetails(paymentModel.getDeclarantCode());
+									paymentDetailsService.acknowledgePaymentDetails(paymentDetails.getDeclarantCode());
 								}
 							}
 			
@@ -82,7 +82,7 @@ public class Utils {
 								TransactionResponse.class);
 						if (response != null) {
 							// update payment response
-							paymentService.updatePaymentDetailsWithResponse(response);
+							paymentDetailsService.updatePaymentDetailsWithResponse(response);
 						}
 
 					}
@@ -111,11 +111,11 @@ public class Utils {
 		return exists;
 	}
 
-	public PaymentModel convertReturnedAssessmentToEassesssmentEntity(EAssessmentNotice notice) {
-		PaymentModel assessmentNotice = null;
+	public PaymentDetails convertReturnedAssessmentToEassesssmentEntity(EAssessmentNotice notice) {
+		PaymentDetails assessmentNotice = null;
 		try {
 			if (notice != null) {
-				assessmentNotice = new PaymentModel(notice);
+				assessmentNotice = new PaymentDetails(notice);
 			}
 		} catch (Exception ex) {
 			log.error("error occured while getting Eassessment because: " + ex.getMessage());

@@ -15,16 +15,15 @@ import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Repository;
 
 import com.ubn.devops.ubnncsintegration.mapper.ResultSetMapper;
-import com.ubn.devops.ubnncsintegration.model.PaymentModel;
+import com.ubn.devops.ubnncsintegration.model.PaymentDetails;
 import com.ubn.devops.ubnncsintegration.ncsschema.EAssessmentNotice;
-import com.ubn.devops.ubnncsintegration.ncsschema.Payment;
 import com.ubn.devops.ubnncsintegration.utility.Utils;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Repository
-public class PaymentPackageRepository {
+public class PaymentDetailsRepository {
 	
 	@Value("${db.schemaname}")
 	private String SCHEMANAME;
@@ -38,10 +37,10 @@ public class PaymentPackageRepository {
 	private JdbcTemplate jdbcTemplate;
 	
 
-	public PaymentModel downloadPaymentDetails(EAssessmentNotice assessmentNotice) {
-		PaymentModel paymentModel = null;
+	public PaymentDetails downloadPaymentDetails(EAssessmentNotice assessmentNotice) {
+		PaymentDetails paymentDetails = null;
 		try {
-			PaymentModel payment = utils.convertReturnedAssessmentToEassesssmentEntity(assessmentNotice);
+			PaymentDetails payment = utils.convertReturnedAssessmentToEassesssmentEntity(assessmentNotice);
 			if (payment != null) {
 				SimpleJdbcCall call = new SimpleJdbcCall(jdbcTemplate);
 				call.setSchemaName(SCHEMANAME);
@@ -85,7 +84,7 @@ public class PaymentPackageRepository {
 					if(responsecode.equals("00")) {
 						log.info("Successfully saved the payment details with declarant code: "+assessmentNotice.getDeclarantCode());
 						payment.setId(((BigDecimal) respValues.get("p_id")).longValue());
-						paymentModel = payment;
+						paymentDetails = payment;
 					}else if(responsecode.equals("99")){
 						log.warn("db error occured with message: "+respValues.get("p_responsemsg"));
 					}
@@ -95,7 +94,7 @@ public class PaymentPackageRepository {
 		}catch(Exception ex) {
 			log.error("error occured while trying to download payment details into database because: "+ex.getMessage(),ex);
 		}
-		return paymentModel;
+		return paymentDetails;
 	}
 	
 	public void setPaymentDetailsAsAcknowledged(String declarantCode) {
@@ -127,8 +126,8 @@ public class PaymentPackageRepository {
 		}
 	}
 	@SuppressWarnings("unchecked")
-	public PaymentModel findPaymentDetails(String declarantcode) {
-		PaymentModel model = null;
+	public PaymentDetails findPaymentDetails(String declarantcode) {
+		PaymentDetails model = null;
 		try {
 			SimpleJdbcCall call = new SimpleJdbcCall(jdbcTemplate);
 			call.setSchemaName(SCHEMANAME);
@@ -146,7 +145,7 @@ public class PaymentPackageRepository {
 				String rspCode = result.get("p_responsecode").toString();
 				if(rspCode.equals("00")) {
 					if(result.get("p_data")!=null) {
-						List<PaymentModel> payments = (List<PaymentModel>)result.get("p_data") ;
+						List<PaymentDetails> payments = (List<PaymentDetails>)result.get("p_data") ;
 						if(!payments.isEmpty()) {
 							model = payments.get(0);
 						}

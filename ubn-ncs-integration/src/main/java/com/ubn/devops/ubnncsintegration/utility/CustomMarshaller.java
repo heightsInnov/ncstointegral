@@ -10,9 +10,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CustomMarshaller {
 
-	static XmlMapper mapper = new XmlMapper();
-
+	
 	public static <T> T unmarshall(File xmlFile, Class<T> clazz){
+		XmlMapper mapper = new XmlMapper();
 		T obj = null;
 		try {
 			obj = mapper.readValue(xmlFile, clazz); // clazz.cast(unmarshaller.unmarshal(xmlFile));
@@ -23,6 +23,7 @@ public class CustomMarshaller {
 	}
 
 	public static int marshall(Object object, String folder) {
+		XmlMapper mapper = new XmlMapper();
 		int isMarshalled = 0;
 		UUID uid = UUID.randomUUID();
 		String filename = folder + uid.toString() + ".xml";

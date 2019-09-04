@@ -16,7 +16,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import com.ubn.devops.ubnncsintegration.model.PaymentModel;
+import com.ubn.devops.ubnncsintegration.model.PaymentDetails;
 import com.ubn.devops.ubnncsintegration.model.TaxEntity;
 
 import lombok.Data;
@@ -30,9 +30,9 @@ public class EAssessmentNotice {
 
 	@XmlTransient
 	@JsonIgnore
-	private PaymentModel entity; 
+	private PaymentDetails entity; 
 	
-	public EAssessmentNotice(PaymentModel entity) {
+	public EAssessmentNotice(PaymentDetails entity) {
 		double totalAmount = 0;
 		this.bankBranchCode = entity.getBankBranchCode();
 		this.bankCode = entity.getBankCode();

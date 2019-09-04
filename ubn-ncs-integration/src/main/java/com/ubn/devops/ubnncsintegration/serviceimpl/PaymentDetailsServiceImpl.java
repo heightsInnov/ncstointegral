@@ -4,27 +4,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ubn.devops.ubnncsintegration.config.FilePathsConfig;
-import com.ubn.devops.ubnncsintegration.model.PaymentModel;
+import com.ubn.devops.ubnncsintegration.model.PaymentDetails;
 import com.ubn.devops.ubnncsintegration.ncsschema.EAssessmentNotice;
 import com.ubn.devops.ubnncsintegration.ncsschema.EPaymentConfirmation;
 import com.ubn.devops.ubnncsintegration.ncsschema.TransactionResponse;
-import com.ubn.devops.ubnncsintegration.repository.PaymentPackageRepository;
+import com.ubn.devops.ubnncsintegration.repository.PaymentDetailsRepository;
 import com.ubn.devops.ubnncsintegration.repository.TaxEntityRepository;
 import com.ubn.devops.ubnncsintegration.response.ApiResponse;
-import com.ubn.devops.ubnncsintegration.service.PaymentService;
+import com.ubn.devops.ubnncsintegration.service.PaymentDetailsService;
 import com.ubn.devops.ubnncsintegration.utility.Utils;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-public class PaymentServiceImpl implements PaymentService {
+public class PaymentDetailsServiceImpl implements PaymentDetailsService {
 
 	@Autowired
 	private FilePathsConfig pathsConfig;
 
 	@Autowired
-	private PaymentPackageRepository paymentRepo;
+	private PaymentDetailsRepository paymentRepo;
 
 	@Autowired
 	private TaxEntityRepository taxRepo;
@@ -33,16 +33,16 @@ public class PaymentServiceImpl implements PaymentService {
 	private Utils utils;
 
 	@Override
-	public PaymentModel savePaymentDetails(EAssessmentNotice assessmentNotice) {
-		PaymentModel paymentModel = null;
+	public PaymentDetails savePaymentDetails(EAssessmentNotice assessmentNotice) {
+		PaymentDetails paymentDetails = null;
 		log.info("=====Trying to save new payment details ===========");
 		try {
-			paymentModel = paymentRepo.downloadPaymentDetails(assessmentNotice);
+			paymentDetails = paymentRepo.downloadPaymentDetails(assessmentNotice);
 
 		} catch (Exception ex) {
 			log.error("error occured while trying to save assessmentnotice entity because: " + ex.getMessage());
 		}
-		return paymentModel;
+		return paymentDetails;
 	}
 
 	@Override
@@ -51,7 +51,7 @@ public class PaymentServiceImpl implements PaymentService {
 			/*
 			 * String declarantCode = response.getDeclarantCode();
 			 * log.info("====Trying to update payment details with declarant code:" +
-			 * declarantCode + " ======="); try { PaymentModel paymentModel =
+			 * declarantCode + " ======="); try { PaymentDetails paymentModel =
 			 * paymentRepo.findByDeclarantCode(declarantCode); if (paymentModel != null) {
 			 * String rspMessage = "";
 			 * paymentModel.setTransactionstatus(response.getTransactionStatus().value());
@@ -70,14 +70,14 @@ public class PaymentServiceImpl implements PaymentService {
 	}
 
 	@Override
-	public PaymentModel updatePaymentDetailsWithRequest(EPaymentConfirmation paymentConfirmation) {
-		PaymentModel entity = null;
+	public PaymentDetails updatePaymentDetailsWithRequest(EPaymentConfirmation paymentConfirmation) {
+		PaymentDetails entity = null;
 		String declarantCode = paymentConfirmation.getDeclarantCode();
 		log.info("=======Trying to update payment details with request using declarant code:" + declarantCode
 				+ "======");
 		try {
 			/*
-			 * PaymentModel model = paymentRepo.findByDeclarantCode(declarantCode); if
+			 * PaymentDetails model = paymentRepo.findByDeclarantCode(declarantCode); if
 			 * (model != null) { Payment payment = paymentConfirmation.getPayment().get(0);
 			 * if (payment != null) { model.setReference(payment.getReference());
 			 * model.setAmount(payment.getAmount());
@@ -100,7 +100,7 @@ public class PaymentServiceImpl implements PaymentService {
 				"Error occured while fetching details by declarant code.");
 		log.info("======Trying to fetch payment details using declarantcode: " + declarantCode + "======");
 		try {
-			PaymentModel model = paymentRepo.findPaymentDetails(declarantCode);
+			PaymentDetails model = paymentRepo.findPaymentDetails(declarantCode);
 			if (model != null) {
 				response.setCode(ApiResponse.SUCCESSFUL);
 				response.setMessage("Successful");
