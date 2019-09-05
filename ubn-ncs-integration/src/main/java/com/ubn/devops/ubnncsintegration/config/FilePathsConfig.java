@@ -18,6 +18,7 @@ public class FilePathsConfig {
 	private String paymentresponse;
 	private String queryrequest;
 	private String queryresponse;
+	private String rootfolder;
 
 
 }

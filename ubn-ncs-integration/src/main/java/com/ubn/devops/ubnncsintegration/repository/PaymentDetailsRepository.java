@@ -14,7 +14,7 @@ import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Repository;
 
-import com.ubn.devops.ubnncsintegration.mapper.ResultSetMapper;
+import com.ubn.devops.ubnncsintegration.mapper.CustomMapper;
 import com.ubn.devops.ubnncsintegration.model.PaymentDetails;
 import com.ubn.devops.ubnncsintegration.ncsschema.EAssessmentNotice;
 import com.ubn.devops.ubnncsintegration.utility.Utils;
@@ -137,7 +137,7 @@ public class PaymentDetailsRepository {
 							,new SqlOutParameter("p_responsemsg",Types.VARCHAR)
 							,new SqlOutParameter("p_responsecode",Types.VARCHAR)
 							,new SqlOutParameter("p_data",Types.REF_CURSOR));
-			call.addDeclaredRowMapper("p_data", new ResultSetMapper());
+			call.addDeclaredRowMapper("p_data", new CustomMapper());
 			Map<String,Object> paramSource = new HashMap<>();
 			paramSource.put("p_declarantcode", declarantcode);
 			Map<String,Object> result = call.execute(paramSource);

@@ -7,11 +7,13 @@
 
 package com.ubn.devops.ubnncsintegration.ncsschema;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
 import lombok.Data;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Data
 @JacksonXmlRootElement(localName = "Payment")
 public class Payment {

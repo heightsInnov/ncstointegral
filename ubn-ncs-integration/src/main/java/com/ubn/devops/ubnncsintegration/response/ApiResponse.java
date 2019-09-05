@@ -10,6 +10,7 @@ public class ApiResponse {
 	public static final int SERVER_ERROR=500;
 	public static final int NOT_FOUND=404;
 	public static final int SUCCESSFUL=200;
+	public static final int ALREADY_PAID = 209;
 
 	private int code;
 	private String message;

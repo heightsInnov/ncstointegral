@@ -8,11 +8,15 @@
 
 package com.ubn.devops.ubnncsintegration.ncsschema;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
 import lombok.Data;
+import lombok.ToString;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
+@ToString
 @Data
 @JacksonXmlRootElement(localName = "TransactionResponse")
 public class TransactionResponse {

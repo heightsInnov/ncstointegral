@@ -10,6 +10,7 @@ import com.ubn.devops.ubnncsintegration.ncsschema.EPaymentConfirmation;
 import com.ubn.devops.ubnncsintegration.ncsschema.TransactionResponse;
 import com.ubn.devops.ubnncsintegration.repository.PaymentDetailsRepository;
 import com.ubn.devops.ubnncsintegration.repository.TaxEntityRepository;
+import com.ubn.devops.ubnncsintegration.request.PaymentProcessRequest;
 import com.ubn.devops.ubnncsintegration.response.ApiResponse;
 import com.ubn.devops.ubnncsintegration.service.PaymentDetailsService;
 import com.ubn.devops.ubnncsintegration.utility.Utils;
@@ -122,6 +123,31 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
 
 		paymentRepo.setPaymentDetailsAsAcknowledged(declarantCode);
 
+	}
+
+	@Override
+	public ApiResponse processPayment(PaymentProcessRequest paymentProcessRequest) {
+		log.info("processing payment request with details: "+paymentProcessRequest.toString());
+		ApiResponse response = new ApiResponse(ApiResponse.SERVER_ERROR,"Unable to process request. Please try again");
+		try {
+			PaymentDetails details = paymentRepo.findPaymentDetails(paymentProcessRequest.getDeclarantCode());
+			if(details!=null) {
+				if(details.isPaid()) {
+					response.setCode(ApiResponse.ALREADY_PAID);
+					response.setMessage("This payment has already been made");
+				}else {
+					
+				}
+			}else {
+				response.setCode(ApiResponse.NOT_FOUND);
+				response.setMessage("The payment with this details does not exist");
+			}
+			
+			
+		}catch(Exception ex) {
+			log.error("error occured while processing payment request because: "+ex.getMessage(),ex);
+		}
+		return response;
 	}
 
 }

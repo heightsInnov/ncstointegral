@@ -9,7 +9,7 @@ import org.springframework.jdbc.core.RowMapper;
 
 import com.ubn.devops.ubnncsintegration.model.PaymentDetails;
 
-public class ResultSetMapper implements RowMapper<PaymentDetails>{
+public class CustomMapper implements RowMapper<PaymentDetails>{
 
 	
 	public static List<PaymentDetails> mapRow(ResultSet rs) throws SQLException {
@@ -47,6 +47,7 @@ public class ResultSetMapper implements RowMapper<PaymentDetails>{
 			payment.setReversalFcubsRef(rs.getString("REVERSAL_FCUBS_REF"));
 			payment.setSweepDate(rs.getDate("SWEEP_DATE"));
 			payment.setSweepFcubsPostRef(rs.getString("SWEEP_FCUBS_POST_REF"));
+			payment.setPostingDate(rs.getDate("POSTING_DATE"));
 			payments.add(payment);
 		}
 		return payments;

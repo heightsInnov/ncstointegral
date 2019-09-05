@@ -56,6 +56,7 @@ public class PaymentDetails {
 	private String isPaymentReversed;
 	private String reversalFcubsRef;
 	private Date reversalDate;
+	private Date postingDate;
 	
 	
     @XmlTransient

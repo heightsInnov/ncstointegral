@@ -14,6 +14,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlTransient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.ubn.devops.ubnncsintegration.model.PaymentDetails;
@@ -21,8 +22,10 @@ import com.ubn.devops.ubnncsintegration.model.TaxEntity;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-
+@ToString
+@JsonIgnoreProperties(ignoreUnknown = true)
 @NoArgsConstructor
 @Data
 @JacksonXmlRootElement(localName = "eAssessmentNotice")
