@@ -6,16 +6,18 @@ import java.nio.file.Paths;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.ubn.devops.ubnncsintegration.ncsschema.EAssessmentNotice;
 import com.ubn.devops.ubnncsintegration.ncsschema.EPaymentConfirmation;
 import com.ubn.devops.ubnncsintegration.ncsschema.TransactionResponse;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 public class CustomMarshaller {
 
+	private static Logger log = LoggerFactory.getLogger(CustomMarshaller.class);
+		
 	public static <T> T unmarshall(File xmlFile, Class<T> clazz) {
 		XmlMapper mapper = new XmlMapper();
 		T obj = null;

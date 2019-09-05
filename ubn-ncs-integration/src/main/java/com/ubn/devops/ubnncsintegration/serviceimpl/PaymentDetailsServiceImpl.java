@@ -1,5 +1,7 @@
 package com.ubn.devops.ubnncsintegration.serviceimpl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,12 +12,11 @@ import com.ubn.devops.ubnncsintegration.request.PaymentProcessRequest;
 import com.ubn.devops.ubnncsintegration.response.ApiResponse;
 import com.ubn.devops.ubnncsintegration.service.PaymentDetailsService;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 @Service
 public class PaymentDetailsServiceImpl implements PaymentDetailsService {
 
+	private Logger log = LoggerFactory.getLogger(this.getClass());
+	
 	@Autowired
 	private PaymentDetailsRepository paymentRepo;
 

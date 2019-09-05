@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -19,11 +21,11 @@ import com.ubn.devops.ubnncsintegration.model.PaymentDetails;
 import com.ubn.devops.ubnncsintegration.ncsschema.EAssessmentNotice;
 import com.ubn.devops.ubnncsintegration.utility.Utils;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 @Repository
 public class PaymentDetailsRepository {
+	
+	private Logger log = LoggerFactory.getLogger(this.getClass());
+			
 	
 	@Value("${db.schemaname}")
 	private String SCHEMANAME;

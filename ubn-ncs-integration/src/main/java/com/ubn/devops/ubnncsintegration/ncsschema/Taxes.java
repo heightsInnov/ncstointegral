@@ -12,8 +12,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-@NoArgsConstructor
-@Data
 @JacksonXmlRootElement(localName="Taxes")
 public class Taxes {
 	
@@ -24,6 +22,22 @@ public class Taxes {
 	public Taxes(List<Tax> taxesToBind) {
 		this.tax =taxesToBind;
 	}
+
+	/**
+	 * @return the tax
+	 */
+	public List<Tax> getTax() {
+		return tax;
+	}
+
+	/**
+	 * @param tax the tax to set
+	 */
+	public void setTax(List<Tax> tax) {
+		this.tax = tax;
+	}
+	
+	
 	
 	
 }

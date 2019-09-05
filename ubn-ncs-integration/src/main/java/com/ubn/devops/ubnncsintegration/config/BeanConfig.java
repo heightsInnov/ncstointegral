@@ -9,14 +9,14 @@ import java.nio.file.WatchService;
 
 import javax.sql.DataSource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Configuration
 public class BeanConfig {
 
@@ -25,6 +25,8 @@ public class BeanConfig {
 	
 	@Autowired
 	private DataSource dataSource;
+	
+	private Logger log = LoggerFactory.getLogger(this.getClass());
 
 	@Bean
 	public WatchService watchService() {
@@ -34,7 +36,7 @@ public class BeanConfig {
 			watchService = FileSystems.getDefault().newWatchService();
 			Path path = Paths.get(filePathConfig.getRootfolder());
 			path.register(watchService, kind);
-			/*
+			/* 
 			 * Path path = Paths.get(filePathConfig.getAssessmentnotice());
 			 * path.register(watchService, kind); Path paymentResponsePath =
 			 * Paths.get(filePathConfig.getPaymentresponse());

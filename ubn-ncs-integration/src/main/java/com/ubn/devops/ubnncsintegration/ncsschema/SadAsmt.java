@@ -16,7 +16,6 @@ import lombok.Data;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Data
 @JacksonXmlRootElement(localName = "SadAsmt")
 public class SadAsmt {
 
@@ -26,6 +25,42 @@ public class SadAsmt {
     protected String sadAssessmentNumber;
     @JsonProperty( "SADYear")
     protected int sadYear;
+	/**
+	 * @return the sadAssessmentSerial
+	 */
+	public String getSadAssessmentSerial() {
+		return sadAssessmentSerial;
+	}
+	/**
+	 * @param sadAssessmentSerial the sadAssessmentSerial to set
+	 */
+	public void setSadAssessmentSerial(String sadAssessmentSerial) {
+		this.sadAssessmentSerial = sadAssessmentSerial;
+	}
+	/**
+	 * @return the sadAssessmentNumber
+	 */
+	public String getSadAssessmentNumber() {
+		return sadAssessmentNumber;
+	}
+	/**
+	 * @param sadAssessmentNumber the sadAssessmentNumber to set
+	 */
+	public void setSadAssessmentNumber(String sadAssessmentNumber) {
+		this.sadAssessmentNumber = sadAssessmentNumber;
+	}
+	/**
+	 * @return the sadYear
+	 */
+	public int getSadYear() {
+		return sadYear;
+	}
+	/**
+	 * @param sadYear the sadYear to set
+	 */
+	public void setSadYear(int sadYear) {
+		this.sadYear = sadYear;
+	}
 
     
 

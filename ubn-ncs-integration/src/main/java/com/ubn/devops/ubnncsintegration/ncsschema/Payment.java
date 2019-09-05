@@ -14,7 +14,6 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import lombok.Data;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Data
 @JacksonXmlRootElement(localName = "Payment")
 public class Payment {
 
@@ -24,5 +23,42 @@ public class Payment {
 	protected String reference;
 	@JsonProperty("Amount")
 	protected double amount;
+	/**
+	 * @return the meansOfPayment
+	 */
+	public String getMeansOfPayment() {
+		return meansOfPayment;
+	}
+	/**
+	 * @param meansOfPayment the meansOfPayment to set
+	 */
+	public void setMeansOfPayment(String meansOfPayment) {
+		this.meansOfPayment = meansOfPayment;
+	}
+	/**
+	 * @return the reference
+	 */
+	public String getReference() {
+		return reference;
+	}
+	/**
+	 * @param reference the reference to set
+	 */
+	public void setReference(String reference) {
+		this.reference = reference;
+	}
+	/**
+	 * @return the amount
+	 */
+	public double getAmount() {
+		return amount;
+	}
+	/**
+	 * @param amount the amount to set
+	 */
+	public void setAmount(double amount) {
+		this.amount = amount;
+	}
 
+	
 }

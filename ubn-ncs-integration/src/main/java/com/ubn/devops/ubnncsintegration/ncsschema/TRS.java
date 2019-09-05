@@ -48,7 +48,7 @@ public enum TRS {
 
     public static TRS fromValue(String v) {
         for (TRS c: TRS.values()) {
-            if (c.value.equals(v)) {
+            if (c.value.equalsIgnoreCase(v)) {
                 return c;
             }
         }

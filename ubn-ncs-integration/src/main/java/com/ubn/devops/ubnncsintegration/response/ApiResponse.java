@@ -3,8 +3,6 @@ package com.ubn.devops.ubnncsintegration.response;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
-@Data
 public class ApiResponse {
 	
 	public static final int SERVER_ERROR=500;
@@ -16,9 +14,50 @@ public class ApiResponse {
 	private String message;
 	private Object body;
 
+	public ApiResponse() {
+		
+	}
 	public ApiResponse(int code, String message) {
 		this.code = code;
 		this.message = message;
 	}
+	/**
+	 * @return the code
+	 */
+	public int getCode() {
+		return code;
+	}
+	/**
+	 * @param code the code to set
+	 */
+	public void setCode(int code) {
+		this.code = code;
+	}
+	/**
+	 * @return the message
+	 */
+	public String getMessage() {
+		return message;
+	}
+	/**
+	 * @param message the message to set
+	 */
+	public void setMessage(String message) {
+		this.message = message;
+	}
+	/**
+	 * @return the body
+	 */
+	public Object getBody() {
+		return body;
+	}
+	/**
+	 * @param body the body to set
+	 */
+	public void setBody(Object body) {
+		this.body = body;
+	}
+	
+	
 
 }

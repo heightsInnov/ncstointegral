@@ -20,14 +20,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.ubn.devops.ubnncsintegration.model.PaymentDetails;
 import com.ubn.devops.ubnncsintegration.model.TaxEntity;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-
-@ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
-@NoArgsConstructor
-@Data
 @JacksonXmlRootElement(localName = "eAssessmentNotice")
 public class EAssessmentNotice {
 
@@ -89,7 +82,196 @@ public class EAssessmentNotice {
     protected Taxes taxes;
     @JsonProperty("TotalAmountToBePaid")
     protected double totalAmountToBePaid;
-    
-    
 
+	/**
+	 * @return the entity
+	 */
+	public PaymentDetails getEntity() {
+		return entity;
+	}
+	/**
+	 * @param entity the entity to set
+	 */
+	public void setEntity(PaymentDetails entity) {
+		this.entity = entity;
+	}
+	/**
+	 * @return the sadYear
+	 */
+	public int getSadYear() {
+		return SadYear;
+	}
+	/**
+	 * @param sadYear the sadYear to set
+	 */
+	public void setSadYear(int sadYear) {
+		SadYear = sadYear;
+	}
+	/**
+	 * @return the customsCode
+	 */
+	public String getCustomsCode() {
+		return customsCode;
+	}
+	/**
+	 * @param customsCode the customsCode to set
+	 */
+	public void setCustomsCode(String customsCode) {
+		this.customsCode = customsCode;
+	}
+	/**
+	 * @return the declarantCode
+	 */
+	public String getDeclarantCode() {
+		return declarantCode;
+	}
+	/**
+	 * @param declarantCode the declarantCode to set
+	 */
+	public void setDeclarantCode(String declarantCode) {
+		this.declarantCode = declarantCode;
+	}
+	/**
+	 * @return the declarantName
+	 */
+	public String getDeclarantName() {
+		return declarantName;
+	}
+	/**
+	 * @param declarantName the declarantName to set
+	 */
+	public void setDeclarantName(String declarantName) {
+		this.declarantName = declarantName;
+	}
+	/**
+	 * @return the sadAssessmentSerial
+	 */
+	public String getSadAssessmentSerial() {
+		return SadAssessmentSerial;
+	}
+	/**
+	 * @param sadAssessmentSerial the sadAssessmentSerial to set
+	 */
+	public void setSadAssessmentSerial(String sadAssessmentSerial) {
+		SadAssessmentSerial = sadAssessmentSerial;
+	}
+	/**
+	 * @return the sadAssessmentNumber
+	 */
+	public String getSadAssessmentNumber() {
+		return SadAssessmentNumber;
+	}
+	/**
+	 * @param sadAssessmentNumber the sadAssessmentNumber to set
+	 */
+	public void setSadAssessmentNumber(String sadAssessmentNumber) {
+		SadAssessmentNumber = sadAssessmentNumber;
+	}
+	/**
+	 * @return the sadAssessmentDate
+	 */
+	public String getSadAssessmentDate() {
+		return SadAssessmentDate;
+	}
+	/**
+	 * @param sadAssessmentDate the sadAssessmentDate to set
+	 */
+	public void setSadAssessmentDate(String sadAssessmentDate) {
+		SadAssessmentDate = sadAssessmentDate;
+	}
+	/**
+	 * @return the companyCode
+	 */
+	public String getCompanyCode() {
+		return companyCode;
+	}
+	/**
+	 * @param companyCode the companyCode to set
+	 */
+	public void setCompanyCode(String companyCode) {
+		this.companyCode = companyCode;
+	}
+	/**
+	 * @return the companyName
+	 */
+	public String getCompanyName() {
+		return companyName;
+	}
+	/**
+	 * @param companyName the companyName to set
+	 */
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
+	/**
+	 * @return the bankCode
+	 */
+	public String getBankCode() {
+		return bankCode;
+	}
+	/**
+	 * @param bankCode the bankCode to set
+	 */
+	public void setBankCode(String bankCode) {
+		this.bankCode = bankCode;
+	}
+	/**
+	 * @return the bankBranchCode
+	 */
+	public String getBankBranchCode() {
+		return bankBranchCode;
+	}
+	/**
+	 * @param bankBranchCode the bankBranchCode to set
+	 */
+	public void setBankBranchCode(String bankBranchCode) {
+		this.bankBranchCode = bankBranchCode;
+	}
+	/**
+	 * @return the formMNumber
+	 */
+	public String getFormMNumber() {
+		return formMNumber;
+	}
+	/**
+	 * @param formMNumber the formMNumber to set
+	 */
+	public void setFormMNumber(String formMNumber) {
+		this.formMNumber = formMNumber;
+	}
+	/**
+	 * @return the taxes
+	 */
+	public Taxes getTaxes() {
+		return taxes;
+	}
+	/**
+	 * @param taxes the taxes to set
+	 */
+	public void setTaxes(Taxes taxes) {
+		this.taxes = taxes;
+	}
+	/**
+	 * @return the totalAmountToBePaid
+	 */
+	public double getTotalAmountToBePaid() {
+		return totalAmountToBePaid;
+	}
+	/**
+	 * @param totalAmountToBePaid the totalAmountToBePaid to set
+	 */
+	public void setTotalAmountToBePaid(double totalAmountToBePaid) {
+		this.totalAmountToBePaid = totalAmountToBePaid;
+	}
+	@Override
+	public String toString() {
+		return "EAssessmentNotice [entity=" + entity + ", SadYear=" + SadYear + ", customsCode=" + customsCode
+				+ ", declarantCode=" + declarantCode + ", declarantName=" + declarantName + ", SadAssessmentSerial="
+				+ SadAssessmentSerial + ", SadAssessmentNumber=" + SadAssessmentNumber + ", SadAssessmentDate="
+				+ SadAssessmentDate + ", companyCode=" + companyCode + ", companyName=" + companyName + ", bankCode="
+				+ bankCode + ", bankBranchCode=" + bankBranchCode + ", formMNumber=" + formMNumber + ", taxes=" + taxes
+				+ ", totalAmountToBePaid=" + totalAmountToBePaid + "]";
+	}
+    
+    
    }

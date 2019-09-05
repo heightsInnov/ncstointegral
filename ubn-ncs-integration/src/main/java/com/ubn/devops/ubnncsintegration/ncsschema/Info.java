@@ -19,13 +19,26 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import lombok.Data;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Data
 @JacksonXmlRootElement(localName = "Info")
 public class Info {
 
     @JsonProperty("Message")
     @JacksonXmlElementWrapper(useWrapping = false)
     private List<String> message = new ArrayList<>();
+
+	/**
+	 * @return the message
+	 */
+	public List<String> getMessage() {
+		return message;
+	}
+
+	/**
+	 * @param message the message to set
+	 */
+	public void setMessage(List<String> message) {
+		this.message = message;
+	}
     
 
 }

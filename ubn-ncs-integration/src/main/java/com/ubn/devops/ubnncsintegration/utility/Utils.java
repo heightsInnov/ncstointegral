@@ -7,6 +7,8 @@ import java.nio.file.WatchService;
 import java.util.Arrays;
 
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,12 +21,10 @@ import com.ubn.devops.ubnncsintegration.ncsschema.TRS;
 import com.ubn.devops.ubnncsintegration.ncsschema.TransactionResponse;
 import com.ubn.devops.ubnncsintegration.service.PaymentDetailsService;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 @Component
 public class Utils {
 
+	private Logger log = LoggerFactory.getLogger(this.getClass());
 	@Autowired
 	private FilePathsConfig filePathConfig;
 
@@ -86,7 +86,7 @@ public class Utils {
 							TransactionResponse response = (TransactionResponse) frResponse.getObject();
 							if (response != null) {
 								// update payment response
-								paymentDetailsService.updatePaymentDetailsWithResponse(response);
+								//paymentDetailsService.updatePaymentDetailsWithResponse(response);
 								moveFile(new File(paymentResponsePath), filePathConfig.getPaymentresponse());
 							}
 							break;
