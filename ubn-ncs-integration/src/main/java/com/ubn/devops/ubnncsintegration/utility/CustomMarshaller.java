@@ -39,6 +39,8 @@ public class CustomMarshaller {
 			filename = folder +FileReaderResponse.TRANSACTIONRESPONSE+ uid + ".xml";
 		}else if(type.equals(FileReaderResponse.EPAYMENTCONFIRMATION)) {
 			filename = folder+FileReaderResponse.EPAYMENTCONFIRMATION+uid+".xml";
+		}else if(type.equals(FileReaderResponse.EPAYMENTQUERY)) {
+			filename = folder+FileReaderResponse.EPAYMENTQUERY+uid+".xml";
 		}
 		try {
 			mapper.writeValue(new File(filename), object);

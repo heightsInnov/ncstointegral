@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ubn.devops.ubnncsintegration.ncsschema.EPaymentQuery;
 import com.ubn.devops.ubnncsintegration.request.PaymentProcessRequest;
 import com.ubn.devops.ubnncsintegration.response.ApiResponse;
 import com.ubn.devops.ubnncsintegration.service.PaymentDetailsService;
@@ -27,6 +28,12 @@ public class PaymentController {
 	@PostMapping("/process-payment")
 	public ApiResponse processPayment(@RequestBody PaymentProcessRequest request){
 		return paymentDetailsService.processPayment(request);
+	}
+	
+	@PostMapping("/query-payment")
+	public ApiResponse queryPayment(@RequestBody EPaymentQuery query ) {
+		
+		return null;
 	}
 	
 }
