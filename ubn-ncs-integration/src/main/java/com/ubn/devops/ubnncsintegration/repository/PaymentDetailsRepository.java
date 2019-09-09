@@ -1,7 +1,9 @@
 package com.ubn.devops.ubnncsintegration.repository;
 
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.sql.Types;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +31,8 @@ public class PaymentDetailsRepository {
 
 	@Value("${db.schemaname}")
 	private String SCHEMANAME;
+	
+	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
 	private final String PACKAGENAME = "NCS_PACKAGE";
 
@@ -219,17 +223,17 @@ public class PaymentDetailsRepository {
 						new SqlParameter("P_CUSTEMAIL", Types.VARCHAR),
 						new SqlParameter("P_AMOUNTPAID", Types.DECIMAL),
 						new SqlParameter("P_CHANNEL", Types.VARCHAR),
-						new SqlParameter("P_PAYMENTDATE", Types.DATE),
+						new SqlParameter("P_PAYMENTDATE", Types.TIMESTAMP),
 						new SqlOutParameter("P_RESPONSEMSG", Types.VARCHAR),
 						new SqlOutParameter("P_RESPONSECODE", Types.VARCHAR));
 				Map<String, Object> paramSource = new HashMap<>();
 				paramSource.put("P_FORMMNUMBER", request.getFormMNumber());
-				paramSource.put("P_TXNREF", request.getFormMNumber());
-				paramSource.put("P_ACCTNO", request.getFormMNumber());
-				paramSource.put("P_CUSTEMAIL", request.getFormMNumber());
-				paramSource.put("P_AMOUNTPAID", request.getFormMNumber());
-				paramSource.put("P_CHANNEL", request.getFormMNumber());
-				paramSource.put("P_PAYMENTDATE", request.getFormMNumber());
+				paramSource.put("P_TXNREF", request.getExternalRef());
+				paramSource.put("P_ACCTNO", request.getAccount());
+				paramSource.put("P_CUSTEMAIL", request.getCustomerEmail());
+				paramSource.put("P_AMOUNTPAID", new BigDecimal(request.getAmount()));
+				paramSource.put("P_CHANNEL", request.getChannel());
+				paramSource.put("P_PAYMENTDATE", sdf.format(request.getPostingDate()));
 				Map<String, Object> respValues = call.execute(paramSource);
 				if (!respValues.isEmpty()) {
 					String responsecode = respValues.get("P_RESPONSECODE").toString();

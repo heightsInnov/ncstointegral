@@ -50,29 +50,7 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
 		return paymentDetails;
 	}
 
-	/*
-	 * @Override public void updatePaymentDetailsWithResponse(TransactionResponse
-	 * response) { try {
-	 * 
-	 * String declarantCode = response.getDeclarantCode();
-	 * log.info("====Trying to update payment details with declarant code:" +
-	 * declarantCode + " ======="); try { PaymentDetailsResponse paymentModel =
-	 * paymentRepo.findByDeclarantCode(declarantCode); if (paymentModel != null) {
-	 * String rspMessage = "";
-	 * paymentModel.setTransactionstatus(response.getTransactionStatus().value());
-	 * Info info = response.getInfo(); if (info != null) { if
-	 * (!info.getMessage().isEmpty()) { rspMessage =
-	 * StringUtils.collectionToCommaDelimitedString(info.getMessage()); } }
-	 * paymentModel.setResponseMessage(rspMessage); paymentRepo.save(paymentModel);
-	 * log.info("successfully updated the payment object with declarant code: "
-	 * +declarantCode+" with transaction response"); } else {
-	 * 
-	 * log.warn("======The declarant code:" + declarantCode + " does not exist"); }
-	 * 
-	 * } catch (Exception ex) {
-	 * log.error("error occured while trying to update payment details because: " +
-	 * ex.getMessage(), ex); } }
-	 */
+	
 	@Override
 	public ApiResponse fetchPaymentDetails(String formMNumber) {
 		ApiResponse response = new ApiResponse(ApiResponse.SERVER_ERROR,

@@ -1,12 +1,10 @@
 package com.ubn.devops.ubnncsintegration.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import com.ubn.devops.ubnncsintegration.utility.Encryptor;
 
-@RefreshScope
 @ConfigurationProperties(prefix = "ncs.path")
 @Component
 public class FilePathsConfig {

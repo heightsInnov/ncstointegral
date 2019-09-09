@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class PaymentProcessRequest {
 	
-	private String customerRef;
+	private String customerEmail;
 	
 	private String externalRef;
 	
@@ -18,18 +18,20 @@ public class PaymentProcessRequest {
 	
 	private String amount;
 
+	
+
 	/**
-	 * @return the customerRef
+	 * @return the customerEmail
 	 */
-	public String getCustomerRef() {
-		return customerRef;
+	public String getCustomerEmail() {
+		return customerEmail;
 	}
 
 	/**
-	 * @param customerRef the customerRef to set
+	 * @param customerEmail the customerEmail to set
 	 */
-	public void setCustomerRef(String customerRef) {
-		this.customerRef = customerRef;
+	public void setCustomerEmail(String customerEmail) {
+		this.customerEmail = customerEmail;
 	}
 
 	/**

@@ -28,7 +28,6 @@ public class CustomMapper implements RowMapper<PaymentDetails>{
 			payment.setFormMNumber(rs.getString("FORMMNUMBER"));
 			payment.setId((rs.getBigDecimal("ID")).longValue());
 			payment.setPaid(rs.getBoolean("IS_PAID"));
-			payment.setReference(rs.getString("REFERENCE"));
 			payment.setResponseMessage(rs.getString("RESPONSE_MESSAGE"));
 			payment.setSadAssessmentDate(rs.getDate("SAD_ASSESSMENT_DATE").toString());
 			payment.setSadAssessmentNumber(rs.getString("SAD_ASSESSMENT_NUMBER"));
@@ -66,7 +65,6 @@ public class CustomMapper implements RowMapper<PaymentDetails>{
 		payment.setFormMNumber(rs.getString("FORMMNUMBER"));
 		payment.setId((rs.getBigDecimal("ID")).longValue());
 		payment.setPaid(rs.getBoolean("IS_PAID"));
-		payment.setReference(rs.getString("REFERENCE"));
 		payment.setResponseMessage(rs.getString("RESPONSE_MESSAGE"));
 		payment.setSadAssessmentDate(rs.getDate("SAD_ASSESSMENT_DATE").toString());
 		payment.setSadAssessmentNumber(rs.getString("SAD_ASSESSMENT_NUMBER"));

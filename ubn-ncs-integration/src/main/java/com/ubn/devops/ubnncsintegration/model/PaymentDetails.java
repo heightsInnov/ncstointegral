@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -18,7 +17,6 @@ import com.ubn.devops.ubnncsintegration.ncsschema.Tax;
 
 public class PaymentDetails {
 	
-	@Transient
 	private EAssessmentNotice assessmentNotice;
 	
 	@XmlTransient
@@ -37,7 +35,6 @@ public class PaymentDetails {
     private String bankBranchCode;
     private String formMNumber;
     
-	private String reference;
 	private BigDecimal amount;
 	private String transactionstatus;
 	private String responseMessage;
@@ -318,23 +315,6 @@ public class PaymentDetails {
 	public void setFormMNumber(String formMNumber) {
 		this.formMNumber = formMNumber;
 	}
-
-
-	/**
-	 * @return the reference
-	 */
-	public String getReference() {
-		return reference;
-	}
-
-
-	/**
-	 * @param reference the reference to set
-	 */
-	public void setReference(String reference) {
-		this.reference = reference;
-	}
-
 
 	/**
 	 * @return the amount
