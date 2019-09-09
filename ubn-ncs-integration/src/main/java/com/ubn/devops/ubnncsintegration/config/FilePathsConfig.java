@@ -1,13 +1,14 @@
 package com.ubn.devops.ubnncsintegration.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.stereotype.Component;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.ubn.devops.ubnncsintegration.utility.Encryptor;
 
+@RefreshScope
 @ConfigurationProperties(prefix = "ncs.path")
-@Configuration
+@Component
 public class FilePathsConfig {
 
 	private String assessmentnotice;
@@ -17,6 +18,16 @@ public class FilePathsConfig {
 	private String queryrequest;
 	private String queryresponse;
 	private String rootfolder;
+	
+	private String tokenurl;
+	private String username;
+	private String password;
+	private String clientid;
+	private String cliensecret;
+	
+	private String refvalidationurl;
+	
+	final Encryptor encryptor = new Encryptor(Encryptor.KEY);
 	/**
 	 * @return the assessmentnotice
 	 */
@@ -100,6 +111,78 @@ public class FilePathsConfig {
 	 */
 	public void setRootfolder(String rootfolder) {
 		this.rootfolder = rootfolder;
+	}
+	/**
+	 * @return the tokenurl
+	 */
+	public String getTokenurl() {
+		return tokenurl;
+	}
+	/**
+	 * @param tokenurl the tokenurl to set
+	 */
+	public void setTokenurl(String tokenurl) {
+		this.tokenurl = tokenurl;
+	}
+	/**
+	 * @return the username
+	 */
+	public String getUsername() {
+		return encryptor.decryptStringEncoded(username);
+	}
+	/**
+	 * @param username the username to set
+	 */
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	/**
+	 * @return the password
+	 */
+	public String getPassword() {
+		return encryptor.decryptStringEncoded(password);
+	}
+	/**
+	 * @param password the password to set
+	 */
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	/**
+	 * @return the clientid
+	 */
+	public String getClientid() {
+		return encryptor.decryptStringEncoded(clientid);
+	}
+	/**
+	 * @param clientid the clientid to set
+	 */
+	public void setClientid(String clientid) {
+		this.clientid = clientid;
+	}
+	/**
+	 * @return the cliensecret
+	 */
+	public String getCliensecret() {
+		return encryptor.decryptStringEncoded(cliensecret);
+	}
+	/**
+	 * @param cliensecret the cliensecret to set
+	 */
+	public void setCliensecret(String cliensecret) {
+		this.cliensecret = cliensecret;
+	}
+	/**
+	 * @return the refvalidationurl
+	 */
+	public String getRefvalidationurl() {
+		return refvalidationurl;
+	}
+	/**
+	 * @param refvalidationurl the refvalidationurl to set
+	 */
+	public void setRefvalidationurl(String refvalidationurl) {
+		this.refvalidationurl = refvalidationurl;
 	}
 
 	

@@ -69,26 +69,32 @@ public class Utils {
 									response.setSadAsmt(sadAsmt);
 									// create xml of transaction response in the transaction response folder
 									int isResponseXmlCreated = CustomMarshaller.marshall(response,
-											filePathConfig.getRootfolder());
+											filePathConfig.getRootfolder(),FileReaderResponse.TRANSACTIONRESPONSE);
 									if (isResponseXmlCreated == 1) {
 										log.info("created acknowledge response xml for declarant code: "
 												+ response.getDeclarantCode());
 										paymentDetailsService
-												.acknowledgePaymentDetails(paymentDetails.getDeclarantCode());
+												.acknowledgePaymentDetails(paymentDetails.getFormMNumber());
 									}
 								}
 
 							}
 							break;
-						case FileReaderResponse.EPAYMENTCONFIRMATION:
-							String paymentResponsePath = filePathConfig.getRootfolder() + event.context();
+						case FileReaderResponse.TRANSACTIONRESPONSE:
+							String name = event.context().toString();
+							if (!name.startsWith(FileReaderResponse.TRANSACTIONRESPONSE)) {
+								String paymentResponsePath = filePathConfig.getRootfolder() + event.context();
+								TransactionResponse response = (TransactionResponse) frResponse.getObject();
+								if (response != null) {
+									if (response.getTransactionStatus().equals(TRS.ERROR)) {
+										// update payment response
+										// paymentDetailsService.updatePaymentDetailsWithResponse(response);
+										moveFile(new File(paymentResponsePath), filePathConfig.getPaymentresponse());
 
-							TransactionResponse response = (TransactionResponse) frResponse.getObject();
-							if (response != null) {
-								// update payment response
-								//paymentDetailsService.updatePaymentDetailsWithResponse(response);
-								moveFile(new File(paymentResponsePath), filePathConfig.getPaymentresponse());
+									}
+								}
 							}
+
 							break;
 						}
 					}

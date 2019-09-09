@@ -2,21 +2,21 @@ package com.ubn.devops.ubnncsintegration.request;
 
 import java.util.Date;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-
 public class PaymentProcessRequest {
 	
 	private String customerRef;
 	
-	private String transactionRef;
+	private String externalRef;
 	
-	private String channelCode;
+	private String channel;
 	
-	private String declarantCode;
+	private String formMNumber;
 	
+	private String account;
+		
 	private Date postingDate = new Date();
+	
+	private String amount;
 
 	/**
 	 * @return the customerRef
@@ -33,45 +33,59 @@ public class PaymentProcessRequest {
 	}
 
 	/**
-	 * @return the transactionRef
+	 * @return the externalRef
 	 */
-	public String getTransactionRef() {
-		return transactionRef;
+	public String getExternalRef() {
+		return externalRef;
 	}
 
 	/**
-	 * @param transactionRef the transactionRef to set
+	 * @param externalRef the externalRef to set
 	 */
-	public void setTransactionRef(String transactionRef) {
-		this.transactionRef = transactionRef;
+	public void setExternalRef(String externalRef) {
+		this.externalRef = externalRef;
 	}
 
 	/**
-	 * @return the channelCode
+	 * @return the channel
 	 */
-	public String getChannelCode() {
-		return channelCode;
+	public String getChannel() {
+		return channel;
 	}
 
 	/**
-	 * @param channelCode the channelCode to set
+	 * @param channel the channel to set
 	 */
-	public void setChannelCode(String channelCode) {
-		this.channelCode = channelCode;
+	public void setChannel(String channel) {
+		this.channel = channel;
 	}
 
 	/**
-	 * @return the declarantCode
+	 * @return the formMNumber
 	 */
-	public String getDeclarantCode() {
-		return declarantCode;
+	public String getFormMNumber() {
+		return formMNumber;
 	}
 
 	/**
-	 * @param declarantCode the declarantCode to set
+	 * @param formMNumber the formMNumber to set
 	 */
-	public void setDeclarantCode(String declarantCode) {
-		this.declarantCode = declarantCode;
+	public void setFormMNumber(String formMNumber) {
+		this.formMNumber = formMNumber;
+	}
+
+	/**
+	 * @return the account
+	 */
+	public String getAccount() {
+		return account;
+	}
+
+	/**
+	 * @param account the account to set
+	 */
+	public void setAccount(String account) {
+		this.account = account;
 	}
 
 	/**
@@ -88,12 +102,21 @@ public class PaymentProcessRequest {
 		this.postingDate = postingDate;
 	}
 
-	@Override
-	public String toString() {
-		return "PaymentProcessRequest [customerRef=" + customerRef + ", transactionRef=" + transactionRef
-				+ ", channelCode=" + channelCode + ", declarantCode=" + declarantCode + ", postingDate=" + postingDate
-				+ "]";
+	/**
+	 * @return the amount
+	 */
+	public String getAmount() {
+		return amount;
 	}
+
+	/**
+	 * @param amount the amount to set
+	 */
+	public void setAmount(String amount) {
+		this.amount = amount;
+	}
+
+	
 	
 	
 

@@ -20,13 +20,13 @@ public class PaymentController {
 	private PaymentDetailsService paymentDetailsService;
 	
 	@GetMapping("/details")
-	public ApiResponse getPaymentDetails(@RequestParam String declarantCode){
-		return paymentDetailsService.fetchPaymentDetails(declarantCode);
+	public ApiResponse getPaymentDetails(@RequestParam String code){
+		return paymentDetailsService.fetchPaymentDetails(code);
 	}
 	
 	@PostMapping("/process-payment")
-	public ApiResponse processPayment(@RequestBody PaymentProcessRequest request) throws Exception {
-		throw new Exception("Not implemented yet");
+	public ApiResponse processPayment(@RequestBody PaymentProcessRequest request){
+		return paymentDetailsService.processPayment(request);
 	}
 	
 }

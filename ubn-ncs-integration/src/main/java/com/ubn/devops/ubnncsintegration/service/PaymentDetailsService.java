@@ -9,9 +9,9 @@ public interface PaymentDetailsService {
 	
 	public PaymentDetails savePaymentDetails(EAssessmentNotice assessmentNotice);
 	
-	public ApiResponse fetchPaymentDetails(String declarantCode);
+	public ApiResponse fetchPaymentDetails(String formMNumber);
 	
-	public void acknowledgePaymentDetails(String declarantCode);
+	public void acknowledgePaymentDetails(String formMNumber);
 	
 	public ApiResponse processPayment(PaymentProcessRequest paymentProcessRequest);
 	

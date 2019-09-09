@@ -8,6 +8,7 @@
 
 package com.ubn.devops.ubnncsintegration.ncsschema;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +29,10 @@ public class EAssessmentNotice {
 	@JsonIgnore
 	private PaymentDetails entity; 
 	
+	public EAssessmentNotice() {
+		
+	}
+	
 	public EAssessmentNotice(PaymentDetails entity) {
 		double totalAmount = 0;
 		this.bankBranchCode = entity.getBankBranchCode();
@@ -44,14 +49,14 @@ public class EAssessmentNotice {
 		this.SadYear=entity.getSadYear();
 		List<Tax> taxesToBind = new ArrayList<>();
 		for(TaxEntity taxEntity:entity.getTaxes()) {
-			totalAmount +=taxEntity.getTaxAmount();
+			totalAmount +=taxEntity.getTaxAmount().doubleValue();
 			Tax tax = new Tax();
 			tax.setTaxAmount(taxEntity.getTaxAmount());
 			tax.setTaxCode(taxEntity.getTaxCode());
 			taxesToBind.add(tax);
 		}
 		this.taxes = new Taxes(taxesToBind);
-		this.totalAmountToBePaid=totalAmount;
+		this.totalAmountToBePaid=new BigDecimal(totalAmount);
 	}
 	
     @JsonProperty("SADYear")
@@ -81,7 +86,7 @@ public class EAssessmentNotice {
     @JsonProperty("Taxes")
     protected Taxes taxes;
     @JsonProperty("TotalAmountToBePaid")
-    protected double totalAmountToBePaid;
+    protected BigDecimal totalAmountToBePaid;
 
 	/**
 	 * @return the entity
@@ -254,13 +259,13 @@ public class EAssessmentNotice {
 	/**
 	 * @return the totalAmountToBePaid
 	 */
-	public double getTotalAmountToBePaid() {
+	public BigDecimal getTotalAmountToBePaid() {
 		return totalAmountToBePaid;
 	}
 	/**
 	 * @param totalAmountToBePaid the totalAmountToBePaid to set
 	 */
-	public void setTotalAmountToBePaid(double totalAmountToBePaid) {
+	public void setTotalAmountToBePaid(BigDecimal totalAmountToBePaid) {
 		this.totalAmountToBePaid = totalAmountToBePaid;
 	}
 	@Override

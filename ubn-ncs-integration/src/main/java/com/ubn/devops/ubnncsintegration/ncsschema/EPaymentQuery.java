@@ -11,8 +11,6 @@ package com.ubn.devops.ubnncsintegration.ncsschema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
-import lombok.Data;
-
 
 @JacksonXmlRootElement(localName = "ePaymentQuery")
 public class EPaymentQuery {

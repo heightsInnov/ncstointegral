@@ -8,15 +8,13 @@
 
 package com.ubn.devops.ubnncsintegration.ncsschema;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-
-import lombok.Data;
-import lombok.ToString;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JacksonXmlRootElement(localName = "ePaymentConfirmation")
@@ -34,7 +32,7 @@ public class EPaymentConfirmation {
 	@JacksonXmlElementWrapper(useWrapping = false)
     protected List<Payment> payment;
 	@JsonProperty( "TotalAmountToBePaid")
-    protected double totalAmountToBePaid;
+    protected BigDecimal totalAmountToBePaid;
 	/**
 	 * @return the customsCode
 	 */
@@ -98,13 +96,13 @@ public class EPaymentConfirmation {
 	/**
 	 * @return the totalAmountToBePaid
 	 */
-	public double getTotalAmountToBePaid() {
+	public BigDecimal getTotalAmountToBePaid() {
 		return totalAmountToBePaid;
 	}
 	/**
 	 * @param totalAmountToBePaid the totalAmountToBePaid to set
 	 */
-	public void setTotalAmountToBePaid(double totalAmountToBePaid) {
+	public void setTotalAmountToBePaid(BigDecimal totalAmountToBePaid) {
 		this.totalAmountToBePaid = totalAmountToBePaid;
 	}
 	@Override

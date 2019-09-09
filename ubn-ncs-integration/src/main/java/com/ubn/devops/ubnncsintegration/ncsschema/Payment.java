@@ -7,11 +7,11 @@
 
 package com.ubn.devops.ubnncsintegration.ncsschema;
 
+import java.math.BigDecimal;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-
-import lombok.Data;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JacksonXmlRootElement(localName = "Payment")
@@ -22,7 +22,7 @@ public class Payment {
 	@JsonProperty("Reference")
 	protected String reference;
 	@JsonProperty("Amount")
-	protected double amount;
+	protected BigDecimal amount;
 	/**
 	 * @return the meansOfPayment
 	 */
@@ -50,13 +50,13 @@ public class Payment {
 	/**
 	 * @return the amount
 	 */
-	public double getAmount() {
+	public BigDecimal getAmount() {
 		return amount;
 	}
 	/**
 	 * @param amount the amount to set
 	 */
-	public void setAmount(double amount) {
+	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
 	}
 

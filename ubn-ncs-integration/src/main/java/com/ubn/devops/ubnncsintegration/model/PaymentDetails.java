@@ -1,5 +1,6 @@
 package com.ubn.devops.ubnncsintegration.model;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -36,9 +37,8 @@ public class PaymentDetails {
     private String bankBranchCode;
     private String formMNumber;
     
-    private String meansOfPayment;
 	private String reference;
-	private double amount;
+	private BigDecimal amount;
 	private String transactionstatus;
 	private String responseMessage;
 	
@@ -47,7 +47,6 @@ public class PaymentDetails {
 	private String isSweepedToTsa;
 	private String sweepFcubsPostRef;
 	private Date sweepDate;
-	private String hashValue;
 	private String customerEmail;
 	private String isPaymentReversed;
 	private String reversalFcubsRef;
@@ -59,7 +58,7 @@ public class PaymentDetails {
     @JsonIgnore(false)
     private boolean isPaid = false;
     private List<TaxEntity> taxes=new ArrayList<>();
-    private double totalAmountToBePaid;
+    private BigDecimal totalAmountToBePaid;
     @JsonFormat(pattern = "dd-MM-yyyy hh:mm:ss a")
     @DateTimeFormat(pattern = "dd-MM-yyyy hh:mm:ss a")
     private Date createdDate = new Date();
@@ -75,12 +74,12 @@ public class PaymentDetails {
     		this.sadYear=assessmentNotice.getSadYear();
     		this.customsCode=assessmentNotice.getCustomsCode();
     		this.declarantCode=assessmentNotice.getDeclarantCode();
-    		this.declarantName=assessmentNotice.getDeclarantName();
+    		this.declarantName=assessmentNotice.getDeclarantName().replace("\n", "");
     		this.sadAssessmentSerial=assessmentNotice.getSadAssessmentSerial();
     		this.sadAssessmentNumber=assessmentNotice.getSadAssessmentNumber();
     		this.sadAssessmentDate=assessmentNotice.getSadAssessmentDate();
     		this.companyCode=assessmentNotice.getCompanyCode();
-    		this.companyName=assessmentNotice.getCompanyName();
+    		this.companyName=assessmentNotice.getCompanyName().replace("\n", "");
     		this.bankBranchCode=assessmentNotice.getBankBranchCode();
     		this.bankCode=assessmentNotice.getBankCode();
     		this.formMNumber=assessmentNotice.getFormMNumber();
@@ -89,9 +88,9 @@ public class PaymentDetails {
     			taxEntity.setTaxAmount(t.getTaxAmount());
     			taxEntity.setTaxCode(t.getTaxCode());
     			this.taxes.add(taxEntity);
-    			amount+=t.getTaxAmount();
+    			amount+=t.getTaxAmount().doubleValue();
     		}
-    		this.totalAmountToBePaid=amount;
+    		this.totalAmountToBePaid=new BigDecimal(amount);
     			
     	}
     }
@@ -322,22 +321,6 @@ public class PaymentDetails {
 
 
 	/**
-	 * @return the meansOfPayment
-	 */
-	public String getMeansOfPayment() {
-		return meansOfPayment;
-	}
-
-
-	/**
-	 * @param meansOfPayment the meansOfPayment to set
-	 */
-	public void setMeansOfPayment(String meansOfPayment) {
-		this.meansOfPayment = meansOfPayment;
-	}
-
-
-	/**
 	 * @return the reference
 	 */
 	public String getReference() {
@@ -356,7 +339,7 @@ public class PaymentDetails {
 	/**
 	 * @return the amount
 	 */
-	public double getAmount() {
+	public BigDecimal getAmount() {
 		return amount;
 	}
 
@@ -364,7 +347,7 @@ public class PaymentDetails {
 	/**
 	 * @param amount the amount to set
 	 */
-	public void setAmount(double amount) {
+	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
 	}
 
@@ -478,22 +461,6 @@ public class PaymentDetails {
 	 */
 	public void setSweepDate(Date sweepDate) {
 		this.sweepDate = sweepDate;
-	}
-
-
-	/**
-	 * @return the hashValue
-	 */
-	public String getHashValue() {
-		return hashValue;
-	}
-
-
-	/**
-	 * @param hashValue the hashValue to set
-	 */
-	public void setHashValue(String hashValue) {
-		this.hashValue = hashValue;
 	}
 
 
@@ -612,7 +579,7 @@ public class PaymentDetails {
 	/**
 	 * @return the totalAmountToBePaid
 	 */
-	public double getTotalAmountToBePaid() {
+	public BigDecimal getTotalAmountToBePaid() {
 		return totalAmountToBePaid;
 	}
 
@@ -620,7 +587,7 @@ public class PaymentDetails {
 	/**
 	 * @param totalAmountToBePaid the totalAmountToBePaid to set
 	 */
-	public void setTotalAmountToBePaid(double totalAmountToBePaid) {
+	public void setTotalAmountToBePaid(BigDecimal totalAmountToBePaid) {
 		this.totalAmountToBePaid = totalAmountToBePaid;
 	}
 

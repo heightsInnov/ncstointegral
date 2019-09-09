@@ -16,7 +16,7 @@ public class CustomMapper implements RowMapper<PaymentDetails>{
 		List<PaymentDetails> payments = new ArrayList<>();
 		while(rs.next()) {
 			PaymentDetails payment = new PaymentDetails();
-			payment.setAmount((rs.getBigDecimal("AMOUNT")).doubleValue());
+			payment.setAmount(rs.getBigDecimal("AMOUNT"));
 			payment.setBankBranchCode(rs.getString("BANK_BRANCH_CODE"));
 			payment.setBankCode(rs.getString("BANK_CODE"));
 			payment.setCompanyCode(rs.getString("COMPANY_CODE"));
@@ -27,7 +27,6 @@ public class CustomMapper implements RowMapper<PaymentDetails>{
 			payment.setDeclarantName(rs.getString("DECLARANT_NAME"));
 			payment.setFormMNumber(rs.getString("FORMMNUMBER"));
 			payment.setId((rs.getBigDecimal("ID")).longValue());
-			payment.setMeansOfPayment(rs.getString("MEANS_OF_PAYMENT"));
 			payment.setPaid(rs.getBoolean("IS_PAID"));
 			payment.setReference(rs.getString("REFERENCE"));
 			payment.setResponseMessage(rs.getString("RESPONSE_MESSAGE"));
@@ -35,11 +34,10 @@ public class CustomMapper implements RowMapper<PaymentDetails>{
 			payment.setSadAssessmentNumber(rs.getString("SAD_ASSESSMENT_NUMBER"));
 			payment.setSadAssessmentSerial(rs.getString("SAD_ASSESSMENT_SERIAL"));
 			payment.setSadYear(rs.getInt("SAD_YEAR"));
-			payment.setTotalAmountToBePaid((rs.getBigDecimal("TOTAL_AMOUNT_TO_BE_PAID")).doubleValue());
+			payment.setTotalAmountToBePaid(rs.getBigDecimal("TOTAL_AMOUNT_TO_BE_PAID"));
 			payment.setTransactionstatus(rs.getString("TRANSACTIONSTATUS"));
 			payment.setCustomerEmail(rs.getString("CUSTOMER_EMAIL"));
 			payment.setFcubsPostingRef(rs.getString("FCUBS_POSTING_REF"));
-			payment.setHashValue(rs.getString("HASH_VALUE"));
 			payment.setIsPaymentReversed(rs.getString("IS_PAYMENT_REVERSED"));
 			payment.setIsSweepedToTsa(rs.getString("IS_SWEEPED_TO_TSA"));
 			payment.setPaymentChannelCode(rs.getString("PAYMENT_CHANNEL_CODE"));
@@ -47,7 +45,7 @@ public class CustomMapper implements RowMapper<PaymentDetails>{
 			payment.setReversalFcubsRef(rs.getString("REVERSAL_FCUBS_REF"));
 			payment.setSweepDate(rs.getDate("SWEEP_DATE"));
 			payment.setSweepFcubsPostRef(rs.getString("SWEEP_FCUBS_POST_REF"));
-			payment.setPostingDate(rs.getDate("POSTING_DATE"));
+			payment.setPostingDate(rs.getDate("PAYMENT_DATE"));
 			payments.add(payment);
 		}
 		return payments;
@@ -56,7 +54,7 @@ public class CustomMapper implements RowMapper<PaymentDetails>{
 	@Override
 	public PaymentDetails mapRow(ResultSet rs, int rowNum) throws SQLException {
 		PaymentDetails payment = new PaymentDetails();
-		payment.setAmount((rs.getBigDecimal("AMOUNT")).doubleValue());
+		payment.setAmount(rs.getBigDecimal("AMOUNT"));
 		payment.setBankBranchCode(rs.getString("BANK_BRANCH_CODE"));
 		payment.setBankCode(rs.getString("BANK_CODE"));
 		payment.setCompanyCode(rs.getString("COMPANY_CODE"));
@@ -67,7 +65,6 @@ public class CustomMapper implements RowMapper<PaymentDetails>{
 		payment.setDeclarantName(rs.getString("DECLARANT_NAME"));
 		payment.setFormMNumber(rs.getString("FORMMNUMBER"));
 		payment.setId((rs.getBigDecimal("ID")).longValue());
-		payment.setMeansOfPayment(rs.getString("MEANS_OF_PAYMENT"));
 		payment.setPaid(rs.getBoolean("IS_PAID"));
 		payment.setReference(rs.getString("REFERENCE"));
 		payment.setResponseMessage(rs.getString("RESPONSE_MESSAGE"));
@@ -75,8 +72,18 @@ public class CustomMapper implements RowMapper<PaymentDetails>{
 		payment.setSadAssessmentNumber(rs.getString("SAD_ASSESSMENT_NUMBER"));
 		payment.setSadAssessmentSerial(rs.getString("SAD_ASSESSMENT_SERIAL"));
 		payment.setSadYear(rs.getInt("SAD_YEAR"));
-		payment.setTotalAmountToBePaid((rs.getBigDecimal("TOTAL_AMOUNT_TO_BE_PAID")).doubleValue());
+		payment.setTotalAmountToBePaid(rs.getBigDecimal("TOTAL_AMOUNT_TO_BE_PAID"));
 		payment.setTransactionstatus(rs.getString("TRANSACTIONSTATUS"));
+		payment.setCustomerEmail(rs.getString("CUSTOMER_EMAIL"));
+		payment.setFcubsPostingRef(rs.getString("FCUBS_POSTING_REF"));
+		payment.setIsPaymentReversed(rs.getString("IS_PAYMENT_REVERSED"));
+		payment.setIsSweepedToTsa(rs.getString("IS_SWEEPED_TO_TSA"));
+		payment.setPaymentChannelCode(rs.getString("PAYMENT_CHANNEL_CODE"));
+		payment.setReversalDate(rs.getDate("REVERSAL_DATE"));
+		payment.setReversalFcubsRef(rs.getString("REVERSAL_FCUBS_REF"));
+		payment.setSweepDate(rs.getDate("SWEEP_DATE"));
+		payment.setSweepFcubsPostRef(rs.getString("SWEEP_FCUBS_POST_REF"));
+		payment.setPostingDate(rs.getDate("PAYMENT_DATE"));
 		return payment;
 	}
 

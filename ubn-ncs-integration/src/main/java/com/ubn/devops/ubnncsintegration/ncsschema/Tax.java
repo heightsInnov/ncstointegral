@@ -1,15 +1,15 @@
 package com.ubn.devops.ubnncsintegration.ncsschema;
 
+import java.math.BigDecimal;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Tax {
 	@JsonProperty("TaxCode")
 	private String taxCode;
 	@JsonProperty("TaxAmount")
-	private double taxAmount;
+	private BigDecimal taxAmount;
 	/**
 	 * @return the taxCode
 	 */
@@ -25,13 +25,13 @@ public class Tax {
 	/**
 	 * @return the taxAmount
 	 */
-	public double getTaxAmount() {
+	public BigDecimal getTaxAmount() {
 		return taxAmount;
 	}
 	/**
 	 * @param taxAmount the taxAmount to set
 	 */
-	public void setTaxAmount(double taxAmount) {
+	public void setTaxAmount(BigDecimal taxAmount) {
 		this.taxAmount = taxAmount;
 	}
 	

@@ -1,5 +1,7 @@
 package com.ubn.devops.ubnncsintegration.model;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,7 +18,7 @@ public class TaxEntity {
 	@SequenceGenerator(allocationSize = 1, initialValue = 1, sequenceName = "taxgen", name = "taxgen")
 	private Long id;
 	protected String taxCode;
-	protected double taxAmount;
+	protected BigDecimal taxAmount;
 	/**
 	 * @return the id
 	 */
@@ -44,13 +46,13 @@ public class TaxEntity {
 	/**
 	 * @return the taxAmount
 	 */
-	public double getTaxAmount() {
+	public BigDecimal getTaxAmount() {
 		return taxAmount;
 	}
 	/**
 	 * @param taxAmount the taxAmount to set
 	 */
-	public void setTaxAmount(double taxAmount) {
+	public void setTaxAmount(BigDecimal taxAmount) {
 		this.taxAmount = taxAmount;
 	}
 	
