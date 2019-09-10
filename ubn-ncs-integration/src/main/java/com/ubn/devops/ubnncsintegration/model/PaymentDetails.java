@@ -38,6 +38,7 @@ public class PaymentDetails {
 	private BigDecimal amount;
 	private String transactionstatus;
 	private String responseMessage;
+	private String responseCode;
 	
 	private String paymentChannelCode;
 	private String fcubsPostingRef;
@@ -586,5 +587,23 @@ public class PaymentDetails {
 	public void setCreatedDate(Date createdDate) {
 		this.createdDate = createdDate;
 	}
+
+
+	/**
+	 * @return the responseCode
+	 */
+	public String getResponseCode() {
+		return responseCode;
+	}
+
+
+	/**
+	 * @param responseCode the responseCode to set
+	 */
+	public void setResponseCode(String responseCode) {
+		this.responseCode = responseCode;
+	}
+	
+	
     
 }

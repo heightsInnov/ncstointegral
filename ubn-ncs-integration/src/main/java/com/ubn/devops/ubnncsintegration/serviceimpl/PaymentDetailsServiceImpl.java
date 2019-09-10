@@ -15,6 +15,7 @@ import com.ubn.devops.ubnncsintegration.ncsschema.EPaymentConfirmation;
 import com.ubn.devops.ubnncsintegration.ncsschema.EPaymentQuery;
 import com.ubn.devops.ubnncsintegration.ncsschema.Payment;
 import com.ubn.devops.ubnncsintegration.ncsschema.SadAsmt;
+import com.ubn.devops.ubnncsintegration.ncsschema.TransactionResponse;
 import com.ubn.devops.ubnncsintegration.repository.PaymentDetailsRepository;
 import com.ubn.devops.ubnncsintegration.request.PaymentProcessRequest;
 import com.ubn.devops.ubnncsintegration.response.ApiResponse;
@@ -55,8 +56,8 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
 	@Override
 	public ApiResponse fetchPaymentDetails(String formMNumber) {
 		ApiResponse response = new ApiResponse(ApiResponse.SERVER_ERROR,
-				"Error occured while fetching details by declarant code.");
-		log.info("======Trying to fetch payment details using declarantcode: " + formMNumber + "======");
+				"Unable to process request right now. Please try again");
+		log.info("======Trying to fetch payment details using code: " + formMNumber + "======");
 		try {
 			PaymentDetails model = paymentRepo.findPaymentDetails(formMNumber);
 			if (model != null) {
@@ -80,7 +81,7 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
 			}
 
 		} catch (Exception ex) {
-			log.error("Error occured while trying to fetch payment details because: " + ex.getMessage(), ex);
+			log.error("Error occured while trying to fetch payment details with code: "+formMNumber+" because: " + ex.getMessage(), ex);
 		}
 		return response;
 
@@ -171,6 +172,12 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
 			log.error("Error occured while processing request because :"+ex.getMessage(),ex);
 		}
 		return response;
+	}
+
+
+	@Override
+	public int updatePaymentWithNCSResponse(TransactionResponse response,String formMNumber) {	
+		return paymentRepo.updatePaymentWithNCSResponse(response,formMNumber);
 	}
 
 }

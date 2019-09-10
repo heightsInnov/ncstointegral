@@ -1,7 +1,6 @@
 package com.ubn.devops.ubnncsintegration.repository;
 
 import java.math.BigDecimal;
-import java.sql.Date;
 import java.sql.Types;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
@@ -17,10 +16,13 @@ import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 import com.ubn.devops.ubnncsintegration.mapper.CustomMapper;
 import com.ubn.devops.ubnncsintegration.model.PaymentDetails;
+import com.ubn.devops.ubnncsintegration.model.TaxEntity;
 import com.ubn.devops.ubnncsintegration.ncsschema.EAssessmentNotice;
+import com.ubn.devops.ubnncsintegration.ncsschema.TransactionResponse;
 import com.ubn.devops.ubnncsintegration.request.PaymentProcessRequest;
 import com.ubn.devops.ubnncsintegration.utility.Utils;
 
@@ -51,46 +53,50 @@ public class PaymentDetailsRepository {
 				call.setSchemaName(SCHEMANAME);
 				call.setCatalogName(PACKAGENAME);
 				call.setProcedureName("SAVEPAYMENTDETAILS");
-				call.declareParameters(new SqlParameter("p_sadyear", Types.INTEGER),
-						new SqlParameter("p_customscode", Types.VARCHAR),
-						new SqlParameter("p_declarantcode", Types.VARCHAR),
-						new SqlParameter("p_declarantName", Types.VARCHAR),
-						new SqlParameter("p_sadassessmentserial", Types.VARCHAR),
-						new SqlParameter("p_sadassessmentnumber", Types.VARCHAR),
-						new SqlParameter("p_sadassessmentdate", Types.DATE),
-						new SqlParameter("p_companycode", Types.VARCHAR),
-						new SqlParameter("p_companyname", Types.VARCHAR), new SqlParameter("bankcode", Types.VARCHAR),
-						new SqlParameter("bankbranchcode", Types.VARCHAR),
-						new SqlParameter("p_formmnumber", Types.VARCHAR),
-						new SqlParameter("p_totalamounttobepaid", Types.DECIMAL),
-						new SqlOutParameter("p_responsecode", Types.VARCHAR),
-						new SqlOutParameter("p_responsemsg", Types.VARCHAR),
-						new SqlOutParameter("p_id", Types.DECIMAL));
+				call.declareParameters(new SqlParameter("P_SADYEAR", Types.INTEGER),
+						new SqlParameter("P_CUSTOMSCODE", Types.VARCHAR),
+						new SqlParameter("P_DECLARANTCODE", Types.VARCHAR),
+						new SqlParameter("P_DECLARANTNAME", Types.VARCHAR),
+						new SqlParameter("P_SADASSESSMENTSERIAL", Types.VARCHAR),
+						new SqlParameter("P_SADASSESSMENTNUMBER", Types.VARCHAR),
+						new SqlParameter("P_SADASSESSMENTDATE", Types.DATE),
+						new SqlParameter("P_COMPANYCODE", Types.VARCHAR),
+						new SqlParameter("P_COMPANYNAME", Types.VARCHAR), 
+						new SqlParameter("BANKCODE", Types.VARCHAR),
+						new SqlParameter("BANKBRANCHCODE", Types.VARCHAR),
+						new SqlParameter("P_FORMMNUMBER", Types.VARCHAR),
+						new SqlParameter("P_TOTALAMOUNTTOBEPAID", Types.DECIMAL),
+						new SqlOutParameter("P_RESPONSECODE", Types.VARCHAR),
+						new SqlOutParameter("P_RESPONSEMSG", Types.VARCHAR),
+						new SqlOutParameter("P_ID", Types.DECIMAL));
 				Map<String, Object> paramSource = new HashMap<>();
-				paramSource.put("p_sadyear", payment.getSadYear());
-				paramSource.put("p_customscode", payment.getCustomsCode());
-				paramSource.put("p_declarantcode", payment.getDeclarantCode());
-				paramSource.put("p_declarantName", payment.getDeclarantName());
-				paramSource.put("p_sadassessmentserial", payment.getSadAssessmentSerial());
-				paramSource.put("p_sadassessmentnumber", payment.getSadAssessmentNumber());
-				paramSource.put("p_sadassessmentdate", payment.getSadAssessmentDate());
-				paramSource.put("p_companycode", payment.getCompanyCode());
-				paramSource.put("p_companyname", payment.getCompanyName());
-				paramSource.put("bankcode", payment.getBankCode());
-				paramSource.put("bankbranchcode", payment.getBankBranchCode());
-				paramSource.put("p_formmnumber", payment.getFormMNumber());
-				paramSource.put("p_totalamounttobepaid", payment.getTotalAmountToBePaid());
+				paramSource.put("P_SADYEAR", payment.getSadYear());
+				paramSource.put("P_CUSTOMSCODE", payment.getCustomsCode());
+				paramSource.put("P_DECLARANTCODE", payment.getDeclarantCode());
+				paramSource.put("P_DECLARANTNAME", payment.getDeclarantName());
+				paramSource.put("P_SADASSESSMENTSERIAL", payment.getSadAssessmentSerial());
+				paramSource.put("P_SADASSESSMENTNUMBER", payment.getSadAssessmentNumber());
+				paramSource.put("P_SADASSESSMENTDATE", payment.getSadAssessmentDate());
+				paramSource.put("P_COMPANYCODE", payment.getCompanyCode());
+				paramSource.put("P_COMPANYNAME", payment.getCompanyName());
+				paramSource.put("BANKCODE", payment.getBankCode());
+				paramSource.put("BANKBRANCHCODE", payment.getBankBranchCode());
+				paramSource.put("P_FORMMNUMBER", payment.getFormMNumber());
+				paramSource.put("P_TOTALAMOUNTTOBEPAID", payment.getTotalAmountToBePaid());
 				Map<String, Object> respValues = call.execute(paramSource);
-
 				if (!respValues.isEmpty()) {
-					String responsecode = respValues.get("p_responsecode").toString();
+					String responsecode = respValues.get("P_RESPONSECODE").toString();
 					if (responsecode.equals("00")) {
 						log.info("Successfully saved the payment details with declarant code: "
 								+ assessmentNotice.getDeclarantCode());
-						payment.setId(((BigDecimal) respValues.get("p_id")).longValue());
+						payment.setId(((BigDecimal) respValues.get("P_ID")).longValue());
+						for(TaxEntity tax:payment.getTaxes()) {
+							tax.setPaymentDetailsId(payment.getId());
+							saveTax(tax);
+						}
 						paymentDetails = payment;
 					} else if (responsecode.equals("99")) {
-						log.warn("db error occured with message: " + respValues.get("p_responsemsg"));
+						log.warn("db error occured with message: " + respValues.get("P_RESPONSEMSG"));
 					}
 				}
 
@@ -250,5 +256,73 @@ public class PaymentDetailsRepository {
 			log.info("error while updating details with payment info because: "+ex.getMessage(),ex);
 		}
 		return isUpdated;
+	}
+	
+	public int updatePaymentWithNCSResponse(TransactionResponse response,String formMNumber) {
+		int isUpdated = 0;
+		log.info("trying to update payment details with ");
+		try {
+			SimpleJdbcCall call = new SimpleJdbcCall(jdbcTemplate);
+			call.setSchemaName(SCHEMANAME);
+			call.setCatalogName(PACKAGENAME);
+			call.setProcedureName("UPDATESUCCESSFULVALIDATION");
+			call.declareParameters(new SqlParameter("P_FORMMNUMBER", Types.VARCHAR),
+					new SqlParameter("P_NCS_RESPCODE", Types.VARCHAR),
+					new SqlParameter("P_NCS_RESPMSG", Types.VARCHAR),
+					new SqlOutParameter("P_RESPONSECODE", Types.VARCHAR),
+					new SqlOutParameter("P_RESPONSEMSG", Types.DECIMAL)
+					);
+			Map<String, Object> paramSource = new HashMap<>();
+			paramSource.put("P_FORMMNUMBER", formMNumber);
+			paramSource.put("P_NCS_RESPCODE", response.getTransactionStatus().value());
+			paramSource.put("P_NCS_RESPMSG", StringUtils.collectionToDelimitedString(response.getInfo().getMessage(),","));
+			Map<String, Object> respValues = call.execute(paramSource);
+			if(!respValues.isEmpty()) {
+				String code = respValues.get("P_RESPONSECODE").toString();
+				if(code.equals("00")) {
+					isUpdated=1;
+					log.info("successfully updated payment with NCS response");
+				}else {
+					String errorMessage = respValues.get("P_RESPONSEMSG").toString();
+					log.warn("db error occured with error message: "+errorMessage);
+				}
+			}				
+		}catch(Exception ex) {
+			log.error("Error occured while trying to update payment with NCS response because: "+ex.getMessage(),ex);
+		}
+		return isUpdated;
+	}
+	
+	public int saveTax(TaxEntity tax) {
+		int isSaved=0;
+		log.info("trying to save tax entity");
+		try {
+			SimpleJdbcCall call = new SimpleJdbcCall(jdbcTemplate);
+			call.setSchemaName(SCHEMANAME);
+			call.setCatalogName(PACKAGENAME);
+			call.setProcedureName("SAVETAX");
+			call.declareParameters(new SqlParameter("P_TAXCODE", Types.VARCHAR),
+					new SqlParameter("P_TAXAMOUNT", Types.VARCHAR),
+					new SqlParameter("P_PAYMENTID", Types.NUMERIC),
+					new SqlOutParameter("P_RESPONSECODE", Types.VARCHAR),
+					new SqlOutParameter("P_RESPONSEMSG", Types.VARCHAR));
+			Map<String, Object> paramSource = new HashMap<>();
+			paramSource.put("P_TAXCODE", tax.getTaxCode());
+			paramSource.put("P_TAXAMOUNT", tax.getTaxAmount());
+			paramSource.put("P_PAYMENTID", tax.getPaymentDetailsId());
+			Map<String, Object> respValues = call.execute(paramSource);
+			if(!respValues.isEmpty()) {
+				String rspCode = respValues.get("P_RESPONSECODE").toString();
+				if(rspCode.equals("00")) {
+					isSaved = 1;
+					log.info("successfully saved tax entity");
+				}else {
+					log.warn("db error occured while trying to save tax entity with error message: "+respValues.get("P_RESPONSEMSG").toString());
+				}
+			}
+		}catch(Exception ex) {
+			log.error("Error occured while trying to save tax entity because: "+ex.getMessage(),ex);
+		}
+		return isSaved;
 	}
 }
