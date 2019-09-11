@@ -133,10 +133,13 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
 								confirmation.setSadAsmt(sadAsmt);
 								confirmation.setTotalAmountToBePaid(details.getTotalAmountToBePaid());
 								CustomMarshaller.marshall(confirmation, pathConfig.getRootfolder(),FileReaderResponse.EPAYMENTCONFIRMATION);
+								response.setCode(ApiResponse.SUCCESSFUL);
+								response.setMessage("Successfully processed payment");
 							}
 
 						} else if (status == 99 || status == 1) {
-							log.info("the reference " + request.getExternalRef() + " entered   ");
+			
+							log.info("dbError occured because: ".toString());
 							response.setCode(ApiResponse.INVALID_REFERENCE);
 							response.setMessage("Reference invalid");
 						}
