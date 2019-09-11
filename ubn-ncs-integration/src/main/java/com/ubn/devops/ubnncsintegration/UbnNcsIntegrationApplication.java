@@ -9,13 +9,19 @@ import org.springframework.scheduling.annotation.Scheduled;
 
 import com.ubn.devops.ubnncsintegration.utility.Utils;
 
-@PropertySource({"file:///C:/ncsfolder/ncsconfig/application.properties"})
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
+
+
+
+@EnableSwagger2
 @EnableScheduling
+@PropertySource("file:///C:/ncsfolder/ncsconfig/application.properties")
 @SpringBootApplication
-public class UbnNcsIntegrationApplication{//implements CommandLineRunner{
+public class UbnNcsIntegrationApplication{
 
 	@Autowired
 	private Utils utilities;
+	
 
 	public static void main(String[] args) {
 		SpringApplication.run(UbnNcsIntegrationApplication.class, args);

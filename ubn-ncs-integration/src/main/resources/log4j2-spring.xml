@@ -8,8 +8,8 @@
  		<!--  fileName="/u01/app/oracle/config/properties/logs/wrservice.log" -->
      	 <!--"${wr.path.logfile}"-->
         <RollingFile name="RollingFile"
-            fileName="/u01/app/oracle/config/properties/logs/pinretrieval.log"
-            filePattern="./logs/$${date:yyyy-MM}/wrservice-%d{-dd-MMMM-yyyy}-%i.log.gz">
+            fileName="/u01/app/oracle/config/properties/logs/ncsintegration.log"
+            filePattern="./logs/$${date:yyyy-MM}/ncsintegration-%d{-dd-MMMM-yyyy}-%i.log.gz">
             <PatternLayout>
                 <pattern>%d %p %C{1.} [%t] %m%n</pattern>
             </PatternLayout>
@@ -31,7 +31,7 @@
             <AppenderRef ref="RollingFile" />
         </Root>
  
-        <!-- LOG "com.baeldung*" at TRACE level -->
+        <!-- LOG "com.ubn.devops*" at TRACE level -->
         <Logger name="com.ubn.devops.ubnncsintegration" level="TRACE"></Logger>
     </Loggers>
  

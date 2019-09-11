@@ -1,29 +1,25 @@
 package com.ubn.devops.ubnncsintegration.config;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
-
 import com.ubn.devops.ubnncsintegration.utility.Encryptor;
+import com.ubn.devops.ubnncsintegration.utility.PropsReader;
 
-@ConfigurationProperties(prefix = "ncs.path")
-@Component
 public class FilePathsConfig {
-
-	private String assessmentnotice;
-	private String paymentrequest;
-	private String transactionresponse;
-	private String paymentresponse;
-	private String queryrequest;
-	private String queryresponse;
-	private String rootfolder;
 	
-	private String tokenurl;
-	private String username;
-	private String password;
-	private String clientid;
-	private String cliensecret;
+	private String assessmentnotice="ncs.path.assessmentnotice";
+	private String paymentrequest="ncs.path.paymentrequest";
+	private String transactionresponse="ncs.path.transactionresponse";
+	private String paymentresponse="ncs.path.paymentresponse";
+	private String queryrequest="ncs.path.queryrequest";
+	private String queryresponse="ncs.path.queryresponse";
+	private String rootfolder="ncs.path.rootfolder";
 	
-	private String refvalidationurl;
+	private String tokenurl="ncs.path.tokenurl";
+	private String username="ncs.path.username";
+	private String password="ncs.path.password";
+	private String clientid="ncs.path.clientid";
+	private String cliensecret="ncs.path.cliensecret";
+	
+	private String refvalidationurl="ncs.path.refvalidationurl";
 	
 	final Encryptor encryptor = new Encryptor(Encryptor.KEY);
 	/**
@@ -32,156 +28,88 @@ public class FilePathsConfig {
 	public String getAssessmentnotice() {
 		return assessmentnotice;
 	}
-	/**
-	 * @param assessmentnotice the assessmentnotice to set
-	 */
-	public void setAssessmentnotice(String assessmentnotice) {
-		this.assessmentnotice = assessmentnotice;
-	}
+	
 	/**
 	 * @return the paymentrequest
 	 */
 	public String getPaymentrequest() {
-		return paymentrequest;
+		return PropsReader.getValue(paymentrequest);
 	}
-	/**
-	 * @param paymentrequest the paymentrequest to set
-	 */
-	public void setPaymentrequest(String paymentrequest) {
-		this.paymentrequest = paymentrequest;
-	}
+	
 	/**
 	 * @return the transactionresponse
 	 */
 	public String getTransactionresponse() {
-		return transactionresponse;
+		return PropsReader.getValue(transactionresponse);
 	}
-	/**
-	 * @param transactionresponse the transactionresponse to set
-	 */
-	public void setTransactionresponse(String transactionresponse) {
-		this.transactionresponse = transactionresponse;
-	}
+	
 	/**
 	 * @return the paymentresponse
 	 */
 	public String getPaymentresponse() {
-		return paymentresponse;
+		return PropsReader.getValue(paymentresponse);
 	}
-	/**
-	 * @param paymentresponse the paymentresponse to set
-	 */
-	public void setPaymentresponse(String paymentresponse) {
-		this.paymentresponse = paymentresponse;
-	}
+	
 	/**
 	 * @return the queryrequest
 	 */
 	public String getQueryrequest() {
-		return queryrequest;
+		return PropsReader.getValue(queryrequest);
 	}
-	/**
-	 * @param queryrequest the queryrequest to set
-	 */
-	public void setQueryrequest(String queryrequest) {
-		this.queryrequest = queryrequest;
-	}
+
 	/**
 	 * @return the queryresponse
 	 */
 	public String getQueryresponse() {
-		return queryresponse;
+		return PropsReader.getValue(queryresponse);
 	}
-	/**
-	 * @param queryresponse the queryresponse to set
-	 */
-	public void setQueryresponse(String queryresponse) {
-		this.queryresponse = queryresponse;
-	}
+	
 	/**
 	 * @return the rootfolder
 	 */
 	public String getRootfolder() {
-		return rootfolder;
+		return PropsReader.getValue(rootfolder);
 	}
-	/**
-	 * @param rootfolder the rootfolder to set
-	 */
-	public void setRootfolder(String rootfolder) {
-		this.rootfolder = rootfolder;
-	}
+	
 	/**
 	 * @return the tokenurl
 	 */
 	public String getTokenurl() {
-		return tokenurl;
+		return PropsReader.getValue(tokenurl);
 	}
-	/**
-	 * @param tokenurl the tokenurl to set
-	 */
-	public void setTokenurl(String tokenurl) {
-		this.tokenurl = tokenurl;
-	}
+	
 	/**
 	 * @return the username
 	 */
 	public String getUsername() {
-		return encryptor.decryptStringEncoded(username);
+		return encryptor.decryptStringEncoded(PropsReader.getValue(username));
 	}
-	/**
-	 * @param username the username to set
-	 */
-	public void setUsername(String username) {
-		this.username = username;
-	}
+	
 	/**
 	 * @return the password
 	 */
 	public String getPassword() {
-		return encryptor.decryptStringEncoded(password);
+		return encryptor.decryptStringEncoded(PropsReader.getValue(password));
 	}
-	/**
-	 * @param password the password to set
-	 */
-	public void setPassword(String password) {
-		this.password = password;
-	}
+	
 	/**
 	 * @return the clientid
 	 */
 	public String getClientid() {
-		return encryptor.decryptStringEncoded(clientid);
+		return encryptor.decryptStringEncoded(PropsReader.getValue(clientid));
 	}
-	/**
-	 * @param clientid the clientid to set
-	 */
-	public void setClientid(String clientid) {
-		this.clientid = clientid;
-	}
+
 	/**
 	 * @return the cliensecret
 	 */
 	public String getCliensecret() {
-		return encryptor.decryptStringEncoded(cliensecret);
+		return encryptor.decryptStringEncoded(PropsReader.getValue(cliensecret));
 	}
-	/**
-	 * @param cliensecret the cliensecret to set
-	 */
-	public void setCliensecret(String cliensecret) {
-		this.cliensecret = cliensecret;
-	}
-	/**
-	 * @return the refvalidationurl
-	 */
+
 	public String getRefvalidationurl() {
-		return refvalidationurl;
+		return PropsReader.getValue(refvalidationurl);
 	}
-	/**
-	 * @param refvalidationurl the refvalidationurl to set
-	 */
-	public void setRefvalidationurl(String refvalidationurl) {
-		this.refvalidationurl = refvalidationurl;
-	}
+	
 
 	
 

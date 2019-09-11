@@ -26,8 +26,8 @@ public class Utils {
 
 	private Logger log = LoggerFactory.getLogger(this.getClass());
 	
-	@Autowired
-	private FilePathsConfig filePathConfig;
+
+	private FilePathsConfig filePathConfig = new FilePathsConfig();
 
 	@Autowired
 	private WatchService watchService;
