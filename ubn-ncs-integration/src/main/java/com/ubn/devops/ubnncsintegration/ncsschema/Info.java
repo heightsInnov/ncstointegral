@@ -11,20 +11,32 @@ package com.ubn.devops.ubnncsintegration.ncsschema;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
-import lombok.Data;
-
-
-@Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 @JacksonXmlRootElement(localName = "Info")
 public class Info {
 
     @JsonProperty("Message")
     @JacksonXmlElementWrapper(useWrapping = false)
     private List<String> message = new ArrayList<>();
+
+	/**
+	 * @return the message
+	 */
+	public List<String> getMessage() {
+		return message;
+	}
+
+	/**
+	 * @param message the message to set
+	 */
+	public void setMessage(List<String> message) {
+		this.message = message;
+	}
     
 
 }

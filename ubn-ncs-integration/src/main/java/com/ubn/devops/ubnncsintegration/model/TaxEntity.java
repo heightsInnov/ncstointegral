@@ -7,11 +7,8 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import lombok.Data;
-
 @Table(name = "NCS_TAX")
 @Entity
-@Data
 public class TaxEntity {
 
 	@Id
@@ -20,4 +17,42 @@ public class TaxEntity {
 	private Long id;
 	protected String taxCode;
 	protected double taxAmount;
+	/**
+	 * @return the id
+	 */
+	public Long getId() {
+		return id;
+	}
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(Long id) {
+		this.id = id;
+	}
+	/**
+	 * @return the taxCode
+	 */
+	public String getTaxCode() {
+		return taxCode;
+	}
+	/**
+	 * @param taxCode the taxCode to set
+	 */
+	public void setTaxCode(String taxCode) {
+		this.taxCode = taxCode;
+	}
+	/**
+	 * @return the taxAmount
+	 */
+	public double getTaxAmount() {
+		return taxAmount;
+	}
+	/**
+	 * @param taxAmount the taxAmount to set
+	 */
+	public void setTaxAmount(double taxAmount) {
+		this.taxAmount = taxAmount;
+	}
+	
+	
 }

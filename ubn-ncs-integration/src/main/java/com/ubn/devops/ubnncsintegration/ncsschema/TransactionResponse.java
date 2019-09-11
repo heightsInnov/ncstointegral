@@ -8,12 +8,11 @@
 
 package com.ubn.devops.ubnncsintegration.ncsschema;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
-import lombok.Data;
-
-@Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 @JacksonXmlRootElement(localName = "TransactionResponse")
 public class TransactionResponse {
 
@@ -27,4 +26,71 @@ public class TransactionResponse {
     protected TRS transactionStatus;
     @JsonProperty( "Info")
     protected Info info;
+	/**
+	 * @return the customsCode
+	 */
+	public String getCustomsCode() {
+		return customsCode;
+	}
+	/**
+	 * @param customsCode the customsCode to set
+	 */
+	public void setCustomsCode(String customsCode) {
+		this.customsCode = customsCode;
+	}
+	/**
+	 * @return the declarantCode
+	 */
+	public String getDeclarantCode() {
+		return declarantCode;
+	}
+	/**
+	 * @param declarantCode the declarantCode to set
+	 */
+	public void setDeclarantCode(String declarantCode) {
+		this.declarantCode = declarantCode;
+	}
+	/**
+	 * @return the sadAsmt
+	 */
+	public SadAsmt getSadAsmt() {
+		return sadAsmt;
+	}
+	/**
+	 * @param sadAsmt the sadAsmt to set
+	 */
+	public void setSadAsmt(SadAsmt sadAsmt) {
+		this.sadAsmt = sadAsmt;
+	}
+	/**
+	 * @return the transactionStatus
+	 */
+	public TRS getTransactionStatus() {
+		return transactionStatus;
+	}
+	/**
+	 * @param transactionStatus the transactionStatus to set
+	 */
+	public void setTransactionStatus(TRS transactionStatus) {
+		this.transactionStatus = transactionStatus;
+	}
+	/**
+	 * @return the info
+	 */
+	public Info getInfo() {
+		return info;
+	}
+	/**
+	 * @param info the info to set
+	 */
+	public void setInfo(Info info) {
+		this.info = info;
+	}
+	@Override
+	public String toString() {
+		return "TransactionResponse [customsCode=" + customsCode + ", declarantCode=" + declarantCode + ", sadAsmt="
+				+ sadAsmt + ", transactionStatus=" + transactionStatus + ", info=" + info + "]";
+	}
+    
+    
 }

@@ -11,10 +11,7 @@ package com.ubn.devops.ubnncsintegration.ncsschema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
-import lombok.Data;
 
-
-@Data
 @JacksonXmlRootElement(localName = "ePaymentQuery")
 public class EPaymentQuery {
 
@@ -24,5 +21,42 @@ public class EPaymentQuery {
     protected String declarantCode;
     @JsonProperty("SadAsmt")
     protected SadAsmt sadAsmt;
+	/**
+	 * @return the customsCode
+	 */
+	public String getCustomsCode() {
+		return customsCode;
+	}
+	/**
+	 * @param customsCode the customsCode to set
+	 */
+	public void setCustomsCode(String customsCode) {
+		this.customsCode = customsCode;
+	}
+	/**
+	 * @return the declarantCode
+	 */
+	public String getDeclarantCode() {
+		return declarantCode;
+	}
+	/**
+	 * @param declarantCode the declarantCode to set
+	 */
+	public void setDeclarantCode(String declarantCode) {
+		this.declarantCode = declarantCode;
+	}
+	/**
+	 * @return the sadAsmt
+	 */
+	public SadAsmt getSadAsmt() {
+		return sadAsmt;
+	}
+	/**
+	 * @param sadAsmt the sadAsmt to set
+	 */
+	public void setSadAsmt(SadAsmt sadAsmt) {
+		this.sadAsmt = sadAsmt;
+	}
 
+    
 }

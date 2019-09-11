@@ -10,13 +10,13 @@ package com.ubn.devops.ubnncsintegration.ncsschema;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
-import lombok.Data;
 
-@Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 @JacksonXmlRootElement(localName = "ePaymentConfirmation")
 public class EPaymentConfirmation {
 
@@ -33,5 +33,83 @@ public class EPaymentConfirmation {
     protected List<Payment> payment;
 	@JsonProperty( "TotalAmountToBePaid")
     protected double totalAmountToBePaid;
+	/**
+	 * @return the customsCode
+	 */
+	public String getCustomsCode() {
+		return customsCode;
+	}
+	/**
+	 * @param customsCode the customsCode to set
+	 */
+	public void setCustomsCode(String customsCode) {
+		this.customsCode = customsCode;
+	}
+	/**
+	 * @return the declarantCode
+	 */
+	public String getDeclarantCode() {
+		return declarantCode;
+	}
+	/**
+	 * @param declarantCode the declarantCode to set
+	 */
+	public void setDeclarantCode(String declarantCode) {
+		this.declarantCode = declarantCode;
+	}
+	/**
+	 * @return the bankCode
+	 */
+	public String getBankCode() {
+		return bankCode;
+	}
+	/**
+	 * @param bankCode the bankCode to set
+	 */
+	public void setBankCode(String bankCode) {
+		this.bankCode = bankCode;
+	}
+	/**
+	 * @return the sadAsmt
+	 */
+	public SadAsmt getSadAsmt() {
+		return sadAsmt;
+	}
+	/**
+	 * @param sadAsmt the sadAsmt to set
+	 */
+	public void setSadAsmt(SadAsmt sadAsmt) {
+		this.sadAsmt = sadAsmt;
+	}
+	/**
+	 * @return the payment
+	 */
+	public List<Payment> getPayment() {
+		return payment;
+	}
+	/**
+	 * @param payment the payment to set
+	 */
+	public void setPayment(List<Payment> payment) {
+		this.payment = payment;
+	}
+	/**
+	 * @return the totalAmountToBePaid
+	 */
+	public double getTotalAmountToBePaid() {
+		return totalAmountToBePaid;
+	}
+	/**
+	 * @param totalAmountToBePaid the totalAmountToBePaid to set
+	 */
+	public void setTotalAmountToBePaid(double totalAmountToBePaid) {
+		this.totalAmountToBePaid = totalAmountToBePaid;
+	}
+	@Override
+	public String toString() {
+		return "EPaymentConfirmation [customsCode=" + customsCode + ", declarantCode=" + declarantCode + ", bankCode="
+				+ bankCode + ", sadAsmt=" + sadAsmt + ", payment=" + payment + ", totalAmountToBePaid="
+				+ totalAmountToBePaid + "]";
+	}
     
 }

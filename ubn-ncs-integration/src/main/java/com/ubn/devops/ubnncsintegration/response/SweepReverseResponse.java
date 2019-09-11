@@ -1,33 +1,33 @@
 package com.ubn.devops.ubnncsintegration.response;
 
-public class ApiResponse {
-	
-	public static final int SERVER_ERROR=500;
-	public static final int NOT_FOUND=404;
-	public static final int SUCCESSFUL=200;
-	public static final int ALREADY_PAID = 209;
+import com.ubn.devops.ubnncsintegration.model.AccountEnquiry;
 
-	private int code;
+public class SweepReverseResponse {
+
+	private String code;
 	private String message;
-	private Object body;
+	private String body;
+	private AccountEnquiry data;
 
-	public ApiResponse() {
+	public SweepReverseResponse() {
 		
 	}
-	public ApiResponse(int code, String message) {
+	
+	public SweepReverseResponse(String code, String message) {
 		this.code = code;
 		this.message = message;
 	}
+
 	/**
 	 * @return the code
 	 */
-	public int getCode() {
+	public String getCode() {
 		return code;
 	}
 	/**
 	 * @param code the code to set
 	 */
-	public void setCode(int code) {
+	public void setCode(String code) {
 		this.code = code;
 	}
 	/**
@@ -45,13 +45,21 @@ public class ApiResponse {
 	/**
 	 * @return the body
 	 */
-	public Object getBody() {
+	public String getBody() {
 		return body;
 	}
 	/**
 	 * @param body the body to set
 	 */
-	public void setBody(Object body) {
+	public void setBody(String body) {
 		this.body = body;
+	}
+
+	public AccountEnquiry getData() {
+		return data;
+	}
+
+	public void setData(AccountEnquiry data) {
+		this.data = data;
 	}
 }
