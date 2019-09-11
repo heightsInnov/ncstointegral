@@ -25,9 +25,9 @@ import com.ubn.devops.ubnncsintegration.service.PaymentDetailsService;
 public class Utils {
 
 	private Logger log = LoggerFactory.getLogger(this.getClass());
-	
 
 	private FilePathsConfig filePathConfig = new FilePathsConfig();
+
 
 	@Autowired
 	private WatchService watchService;
@@ -70,17 +70,21 @@ public class Utils {
 									response.setSadAsmt(sadAsmt);
 									// create xml of transaction response in the transaction response folder
 									int isResponseXmlCreated = CustomMarshaller.marshall(response,
+
 											filePathConfig.getRootfolder(), FileReaderResponse.TRANSACTIONRESPONSE);
+
 									if (isResponseXmlCreated == 1) {
 										log.info("created acknowledge response xml for declarant code: "
 												+ response.getDeclarantCode());
 										paymentDetailsService
 												.acknowledgePaymentDetails(paymentDetails.getFormMNumber());
+
 									}
 								}
 
 							}
 							break;
+
 						case FileReaderResponse.TRANSACTIONRESPONSE:
 							String name = event.context().toString();
 							if (!name.startsWith(FileReaderResponse.TRANSACTIONRESPONSE)) {
@@ -95,6 +99,7 @@ public class Utils {
 									}
 								}
 							}
+
 
 							break;
 						}

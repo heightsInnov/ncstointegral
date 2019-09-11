@@ -4,6 +4,7 @@ import java.util.Date;
 
 public class PaymentProcessRequest {
 	
+
 	private String customerEmail;
 	
 	private String externalRef;
@@ -88,6 +89,7 @@ public class PaymentProcessRequest {
 	 */
 	public void setAccount(String account) {
 		this.account = account;
+
 	}
 
 	/**
@@ -118,8 +120,6 @@ public class PaymentProcessRequest {
 		this.amount = amount;
 	}
 
-	
-	
-	
+		
 
 }

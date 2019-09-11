@@ -30,6 +30,7 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
 
 	private Logger log = LoggerFactory.getLogger(this.getClass());
 
+
 	@Autowired
 	private PaymentDetailsRepository paymentRepo;
 
@@ -51,6 +52,7 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
 		}
 		return paymentDetails;
 	}
+
 
 	
 	@Override
@@ -156,7 +158,6 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
 		}
 		return response;
 	}
-
 
 	@Override
 	public ApiResponse queryPaymentDetails(EPaymentQuery paymentQuery) {

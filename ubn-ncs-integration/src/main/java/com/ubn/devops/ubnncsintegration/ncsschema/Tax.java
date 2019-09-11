@@ -1,5 +1,6 @@
 package com.ubn.devops.ubnncsintegration.ncsschema;
 
+
 import java.math.BigDecimal;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

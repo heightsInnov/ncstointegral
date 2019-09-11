@@ -17,7 +17,7 @@ import com.ubn.devops.ubnncsintegration.ncsschema.TransactionResponse;
 public class CustomMarshaller {
 
 	private static Logger log = LoggerFactory.getLogger(CustomMarshaller.class);
-	
+
 	public static <T> T unmarshall(File xmlFile, Class<T> clazz) {
 		XmlMapper mapper = new XmlMapper();
 		T obj = null;
@@ -31,6 +31,7 @@ public class CustomMarshaller {
 	}
 
 	public static int marshall(Object object, String folder,String type) {
+
 		XmlMapper mapper = new XmlMapper();
 		int isMarshalled = 0;
 		String uid = UUID.randomUUID().toString().replace("-", "");
@@ -104,4 +105,22 @@ public class CustomMarshaller {
 	 * 
 	 * } catch (Exception ex) { ex.printStackTrace(); } }
 	 */
+	public static void main(String[] args) {
+		try {
+			String filePath = "C:\\Users\\lababatunde\\Documents\\TestData\\epay333695553658105.xml";
+			FileReaderResponse response = CustomMarshaller.readFile(filePath);
+			switch(response.getClassName()) {
+			case FileReaderResponse.EASSESSMENTNOTICE:
+				EAssessmentNotice notice = (EAssessmentNotice) response.getObject();
+				if(notice!=null) {
+					System.out.println("bankCode: "+notice.getBankCode()+" customsCode: "+notice.getCustomsCode());
+					System.out.println(notice.toString());
+				}
+				break;
+			}
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
 }

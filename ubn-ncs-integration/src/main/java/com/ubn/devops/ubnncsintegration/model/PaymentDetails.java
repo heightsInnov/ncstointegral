@@ -1,5 +1,6 @@
 package com.ubn.devops.ubnncsintegration.model;
 
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -45,6 +46,7 @@ public class PaymentDetails {
 	private String isSweepedToTsa;
 	private String sweepFcubsPostRef;
 	private Date sweepDate;
+	
 	private String customerEmail;
 	private String isPaymentReversed;
 	private String reversalFcubsRef;
@@ -72,12 +74,16 @@ public class PaymentDetails {
     		this.sadYear=assessmentNotice.getSadYear();
     		this.customsCode=assessmentNotice.getCustomsCode();
     		this.declarantCode=assessmentNotice.getDeclarantCode();
+
     		this.declarantName=assessmentNotice.getDeclarantName().replace("\n", "");
+
     		this.sadAssessmentSerial=assessmentNotice.getSadAssessmentSerial();
     		this.sadAssessmentNumber=assessmentNotice.getSadAssessmentNumber();
     		this.sadAssessmentDate=assessmentNotice.getSadAssessmentDate();
     		this.companyCode=assessmentNotice.getCompanyCode();
+
     		this.companyName=assessmentNotice.getCompanyName().replace("\n", "");
+
     		this.bankBranchCode=assessmentNotice.getBankBranchCode();
     		this.bankCode=assessmentNotice.getBankCode();
     		this.formMNumber=assessmentNotice.getFormMNumber();
@@ -321,6 +327,7 @@ public class PaymentDetails {
 	 * @return the amount
 	 */
 	public BigDecimal getAmount() {
+
 		return amount;
 	}
 
@@ -561,6 +568,7 @@ public class PaymentDetails {
 	 * @return the totalAmountToBePaid
 	 */
 	public BigDecimal getTotalAmountToBePaid() {
+
 		return totalAmountToBePaid;
 	}
 
@@ -569,6 +577,7 @@ public class PaymentDetails {
 	 * @param totalAmountToBePaid the totalAmountToBePaid to set
 	 */
 	public void setTotalAmountToBePaid(BigDecimal totalAmountToBePaid) {
+
 		this.totalAmountToBePaid = totalAmountToBePaid;
 	}
 
@@ -588,7 +597,6 @@ public class PaymentDetails {
 		this.createdDate = createdDate;
 	}
 
-
 	/**
 	 * @return the responseCode
 	 */
@@ -603,7 +611,5 @@ public class PaymentDetails {
 	public void setResponseCode(String responseCode) {
 		this.responseCode = responseCode;
 	}
-	
-	
-    
+	    
 }

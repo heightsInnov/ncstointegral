@@ -2,6 +2,7 @@ package com.ubn.devops.ubnncsintegration.model;
 
 import java.math.BigDecimal;
 
+
 public class TaxEntity {
 
 	private Long id;
@@ -15,21 +16,18 @@ public class TaxEntity {
 	public Long getId() {
 		return id;
 	}
-
 	/**
 	 * @param id the id to set
 	 */
 	public void setId(Long id) {
 		this.id = id;
 	}
-
 	/**
 	 * @return the taxCode
 	 */
 	public String getTaxCode() {
 		return taxCode;
 	}
-
 	/**
 	 * @param taxCode the taxCode to set
 	 */

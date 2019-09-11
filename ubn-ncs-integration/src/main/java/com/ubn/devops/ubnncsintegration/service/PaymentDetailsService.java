@@ -20,6 +20,7 @@ public interface PaymentDetailsService {
 	public ApiResponse queryPaymentDetails(EPaymentQuery paymentQuery);
 	
 	public int updatePaymentWithNCSResponse(TransactionResponse response,String formMNumber);
+
 	/*
 	 
 	 * public void queryTransaction(EPaymentQuery query);

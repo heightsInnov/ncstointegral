@@ -36,6 +36,7 @@ public class PaymentDetailsRepository {
 	
 	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
+
 	private final String PACKAGENAME = "NCS_PACKAGE";
 
 	@Autowired
@@ -121,6 +122,7 @@ public class PaymentDetailsRepository {
 					new SqlOutParameter("p_responsecode", Types.VARCHAR));
 			Map<String, Object> paramSource = new HashMap<>();
 			paramSource.put("p_formM", formMNumber);
+
 			Map<String, Object> respValues = call.execute(paramSource);
 			if (!respValues.isEmpty()) {
 				String responsecode = respValues.get("p_responsecode").toString();
@@ -141,6 +143,7 @@ public class PaymentDetailsRepository {
 
 	@SuppressWarnings("unchecked")
 	public PaymentDetails findPaymentDetails(String formMNumber) {
+
 		PaymentDetails model = null;
 		try {
 			SimpleJdbcCall call = new SimpleJdbcCall(jdbcTemplate);
@@ -166,7 +169,6 @@ public class PaymentDetailsRepository {
 						} else {
 							log.warn("payment details with unique code: " + formMNumber + " does  not exist");
 						}
-
 					}
 				} else if (rspCode.equals("99")) {
 					log.error("db error occured with message: " + result.get("p_responsemsg"));
@@ -174,6 +176,7 @@ public class PaymentDetailsRepository {
 			}
 		} catch (Exception ex) {
 			log.error("Error occured while trying to fetch payment details with unique code: " + formMNumber
+
 					+ " because: " + ex.getMessage(), ex);
 		}
 		return model;
@@ -181,6 +184,7 @@ public class PaymentDetailsRepository {
 
 	public int validateTransactionReference(String txnReference,String formMNumber) {
 		int responseValue = 0;
+
 		try {
 			SimpleJdbcCall call = new SimpleJdbcCall(jdbcTemplate);
 			call.setSchemaName(SCHEMANAME);

@@ -33,6 +33,7 @@ public class BeanConfig {
 	
 	private FilePathsConfig filePathConfig = new FilePathsConfig();
 	
+	
 	@Autowired
 	private DataSource dataSource;
 	
