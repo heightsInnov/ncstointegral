@@ -124,7 +124,6 @@ public class Utils {
 	}
 
 	private void moveFile(File theFile, String directory) {
-		
 		try {
 			FileUtils.moveFileToDirectory(theFile, new File(directory), false);
 		} catch (Exception ex) {
