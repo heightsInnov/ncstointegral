@@ -11,8 +11,8 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 
+import com.ubn.devops.ubnncsintegration.config.FilePathsConfig;
 import com.ubn.devops.ubnncsintegration.model.AccountEnquiry;
 import com.ubn.devops.ubnncsintegration.model.SweepPaymentDetails;
 import com.ubn.devops.ubnncsintegration.model.SweepPersistAgent;
@@ -24,35 +24,28 @@ public class SweepRequestProcessor {
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	@Value("${ncs.sweep.gl.account}")
-	private String ubntransitgl;
+	@Autowired
+	private FilePathsConfig config;
+	
+	private String ubntransitgl = config.getUbntransitgl();
 
-	@Value("${ncs.sweep.gl.account.name}")
-	private String ubntransitgl_name;
+	private String ubntransitgl_name = config.getUbntransitgl_name();
 
-	@Value("${ncs.sweep.tsa.account}")
-	private String tsaaccountno;
+	private String tsaaccountno = config.getTsaaccountno();
 
-	@Value("${ncs.sweep.tsa.account.name}")
-	private String tsaaccount_name;
+	private String tsaaccount_name = config.getTsaaccount_name();
 
-	@Value("${ncs.sweep.tsa.account.branchcode}")
-	private String tsaaccount_branch;
+	private String tsaaccount_branch = config.getTsaaccount_branch();
 
-	@Value("${ncs.sweep.trans.notification}")
-	private String narations;
+	private String narations = config.getNarations();
+	
+	private String init_branch = config.getInit_branch();
 
-	@Value("${ncs.sweep.gl.branch}")
-	private String init_branch;
+	private String token_url = config.getToken_url();
 
-	@Value("${ncs.token.url}")
-	private String token_url;
+	private String posting_url = config.getPosting_url();
 
-	@Value("${ncs.posting.url}")
-	private String posting_url;
-
-	@Value("${ncs.accteqry.url}")
-	private String accteqry_url;
+	private String accteqry_url = config.getAccteqry_url();
 
 	@Autowired
 	TokenGenerator tokenize;

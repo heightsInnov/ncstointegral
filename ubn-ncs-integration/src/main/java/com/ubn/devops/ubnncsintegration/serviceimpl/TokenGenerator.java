@@ -15,7 +15,7 @@ import javax.net.ssl.X509TrustManager;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -26,21 +26,15 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import com.ubn.devops.ubnncsintegration.config.FilePathsConfig;
+
 @Component
 public class TokenGenerator {
 
-	@Value("${mgm.ubn.miserv.clientsecret}")
-	private String clientSecret;
-	@Value("${mgm.ubn.miserv.clientid}")
-	private String clientId;
-	@Value("${mgm.ubn.miserv.granttype}")
-	private String grantType;
-	@Value("${mgm.ubn.miserv.username}")
-	private String username;
-	@Value("${mgm.ubn.miserv.password}")
-	private String pass;
-	@Value("${miservurl}")
-	private String baseUrlMiserv;
+
+	@Autowired
+	private FilePathsConfig configs;
+	
 
 	private static Logger logger = LoggerFactory.getLogger(TokenGenerator.class.getName());
 
@@ -130,18 +124,18 @@ public class TokenGenerator {
 	}
 
 	public String getToken() {
-		logger.info("MiservURL = **" + baseUrlMiserv + "**");
+		logger.info("MiservURL = **" +configs.getBaseUrlMiserv()  + "**");
 		String access_token="";
 		try {
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
 			JSONObject data = new JSONObject();
-			data.put("client_secret", clientSecret);
-			data.put("client_id", clientId);
-			data.put("grant_type", grantType);
-			data.put("username", username);
-			data.put("password", pass);
+			data.put("client_secret", configs.getCliensecret());
+			data.put("client_id", configs.getClientId());
+			data.put("grant_type", configs.getGrantType());
+			data.put("username", configs.getUsername());
+			data.put("password", configs.getPass());
 			
 			// HttpEntity<String>: To get result as String.
 			HttpEntity<String> entity = new HttpEntity<>(data.toString(), headers);
@@ -149,7 +143,7 @@ public class TokenGenerator {
 			RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory());
 
 			
-			String TOKEN_REST_URL = baseUrlMiserv;
+			String TOKEN_REST_URL = configs.getBaseUrlMiserv();
 			
 //			+ "client_secret=" + URLEncoder.encode(clientSecret) + "&client_id=" + URLEncoder.encode(clientId)
 //					+ "&grant_type=" + grantType + "&username=" + URLEncoder.encode(user) + "&password=" + URLEncoder.encode(pass);

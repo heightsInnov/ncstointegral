@@ -37,8 +37,8 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
 	@Autowired
 	private RestService restService;
 	
-	
-	private FilePathsConfig pathConfig = new FilePathsConfig(); 
+	@Autowired
+	private FilePathsConfig pathConfig; 
 
 	@Override
 	public PaymentDetails savePaymentDetails(EAssessmentNotice assessmentNotice) {

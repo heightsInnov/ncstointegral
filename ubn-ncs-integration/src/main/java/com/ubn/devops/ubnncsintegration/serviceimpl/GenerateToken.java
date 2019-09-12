@@ -12,29 +12,19 @@ import org.apache.http.HttpHeaders;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 
 import com.ubn.devops.ubnncsintegration.bypass.HttpsServiceCertificateByPasser;
+import com.ubn.devops.ubnncsintegration.config.FilePathsConfig;
 
 @Component
 public class GenerateToken {
 	
-	@Value("${mgm.ubn.miserv.clientsecret}")
-	private String clientSecret;
-	@Value("${mgm.ubn.miserv.clientid}")
-	private String clientId;
-	@Value("${mgm.ubn.miserv.granttype}")
-	private String grantType;
-	@Value("${mgm.ubn.miserv.username}")
-	private String username;
-	@Value("${mgm.ubn.miserv.password}")
-	private String pass;
-	@Value("${miservurl}")
-	private String baseUrlMiserv;
+	private FilePathsConfig configs;
 	
+		
 //	private String clientSecret;
 //	private String clientId;
 //	private String grantType;
@@ -63,7 +53,7 @@ public class GenerateToken {
         try {
             hscbp.disableCertificateValidation();
             
-            String TOKEN_REST_URL = baseUrlMiserv+"username="+username+"&password="+pass+"&client_id="+clientId+"&client_secret="+clientSecret+"&grant_type="+grantType;
+            String TOKEN_REST_URL = configs.getBaseUrlMiserv()+"username="+configs.getMgmusername()+"&password="+configs.getPass()+"&client_id="+configs.getClientId()+"&client_secret="+configs.getClientSecret()+"&grant_type="+configs.getGrantType();
            
             @SuppressWarnings("restriction")
 			URL url = new URL(null, TOKEN_REST_URL, new sun.net.www.protocol.https.Handler());

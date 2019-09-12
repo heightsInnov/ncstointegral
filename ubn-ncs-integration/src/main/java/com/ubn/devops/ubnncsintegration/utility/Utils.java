@@ -26,7 +26,8 @@ public class Utils {
 
 	private Logger log = LoggerFactory.getLogger(this.getClass());
 
-	private FilePathsConfig filePathConfig = new FilePathsConfig();
+	@Autowired
+	private FilePathsConfig config;
 
 
 	@Autowired
@@ -42,7 +43,7 @@ public class Utils {
 			WatchKey watchKey;
 			while ((watchKey = watchService.take()) != null) {
 				for (WatchEvent<?> event : watchKey.pollEvents()) {
-					filename = filePathConfig.getRootfolder() + event.context();
+					filename = config.getRootfolder() + event.context();
 					FileReaderResponse frResponse = CustomMarshaller.readFile(filename);
 					if (frResponse != null) {
 						switch (frResponse.getClassName()) {
@@ -53,7 +54,7 @@ public class Utils {
 								PaymentDetails paymentDetails = paymentDetailsService
 										.savePaymentDetails(eAssessmentNotice);
 								if (paymentDetails != null) {
-									moveFile(new File(filename), filePathConfig.getAssessmentnotice());
+									moveFile(new File(filename), config.getAssessmentnotice());
 									// if the paymentdetails was successfully saved then go ahead and confirm that
 									// the notice receipt
 									TransactionResponse response = new TransactionResponse();
@@ -71,7 +72,7 @@ public class Utils {
 									// create xml of transaction response in the transaction response folder
 									int isResponseXmlCreated = CustomMarshaller.marshall(response,
 
-											filePathConfig.getRootfolder(), FileReaderResponse.TRANSACTIONRESPONSE);
+											config.getRootfolder(), FileReaderResponse.TRANSACTIONRESPONSE);
 
 									if (isResponseXmlCreated == 1) {
 										log.info("created acknowledge response xml for declarant code: "
@@ -88,13 +89,13 @@ public class Utils {
 						case FileReaderResponse.TRANSACTIONRESPONSE:
 							String name = event.context().toString();
 							if (!name.startsWith(FileReaderResponse.TRANSACTIONRESPONSE)) {
-								String paymentResponsePath = filePathConfig.getRootfolder() + event.context();
+								String paymentResponsePath = config.getRootfolder() + event.context();
 								TransactionResponse response = (TransactionResponse) frResponse.getObject();
 								if (response != null) {
 									if (response.getTransactionStatus().equals(TRS.ERROR)) {
 										// update payment response
 										// paymentDetailsService.updatePaymentWithNCSResponse(response,formMNumber);
-										moveFile(new File(paymentResponsePath), filePathConfig.getPaymentresponse());
+										moveFile(new File(paymentResponsePath), config.getPaymentresponse());
 
 									}
 								}

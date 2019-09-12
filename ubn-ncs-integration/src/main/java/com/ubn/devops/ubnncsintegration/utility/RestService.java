@@ -22,7 +22,8 @@ public class RestService {
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	
-	private FilePathsConfig config = new FilePathsConfig();
+	@Autowired
+	private FilePathsConfig config;
 
 	RestClientServiceImpl service = new RestClientServiceImpl();
 
