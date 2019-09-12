@@ -129,7 +129,7 @@ public class SweepRequestProcessor {
 							debititem.put("accountNumber", ubntransitgl);
 							debititem.put("accountType", "GL");
 							debititem.put("accountName", ubntransitgl_name);
-							debititem.put("accountBranchCode", tsaaccount_branch);
+							debititem.put("accountBranchCode", init_branch);
 							debititem.put("accountBankCode", "032");
 							debititem.put("narration", naration);
 							debititem.put("instrumentNumber", "");
@@ -139,7 +139,7 @@ public class SweepRequestProcessor {
 							debititem.put("feeOrCharges", false);
 
 							debitSweep.setDebitacccountnumber(ubntransitgl);
-							debitSweep.setBranchcode(tsaaccount_branch);
+							debitSweep.setBranchcode(init_branch);
 							debitSweep.setAmount(request.getLcy_amount());
 							debitSweep.setDebitcreditindicator("D");
 							debitSweep.setNarration(naration);
