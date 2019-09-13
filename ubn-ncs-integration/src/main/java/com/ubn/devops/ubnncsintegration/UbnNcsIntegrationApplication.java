@@ -15,8 +15,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 
 @EnableSwagger2
-@ConfigurationProperties
-@PropertySource({"file:///C:/deploy/application.properties"})
 @EnableScheduling
 @SpringBootApplication
 public class UbnNcsIntegrationApplication{

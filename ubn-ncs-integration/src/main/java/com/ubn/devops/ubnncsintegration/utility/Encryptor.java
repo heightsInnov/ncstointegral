@@ -9,7 +9,7 @@ import org.bouncycastle.crypto.BufferedBlockCipher;
 import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.engines.DESEngine;
 import org.bouncycastle.crypto.modes.CBCBlockCipher;
-import org.bouncycastle.crypto.modes.PaddedBlockCipher;
+import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.util.encoders.Base64;
 import org.slf4j.Logger;
@@ -43,7 +43,7 @@ public class Encryptor {
 	 */
 	// The key array should be at least 8 bytes long.
 	public Encryptor(byte[] key) {
-		cipher = new PaddedBlockCipher(new CBCBlockCipher(new DESEngine()));
+		cipher = new PaddedBufferedBlockCipher(new CBCBlockCipher(new DESEngine()));
 		this.key = new KeyParameter(key);
 	}
 
@@ -188,12 +188,14 @@ public class Encryptor {
 	}
 
 	public static void main(String[] args) { 
-	  String data ="pinchange@123";
-	  Encryptor encryptor = new Encryptor(KEY); 
-	  String encrptedData = encryptor.encryptStringEncoded(data);
-	  System.out.println("Encrypted: "+encrptedData); //String decryptedData =
+		/*
+		 * String data ="pinchange@123"; Encryptor encryptor = new Encryptor(KEY);
+		 * String encrptedData = encryptor.encryptStringEncoded(data);
+		 * System.out.println("Encrypted: "+encrptedData);
+		 */ //String decryptedData =
 	  //encryptor.decryptStringEncoded(data);
 	  //System.out.println("Encrypted: "+decryptedData); 
+		System.out.println(System.getenv("WR_FILE"));
 	  }
 	 
 }

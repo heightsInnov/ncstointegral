@@ -6,14 +6,12 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.ubn.devops.ubnncsintegration.config.Constant;
-
 public class PropsReader {
 	
 	private static Logger log= LoggerFactory.getLogger(PropsReader.class);
 	
 	public static String getValue(String key) {
-		String propsFile = Constant.FILEPATH;
+		String propsFile = System.getenv("NCS_CONFIG");
 		String value = "";
 		Properties props = new Properties();
 		try {

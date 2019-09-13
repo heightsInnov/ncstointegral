@@ -12,7 +12,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
@@ -28,6 +27,7 @@ import com.ubn.devops.ubnncsintegration.model.TaxEntity;
 import com.ubn.devops.ubnncsintegration.ncsschema.EAssessmentNotice;
 import com.ubn.devops.ubnncsintegration.ncsschema.TransactionResponse;
 import com.ubn.devops.ubnncsintegration.request.PaymentProcessRequest;
+import com.ubn.devops.ubnncsintegration.utility.PropsReader;
 import com.ubn.devops.ubnncsintegration.utility.Utils;
 
 @Repository
@@ -35,13 +35,12 @@ public class PaymentDetailsRepository {
 
 	private Logger log = LoggerFactory.getLogger(this.getClass());
 
-	@Value("${db.schemaname}")
-	private String SCHEMANAME;
+	private String SCHEMANAME = PropsReader.getValue("db.schemaname");
 	
 	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
 
-	private final String PACKAGENAME = "NCS_PACKAGE";
+	private final String PACKAGENAME = PropsReader.getValue("db.packagename");
 
 	@Autowired
 	private Utils utils;
@@ -73,7 +72,8 @@ public class PaymentDetailsRepository {
 						new SqlParameter("P_TOTALAMOUNTTOBEPAID", Types.DECIMAL),
 						new SqlOutParameter("P_RESPONSECODE", Types.VARCHAR),
 						new SqlOutParameter("P_RESPONSEMSG", Types.VARCHAR),
-						new SqlOutParameter("P_ID", Types.DECIMAL));
+						new SqlOutParameter("P_ID", Types.DECIMAL),
+						new SqlParameter("P_VERSION",Types.VARCHAR));
 				Map<String, Object> paramSource = new HashMap<>();
 				paramSource.put("P_SADYEAR", payment.getSadYear());
 				paramSource.put("P_CUSTOMSCODE", payment.getCustomsCode());
@@ -88,6 +88,7 @@ public class PaymentDetailsRepository {
 				paramSource.put("BANKBRANCHCODE", payment.getBankBranchCode());
 				paramSource.put("P_FORMMNUMBER", payment.getFormMNumber());
 				paramSource.put("P_TOTALAMOUNTTOBEPAID", payment.getTotalAmountToBePaid());
+				paramSource.put("P_VERSION", payment.getVersion());
 				Map<String, Object> respValues = call.execute(paramSource);
 				if (!respValues.isEmpty()) {
 					String responsecode = respValues.get("P_RESPONSECODE").toString();
@@ -266,7 +267,7 @@ public class PaymentDetailsRepository {
 		return isUpdated;
 	}
 	
-	public int updatePaymentWithNCSResponse(TransactionResponse response,String formMNumber) {
+	public int updatePaymentWithNCSResponse(TransactionResponse response) {
 		int isUpdated = 0;
 		log.info("trying to update payment details with ");
 		try {
@@ -274,14 +275,23 @@ public class PaymentDetailsRepository {
 			call.setSchemaName(SCHEMANAME);
 			call.setCatalogName(PACKAGENAME);
 			call.setProcedureName("UPDATESUCCESSFULVALIDATION");
-			call.declareParameters(new SqlParameter("P_FORMMNUMBER", Types.VARCHAR),
+			call.declareParameters(new SqlParameter("P_SADYEAR", Types.INTEGER),
+					new SqlParameter("P_CUSTOMSCODE", Types.VARCHAR),
+					new SqlParameter("P_SADASSESSMENTSERIAL", Types.VARCHAR),
+					new SqlParameter("P_SADASSESSMENTNUMBER", Types.VARCHAR),
+					new SqlParameter("P_VERSION", Types.VARCHAR),
 					new SqlParameter("P_NCS_RESPCODE", Types.VARCHAR),
 					new SqlParameter("P_NCS_RESPMSG", Types.VARCHAR),
 					new SqlOutParameter("P_RESPONSECODE", Types.VARCHAR),
 					new SqlOutParameter("P_RESPONSEMSG", Types.DECIMAL)
+					
 					);
 			Map<String, Object> paramSource = new HashMap<>();
-			paramSource.put("P_FORMMNUMBER", formMNumber);
+			paramSource.put("P_SADYEAR", response.getSadAsmt().getSadYear());
+			paramSource.put("P_CUSTOMSCODE", response.getCustomsCode());
+			paramSource.put("P_SADASSESSMENTSERIAL", response.getSadAsmt().getSadAssessmentSerial());
+			paramSource.put("P_SADASSESSMENTNUMBER", response.getSadAsmt().getSadAssessmentNumber());
+			paramSource.put("P_VERSION", response.getSadAsmt().getSadYear());
 			paramSource.put("P_NCS_RESPCODE", response.getTransactionStatus().value());
 			paramSource.put("P_NCS_RESPMSG", StringUtils.collectionToDelimitedString(response.getInfo().getMessage(),","));
 			Map<String, Object> respValues = call.execute(paramSource);

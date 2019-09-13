@@ -17,6 +17,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.ubn.devops.ubnncsintegration.model.PaymentDetails;
 import com.ubn.devops.ubnncsintegration.model.TaxEntity;
@@ -28,6 +29,9 @@ public class EAssessmentNotice {
 	@XmlTransient
 	@JsonIgnore
 	private PaymentDetails entity; 
+	
+	@JacksonXmlProperty(isAttribute=true)
+	private String version;
 	
 	public EAssessmentNotice() {
 		
@@ -268,6 +272,21 @@ public class EAssessmentNotice {
 	public void setTotalAmountToBePaid(BigDecimal totalAmountToBePaid) {
 		this.totalAmountToBePaid = totalAmountToBePaid;
 	}
+	
+	/**
+	 * @return the version
+	 */
+	public String getVersion() {
+		return version;
+	}
+
+	/**
+	 * @param version the version to set
+	 */
+	public void setVersion(String version) {
+		this.version = version;
+	}
+
 	@Override
 	public String toString() {
 		return "EAssessmentNotice [entity=" + entity + ", SadYear=" + SadYear + ", customsCode=" + customsCode
