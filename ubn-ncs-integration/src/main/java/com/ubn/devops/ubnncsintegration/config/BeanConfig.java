@@ -9,15 +9,21 @@ import java.nio.file.WatchService;
 import java.util.Collections;
 import java.util.concurrent.Executor;
 
+import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.jndi.JndiObjectFactoryBean;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+
+import com.ubn.devops.ubnncsintegration.utility.PropsReader;
 
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -29,13 +35,38 @@ import springfox.documentation.spring.web.plugins.Docket;
 
 @Configuration
 public class BeanConfig {
+	
+	 final String JNDI="JNDI";
+	 final String USERNAMEPASSWORD="USERNAMEPASSWORD";
 
-	
-	private FilePathsConfig filePathConfig = new FilePathsConfig();
-	
-	
 	@Autowired
-	private DataSource dataSource;
+	private FilePathsConfig filePathConfig;
+	
+	
+	@Bean
+	public DataSource dataSource() throws IllegalArgumentException, NamingException {
+		String dbType = PropsReader.getValue("db.type");
+		DataSource dataSource = null;
+		if(dbType.contentEquals(USERNAMEPASSWORD)) {
+			String driverclassName = PropsReader.getValue("db.driverclassname");
+			String username = PropsReader.getValue("db.username");
+			String password = PropsReader.getValue("db.password");
+			String url = PropsReader.getValue("db.url");
+			dataSource =  DataSourceBuilder.create()
+					.driverClassName(driverclassName)
+					.password(password).username(username)
+					.url(url).build();
+		}else if(dbType.equals(JNDI)) {
+			String jndiName = PropsReader.getValue("db.jndiname");
+			JndiObjectFactoryBean bean = new JndiObjectFactoryBean();
+			bean.setJndiName(jndiName);
+			bean.setProxyInterface(DataSource.class);
+	        bean.setLookupOnStartup(false);
+	        bean.afterPropertiesSet();
+	        dataSource = (DataSource) bean.getObject();
+		}
+		return dataSource;
+	}
 	
 	private Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -58,8 +89,8 @@ public class BeanConfig {
 	}
 	
 	@Bean
-	public JdbcTemplate jdbcTemplate() {
-		return new JdbcTemplate(dataSource);
+	public JdbcTemplate jdbcTemplate() throws IllegalArgumentException, NamingException {
+		return new JdbcTemplate(dataSource());
 
 	}
 	
