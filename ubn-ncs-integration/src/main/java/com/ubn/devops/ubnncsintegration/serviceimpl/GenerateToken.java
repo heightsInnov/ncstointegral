@@ -18,20 +18,20 @@ import org.springframework.stereotype.Component;
 
 import com.ubn.devops.ubnncsintegration.bypass.HttpsServiceCertificateByPasser;
 import com.ubn.devops.ubnncsintegration.config.FilePathsConfig;
+import com.ubn.devops.ubnncsintegration.utility.PropsReader;
 
 @Component
 public class GenerateToken {
-	
+
 	private FilePathsConfig configs;
-	
-		
+
 //	private String clientSecret;
 //	private String clientId;
 //	private String grantType;
 //	private String baseUrlMiserv;
 //	private String username;
 //	private String password;
-	
+
 	HttpsURLConnection con = null;
 
 	private HttpsServiceCertificateByPasser hscbp = new HttpsServiceCertificateByPasser();
@@ -49,50 +49,55 @@ public class GenerateToken {
 	}
 
 	public String getToken() throws IOException {
-        String accesstoken = null;
-        try {
-            hscbp.disableCertificateValidation();
-            
-            String TOKEN_REST_URL = configs.getBaseUrlMiserv()+"username="+configs.getMgmusername()+"&password="+configs.getPass()+"&client_id="+configs.getClientId()+"&client_secret="+configs.getClientSecret()+"&grant_type="+configs.getGrantType();
-           
-            @SuppressWarnings("restriction")
+		String accesstoken = null;
+		try {
+			hscbp.disableCertificateValidation();
+
+			String TOKEN_REST_URL = configs.getBaseUrlMiserv() + "username="
+					+ PropsReader.getValue("ncs.ubn.miserv.username") + "&password="
+					+ PropsReader.getValue("ncs.ubn.miserv.password") + "&client_id="
+					+ PropsReader.getValue("ncs.ubn.miserv.clientid") + "&client_secret="
+					+ PropsReader.getValue("ncs.ubn.miserv.clientsecret") + "&grant_type="
+					+ PropsReader.getValue("ncs.ubn.miserv.granttype");
+
+			@SuppressWarnings("restriction")
 			URL url = new URL(null, TOKEN_REST_URL, new sun.net.www.protocol.https.Handler());
-            con = (HttpsURLConnection)url.openConnection();
-            
-            con.setRequestMethod("POST");
-            con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-            con.setDoInput(true);
-            con.setDoOutput(true);
+			con = (HttpsURLConnection) url.openConnection();
 
-            JSONObject jsonEntity = new JSONObject();
-            
-            OutputStream os = con.getOutputStream();
-            os.write(jsonEntity.toString().getBytes());
-            os.flush();
+			con.setRequestMethod("POST");
+			con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+			con.setDoInput(true);
+			con.setDoOutput(true);
 
-            if (con.getResponseCode() != 200) {
-                throw new RuntimeException("Failed : HTTP error code : " + con.getResponseCode());
-            } else {
-                BufferedReader br = new BufferedReader(new InputStreamReader((con.getInputStream())));
-                String reader;
-                String response = null;
-                while ((reader = br.readLine()) != null) {
-                    response = reader;
-                }
-                if (response != null) {
-                    if (response.startsWith("{")) {
-                        JSONObject jsonObject = new JSONObject(response);
-                        if (jsonObject.has("access_token")) {
-                            accesstoken = jsonObject.getString("access_token");
-                        }
-                    }
-                }
-                con.disconnect();
-            }
-        } catch (Exception e) {
-        	e.printStackTrace();
-            logger.error("getToken::Response==== " + e.getMessage());
-        }
-        return accesstoken;
-    }
+			JSONObject jsonEntity = new JSONObject();
+
+			OutputStream os = con.getOutputStream();
+			os.write(jsonEntity.toString().getBytes());
+			os.flush();
+
+			if (con.getResponseCode() != 200) {
+				throw new RuntimeException("Failed : HTTP error code : " + con.getResponseCode());
+			} else {
+				BufferedReader br = new BufferedReader(new InputStreamReader((con.getInputStream())));
+				String reader;
+				String response = null;
+				while ((reader = br.readLine()) != null) {
+					response = reader;
+				}
+				if (response != null) {
+					if (response.startsWith("{")) {
+						JSONObject jsonObject = new JSONObject(response);
+						if (jsonObject.has("access_token")) {
+							accesstoken = jsonObject.getString("access_token");
+						}
+					}
+				}
+				con.disconnect();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("getToken::Response==== " + e.getMessage());
+		}
+		return accesstoken;
+	}
 }

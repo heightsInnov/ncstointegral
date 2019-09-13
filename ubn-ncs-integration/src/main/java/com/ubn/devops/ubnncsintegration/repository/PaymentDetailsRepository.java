@@ -392,7 +392,6 @@ public class PaymentDetailsRepository {
 			call.setProcedureName("PERSISTSWEEPDATA");
 			call.declareParameters(new SqlOutParameter("respcode", Types.VARCHAR));
 			Map<String, Object> paramSource = new HashMap<>();
-			paramSource.put("RECORD_ID", sweepAgent.getRecordid());
 			paramSource.put("BATCH_ID", sweepAgent.getBatchid());
 			paramSource.put("INITIATING_BRANCH", sweepAgent.getInitiatingbranch());
 			paramSource.put("REQUEST_MODULE", sweepAgent.getRequestmodule());
