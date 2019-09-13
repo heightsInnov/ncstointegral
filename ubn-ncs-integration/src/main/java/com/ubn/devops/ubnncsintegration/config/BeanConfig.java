@@ -45,14 +45,12 @@ public class BeanConfig {
 		Kind<Path> kind = StandardWatchEventKinds.ENTRY_CREATE;
 		try {
 			watchService = FileSystems.getDefault().newWatchService();
-			Path path = Paths.get(filePathConfig.getRootfolder());
-			path.register(watchService, kind);
-			/* 
-			 * Path path = Paths.get(filePathConfig.getAssessmentnotice());
-			 * path.register(watchService, kind); Path paymentResponsePath =
-			 * Paths.get(filePathConfig.getPaymentresponse());
-			 * paymentResponsePath.register(watchService, kind);
-			 */
+			Path callbackPath = Paths.get(filePathConfig.getCallback());
+			callbackPath.register(watchService, kind);
+			Path eresponsePath = Paths.get(filePathConfig.getEresponse());
+			eresponsePath.register(watchService, kind);
+			Path errPath = Paths.get(filePathConfig.getErr());
+			errPath.register(watchService, kind);			 
 		} catch (Exception ex) {
 			log.error("Unable to create watchservice bean because: " + ex.getMessage());
 		}

@@ -4,7 +4,6 @@ import java.io.File;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
-import java.util.Arrays;
 
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -15,8 +14,6 @@ import org.springframework.stereotype.Component;
 import com.ubn.devops.ubnncsintegration.config.FilePathsConfig;
 import com.ubn.devops.ubnncsintegration.model.PaymentDetails;
 import com.ubn.devops.ubnncsintegration.ncsschema.EAssessmentNotice;
-import com.ubn.devops.ubnncsintegration.ncsschema.Info;
-import com.ubn.devops.ubnncsintegration.ncsschema.SadAsmt;
 import com.ubn.devops.ubnncsintegration.ncsschema.TRS;
 import com.ubn.devops.ubnncsintegration.ncsschema.TransactionResponse;
 import com.ubn.devops.ubnncsintegration.service.PaymentDetailsService;
@@ -28,7 +25,6 @@ public class Utils {
 
 	@Autowired
 	private FilePathsConfig config;
-
 
 	@Autowired
 	private WatchService watchService;
@@ -55,37 +51,10 @@ public class Utils {
 										.savePaymentDetails(eAssessmentNotice);
 								if (paymentDetails != null) {
 									moveFile(new File(filename), config.getAssessmentnotice());
-									// if the paymentdetails was successfully saved then go ahead and confirm that
-									// the notice receipt
-									TransactionResponse response = new TransactionResponse();
-									response.setCustomsCode(paymentDetails.getCustomsCode());
-									response.setDeclarantCode(paymentDetails.getDeclarantCode());
-									response.setTransactionStatus(TRS.OK);
-									Info info = new Info();
-									info.setMessage(Arrays.asList("Successfully received the assessment notice"));
-									response.setInfo(info);
-									SadAsmt sadAsmt = new SadAsmt();
-									sadAsmt.setSadAssessmentNumber(paymentDetails.getSadAssessmentNumber());
-									sadAsmt.setSadAssessmentSerial(paymentDetails.getSadAssessmentSerial());
-									sadAsmt.setSadYear(paymentDetails.getSadYear());
-									response.setSadAsmt(sadAsmt);
-									// create xml of transaction response in the transaction response folder
-									int isResponseXmlCreated = CustomMarshaller.marshall(response,
-
-											config.getRootfolder(), FileReaderResponse.TRANSACTIONRESPONSE);
-
-									if (isResponseXmlCreated == 1) {
-										log.info("created acknowledge response xml for declarant code: "
-												+ response.getDeclarantCode());
-										paymentDetailsService
-												.acknowledgePaymentDetails(paymentDetails.getFormMNumber());
-
-									}
+									paymentDetailsService.acknowledgePaymentDetails(paymentDetails.getFormMNumber());
 								}
-
 							}
-							break;
-
+							break;							
 						case FileReaderResponse.TRANSACTIONRESPONSE:
 							String name = event.context().toString();
 							if (!name.startsWith(FileReaderResponse.TRANSACTIONRESPONSE)) {
@@ -100,7 +69,6 @@ public class Utils {
 									}
 								}
 							}
-
 
 							break;
 						}
@@ -136,7 +104,7 @@ public class Utils {
 		return assessmentNotice;
 	}
 
-	private void moveFile(File theFile, String directory) {
+	public void moveFile(File theFile, String directory) {
 		try {
 			FileUtils.moveFileToDirectory(theFile, new File(directory), false);
 		} catch (Exception ex) {

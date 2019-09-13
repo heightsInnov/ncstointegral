@@ -12,7 +12,6 @@ import com.ubn.devops.ubnncsintegration.config.FilePathsConfig;
 import com.ubn.devops.ubnncsintegration.model.PaymentDetails;
 import com.ubn.devops.ubnncsintegration.ncsschema.EAssessmentNotice;
 import com.ubn.devops.ubnncsintegration.ncsschema.EPaymentConfirmation;
-import com.ubn.devops.ubnncsintegration.ncsschema.EPaymentQuery;
 import com.ubn.devops.ubnncsintegration.ncsschema.Payment;
 import com.ubn.devops.ubnncsintegration.ncsschema.SadAsmt;
 import com.ubn.devops.ubnncsintegration.ncsschema.TransactionResponse;
@@ -134,7 +133,7 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
 								sadAsmt.setSadYear(details.getSadYear());
 								confirmation.setSadAsmt(sadAsmt);
 								confirmation.setTotalAmountToBePaid(details.getTotalAmountToBePaid());
-								CustomMarshaller.marshall(confirmation, pathConfig.getRootfolder(),FileReaderResponse.EPAYMENTCONFIRMATION);
+								CustomMarshaller.marshall(confirmation, pathConfig.getInfolder(),FileReaderResponse.EPAYMENTCONFIRMATION);
 								response.setCode(ApiResponse.SUCCESSFUL);
 								response.setMessage("Successfully processed payment");
 							}
@@ -159,29 +158,26 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
 		return response;
 	}
 
-	@Override
-	public ApiResponse queryPaymentDetails(EPaymentQuery paymentQuery) {
-		ApiResponse response = new ApiResponse(ApiResponse.SERVER_ERROR,"Unable to process request right now");
-		log.info("querying the TWM server for payment details");
-		try {
-			if(paymentQuery!=null) {
-				int isMarshalled =CustomMarshaller.marshall(paymentQuery, pathConfig.getRootfolder(), FileReaderResponse.EPAYMENTQUERY);
-				if(isMarshalled==1) {
-					log.info("successfully sent the query");
-					response.setCode(ApiResponse.SUCCESSFUL);
-					response.setMessage("Successfully sent epayment query request");
-				}
-			}
-		}catch(Exception ex) {
-			log.error("Error occured while processing request because :"+ex.getMessage(),ex);
-		}
-		return response;
-	}
+	/*
+	 * @Override public ApiResponse queryPaymentDetails(EPaymentQuery paymentQuery)
+	 * { ApiResponse response = new
+	 * ApiResponse(ApiResponse.SERVER_ERROR,"Unable to process request right now");
+	 * log.info("querying the TWM server for payment details"); try {
+	 * if(paymentQuery!=null) { int isMarshalled
+	 * =CustomMarshaller.marshall(paymentQuery, pathConfig.getRootfolder(),
+	 * FileReaderResponse.EPAYMENTQUERY); if(isMarshalled==1) {
+	 * log.info("successfully sent the query");
+	 * response.setCode(ApiResponse.SUCCESSFUL);
+	 * response.setMessage("Successfully sent epayment query request"); } }
+	 * }catch(Exception ex) {
+	 * log.error("Error occured while processing request because :"+ex.getMessage(),
+	 * ex); } return response; }
+	 */
 
 
 	@Override
-	public int updatePaymentWithNCSResponse(TransactionResponse response,String formMNumber) {	
-		return paymentRepo.updatePaymentWithNCSResponse(response,formMNumber);
+	public int updatePaymentWithNCSResponse(TransactionResponse response) {	
+		return paymentRepo.updatePaymentWithNCSResponse(response);
 	}
 
 }

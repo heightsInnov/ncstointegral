@@ -16,6 +16,12 @@ public class FilePathsConfig {
 	private String queryresponse="ncs.path.queryresponse";
 	private String rootfolder="ncs.path.rootfolder";
 	
+	//where webfontaine will drop their files
+	private String err="ncs.path.err";
+	private String callback="ncs.path.callback";
+	private String eresponse="ncs.path.eresponse";
+	private String infolder="ncs.path.in";
+	
 	private String tokenurl="ncs.path.tokenurl";
 	private String username="ncs.path.username";
 	private String password="ncs.path.password";
@@ -252,6 +258,34 @@ public class FilePathsConfig {
 	 */
 	public String getBaseUrlMiserv() {
 		return baseUrlMiserv;
+	}
+
+	/**
+	 * @return the err
+	 */
+	public String getErr() {
+		return PropsReader.getValue(err);
+	}
+
+	/**
+	 * @return the callback
+	 */
+	public String getCallback() {
+		return PropsReader.getValue(callback);
+	}
+
+	/**
+	 * @return the eresponse
+	 */
+	public String getEresponse() {
+		return PropsReader.getValue(eresponse);
+	}
+
+	/**
+	 * @return the infolder
+	 */
+	public String getInfolder() {
+		return PropsReader.getValue(infolder);
 	}
 	
 	

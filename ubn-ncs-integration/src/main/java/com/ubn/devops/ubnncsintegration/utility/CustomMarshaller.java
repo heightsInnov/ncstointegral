@@ -30,18 +30,18 @@ public class CustomMarshaller {
 		return obj;
 	}
 
-	public static int marshall(Object object, String folder,String type) {
+	public static int marshall(Object object, String folder, String type) {
 
 		XmlMapper mapper = new XmlMapper();
 		int isMarshalled = 0;
 		String uid = UUID.randomUUID().toString().replace("-", "");
 		String filename = "";
-		if(type.equals(FileReaderResponse.TRANSACTIONRESPONSE)) {
-			filename = folder +FileReaderResponse.TRANSACTIONRESPONSE+ uid + ".xml";
-		}else if(type.equals(FileReaderResponse.EPAYMENTCONFIRMATION)) {
-			filename = folder+FileReaderResponse.EPAYMENTCONFIRMATION+uid+".xml";
-		}else if(type.equals(FileReaderResponse.EPAYMENTQUERY)) {
-			filename = folder+FileReaderResponse.EPAYMENTQUERY+uid+".xml";
+		if (type.equals(FileReaderResponse.TRANSACTIONRESPONSE)) {
+			filename = folder + FileReaderResponse.TRANSACTIONRESPONSE + uid + ".xml";
+		} else if (type.equals(FileReaderResponse.EPAYMENTCONFIRMATION)) {
+			filename = folder + FileReaderResponse.EPAYMENTCONFIRMATION + uid + ".xml";
+		} else if (type.equals(FileReaderResponse.EPAYMENTQUERY)) {
+			filename = folder + FileReaderResponse.EPAYMENTQUERY + uid + ".xml";
 		}
 		try {
 			mapper.writeValue(new File(filename), object);
@@ -71,15 +71,15 @@ public class CustomMarshaller {
 					}
 				} else if (header.startsWith("<TransactionResponse")) {
 					TransactionResponse transactionResponse = mapper.readValue(file, TransactionResponse.class);
-					if(transactionResponse!=null) {
+					if (transactionResponse != null) {
 						response = new FileReaderResponse();
 						response.setClassName(FileReaderResponse.TRANSACTIONRESPONSE);
 						response.setObject(transactionResponse);
 					}
-					
+
 				} else if (header.startsWith("<eAssessmentNotice")) {
 					EAssessmentNotice notice = mapper.readValue(file, EAssessmentNotice.class);
-					if(notice!=null) {
+					if (notice != null) {
 						response = new FileReaderResponse();
 						response.setClassName(FileReaderResponse.EASSESSMENTNOTICE);
 						response.setObject(notice);
@@ -96,24 +96,26 @@ public class CustomMarshaller {
 	/*
 	 * public static void main(String[] args) { try { String filePath =
 	 * "C:\\Users\\lababatunde\\Documents\\TestData\\epay333695553658105.xml";
-	 * FileReaderResponse response = CustomMarshaller.readFile(filePath);
-	 * switch(response.getClassName()) { case FileReaderResponse.EASSESSMENTNOTICE:
-	 * EAssessmentNotice notice = (EAssessmentNotice) response.getObject();
-	 * if(notice!=null) {
-	 * System.out.println("bankCode: "+notice.getBankCode()+" customsCode: "+notice.
-	 * getCustomsCode()); System.out.println(notice.toString()); } break; }
+	 * FileReaderResponse response = CustomMarshaller.readFile(filePath); switch
+	 * (response.getClassName()) { case FileReaderResponse.EASSESSMENTNOTICE:
+	 * EAssessmentNotice notice = (EAssessmentNotice) response.getObject(); if
+	 * (notice != null) { System.out .println("bankCode: " + notice.getBankCode() +
+	 * " customsCode: " + notice.getCustomsCode());
+	 * System.out.println(notice.toString()); } break; }
 	 * 
 	 * } catch (Exception ex) { ex.printStackTrace(); } }
 	 */
+
 	public static void main(String[] args) {
 		try {
 			String filePath = "C:\\Users\\lababatunde\\Documents\\TestData\\epay333695553658105.xml";
 			FileReaderResponse response = CustomMarshaller.readFile(filePath);
-			switch(response.getClassName()) {
+			switch (response.getClassName()) {
 			case FileReaderResponse.EASSESSMENTNOTICE:
 				EAssessmentNotice notice = (EAssessmentNotice) response.getObject();
-				if(notice!=null) {
-					System.out.println("bankCode: "+notice.getBankCode()+" customsCode: "+notice.getCustomsCode());
+				if (notice != null) {
+					System.out
+							.println("bankCode: " + notice.getBankCode() + " customsCode: " + notice.getCustomsCode());
 					System.out.println(notice.toString());
 				}
 				break;
