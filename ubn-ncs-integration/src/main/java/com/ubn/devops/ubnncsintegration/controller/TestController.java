@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ubn.devops.ubnncsintegration.config.FilePathsConfig;
-import com.ubn.devops.ubnncsintegration.sweep.SweepRequestProcessor;
+import com.ubn.devops.ubnncsintegration.serviceimpl.SweepRequestProcessor;
 
 @RestController
 public class TestController {

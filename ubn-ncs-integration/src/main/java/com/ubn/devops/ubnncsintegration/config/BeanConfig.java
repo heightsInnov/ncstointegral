@@ -74,11 +74,11 @@ public class BeanConfig {
 		Kind<Path> kind = StandardWatchEventKinds.ENTRY_CREATE;
 		try {
 			watchService = FileSystems.getDefault().newWatchService();
-			Path callbackPath = Paths.get(filePathConfig.getCallback());
+			Path callbackPath = Paths.get(filePathConfig.getRootfolder());
 			callbackPath.register(watchService, kind);
-			Path eresponsePath = Paths.get(filePathConfig.getEresponse());
+			Path eresponsePath = Paths.get(filePathConfig.getRootfolder());
 			eresponsePath.register(watchService, kind);
-			Path errPath = Paths.get(filePathConfig.getErr());
+			Path errPath = Paths.get(filePathConfig.getRootfolder());
 			errPath.register(watchService, kind);			 
 		} catch (Exception ex) {
 			log.error("Unable to create watchservice bean because: " + ex.getMessage());
@@ -89,7 +89,6 @@ public class BeanConfig {
 	@Bean
 	public JdbcTemplate jdbcTemplate() throws IllegalArgumentException, NamingException {
 		return new JdbcTemplate(dataSource());
-
 	}
 	
 	@Bean
