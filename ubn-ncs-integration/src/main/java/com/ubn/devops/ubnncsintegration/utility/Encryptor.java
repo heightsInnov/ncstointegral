@@ -189,13 +189,14 @@ public class Encryptor {
 
 	public static void main(String[] args) { 
 		
-		  String data ="mhpyB4WQQ2SVKUXqLdjbLA==";
-		  Encryptor encryptor = new Encryptor(KEY);
-		 // String encrptedData = encryptor.encryptStringEncoded(data);
-		 //ystem.out.println("Encrypted: "+encrptedData);
-		 String decryptedData = encryptor.decryptStringEncoded(data);
-	  System.out.println("Encrypted: "+decryptedData); 
-		
+		/*
+		 * String data ="mhpyB4WQQ2SVKUXqLdjbLA=="; Encryptor encryptor = new
+		 * Encryptor(KEY); // String encrptedData =
+		 * encryptor.encryptStringEncoded(data);
+		 * //ystem.out.println("Encrypted: "+encrptedData); String decryptedData =
+		 * encryptor.decryptStringEncoded(data);
+		 * System.out.println("Encrypted: "+decryptedData);
+		 */
 	  }
 	 
 }

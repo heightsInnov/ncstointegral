@@ -11,41 +11,36 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import com.ubn.devops.ubnncsintegration.config.FilePathsConfig;
 import com.ubn.devops.ubnncsintegration.model.AccountEnquiry;
 import com.ubn.devops.ubnncsintegration.model.SweepPaymentDetails;
 import com.ubn.devops.ubnncsintegration.model.SweepPersistAgent;
 import com.ubn.devops.ubnncsintegration.repository.PaymentDetailsRepository;
 import com.ubn.devops.ubnncsintegration.response.SweepReverseResponse;
 import com.ubn.devops.ubnncsintegration.serviceimpl.TokenGenerator;
+import com.ubn.devops.ubnncsintegration.utility.PropsReader;
 
+@Component
 public class SweepRequestProcessor {
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	@Autowired
-	private FilePathsConfig config;
-	
-	private String ubntransitgl = config.getUbntransitgl();
+	private String ubntransitgl = PropsReader.getValue("ncs.sweep.gl.account");
 
-	private String ubntransitgl_name = config.getUbntransitgl_name();
+	private String ubntransitgl_name = PropsReader.getValue("ncs.sweep.gl.account.name");
 
-	private String tsaaccountno = config.getTsaaccountno();
+	private String tsaaccountno = PropsReader.getValue("ncs.sweep.tsa.account");
 
-	private String tsaaccount_name = config.getTsaaccount_name();
+	private String narations = PropsReader.getValue("ncs.sweep.trans.notification");
 
-	private String tsaaccount_branch = config.getTsaaccount_branch();
+	private String init_branch = PropsReader.getValue("ncs.sweep.gl.branch");
 
-	private String narations = config.getNarations();
-	
-	private String init_branch = config.getInit_branch();
+	private String token_url = PropsReader.getValue("ncs.token.url");
 
-	private String token_url = config.getToken_url();
+	private String posting_url = PropsReader.getValue("ncs.posting.url");
 
-	private String posting_url = config.getPosting_url();
-
-	private String accteqry_url = config.getAccteqry_url();
+	private String accteqry_url = PropsReader.getValue("ncs.accteqry.url");
 
 	@Autowired
 	TokenGenerator tokenize;
@@ -53,13 +48,12 @@ public class SweepRequestProcessor {
 	@Autowired
 	SweepingAndPosting restService;
 
-	@Autowired
-	PaymentDetailsRepository paymentDetailsRepository;
+	PaymentDetailsRepository paymentDetailsRepository = new PaymentDetailsRepository();
 
 	public String DoSweepPostingProcess(String fcubs_reference, String task_code) {
 		List<SweepPersistAgent> persistData = new ArrayList<>();
 		SweepReverseResponse response = new SweepReverseResponse();
-		String resp="01";
+		String resp = "01";
 		SweepReverseResponse accEnq;
 		String naration = "";
 
@@ -129,7 +123,7 @@ public class SweepRequestProcessor {
 							debititem.put("accountNumber", ubntransitgl);
 							debititem.put("accountType", "GL");
 							debititem.put("accountName", ubntransitgl_name);
-							debititem.put("accountBranchCode", tsaaccount_branch);
+							debititem.put("accountBranchCode", init_branch);
 							debititem.put("accountBankCode", "032");
 							debititem.put("narration", naration);
 							debititem.put("instrumentNumber", "");
@@ -139,7 +133,7 @@ public class SweepRequestProcessor {
 							debititem.put("feeOrCharges", false);
 
 							debitSweep.setDebitacccountnumber(ubntransitgl);
-							debitSweep.setBranchcode(tsaaccount_branch);
+							debitSweep.setBranchcode(init_branch);
 							debitSweep.setAmount(request.getLcy_amount());
 							debitSweep.setDebitcreditindicator("D");
 							debitSweep.setNarration(naration);
@@ -219,7 +213,7 @@ public class SweepRequestProcessor {
 				postingObject.put("externalSystemReference", "");
 				postingObject.put("batchItems", batchItems);
 
-				response = restService.PostorSweep(accteqry_url + tokenize.getToken(), postingObject);
+				response = restService.PostorSweep(posting_url + tokenize.getToken(token_url), postingObject);
 			}
 			for (SweepPersistAgent saveSweep : persistData) {
 				saveSweep.setResponsecode(response.getCode());
@@ -244,7 +238,7 @@ public class SweepRequestProcessor {
 	}
 
 	private void SaveSweepTransaction(List<SweepPersistAgent> sweepData) {
-		for(SweepPersistAgent sweepAgent : sweepData) {
+		for (SweepPersistAgent sweepAgent : sweepData) {
 			paymentDetailsRepository.persistSweepInfo(sweepAgent);
 		}
 	}
@@ -252,7 +246,12 @@ public class SweepRequestProcessor {
 	public SweepReverseResponse AccountEnquiryCheck(String accountNo) throws IOException {
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("accountNumber", accountNo);
-		SweepReverseResponse resp = restService.PostorSweep(accteqry_url + tokenize.getToken(), jsonObject);
+		SweepReverseResponse resp = restService.PostorSweep(accteqry_url + tokenize.getToken(token_url), jsonObject);
 		return resp;
 	}
+
+//	public static void main(String[] args) {
+//		SweepRequestProcessor r = new SweepRequestProcessor();
+//		r.DoSweepPostingProcess("20190723133733", "R");
+//	}
 }
