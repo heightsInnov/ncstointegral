@@ -3,6 +3,7 @@ package com.ubn.devops.ubnncsintegration.utility;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -30,22 +31,28 @@ public class CustomMarshaller {
 		return obj;
 	}
 
-	public static int marshall(Object object, String folder, String type) {
+	public static int marshall(Object object, List<String> folders, String type) {
 
 		XmlMapper mapper = new XmlMapper();
 		int isMarshalled = 0;
 		String uid = UUID.randomUUID().toString().replace("-", "");
-		String filename = "";
-		if (type.equals(FileReaderResponse.TRANSACTIONRESPONSE)) {
-			filename = folder + FileReaderResponse.TRANSACTIONRESPONSE + uid + ".xml";
-		} else if (type.equals(FileReaderResponse.EPAYMENTCONFIRMATION)) {
-			filename = folder + FileReaderResponse.EPAYMENTCONFIRMATION + uid + ".xml";
-		} else if (type.equals(FileReaderResponse.EPAYMENTQUERY)) {
-			filename = folder + FileReaderResponse.EPAYMENTQUERY + uid + ".xml";
-		}
-		try {
-			mapper.writeValue(new File(filename), object);
-			isMarshalled = 1;
+		try {			
+			/*
+			 * if (type.equals(FileReaderResponse.TRANSACTIONRESPONSE)) {
+			 * 
+			 * } else
+			 */
+		if (type.equals(FileReaderResponse.EPAYMENTCONFIRMATION)) {
+			for(String folder:folders) {
+				String filename = folder + FileReaderResponse.EPAYMENTCONFIRMATION + uid + ".xml";
+				mapper.writeValue(new File(filename), object);
+			}
+			
+		} /*
+				 * else if (type.equals(FileReaderResponse.EPAYMENTQUERY)) { filename = folder +
+				 * FileReaderResponse.EPAYMENTQUERY + uid + ".xml"; }
+				 */
+		    isMarshalled = 1;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -108,10 +115,10 @@ public class CustomMarshaller {
 
 	public static void main(String[] args) {
 		try {
-			String filePath = "C:\\Users\\lababatunde\\Documents\\TestData\\epay3358698739543382.xml";
+			String filePath = "C:\\Users\\lababatunde\\Documents\\TestData\\payment3353536517552613.xml";
 			FileReaderResponse response = CustomMarshaller.readFile(filePath);
 			switch (response.getClassName()) {
-			case FileReaderResponse.EASSESSMENTNOTICE:
+			case FileReaderResponse.TRANSACTIONRESPONSE:
 				TransactionResponse notice = (TransactionResponse) response.getObject();
 				if (notice != null) {
 					/*

@@ -30,6 +30,10 @@ public class EAssessmentNotice {
 	@JsonIgnore
 	private PaymentDetails entity; 
 	
+	@XmlTransient
+	@JsonIgnore
+	private String assessmentFilename;
+	
 	@JacksonXmlProperty(isAttribute=true)
 	private String version;
 	
@@ -285,6 +289,21 @@ public class EAssessmentNotice {
 	 */
 	public void setVersion(String version) {
 		this.version = version;
+	}
+	
+	
+	/**
+	 * @return the assessmentFilename
+	 */
+	public String getAssessmentFilename() {
+		return assessmentFilename;
+	}
+
+	/**
+	 * @param assessmentFilename the assessmentFilename to set
+	 */
+	public void setAssessmentFilename(String assessmentFilename) {
+		this.assessmentFilename = assessmentFilename;
 	}
 
 	@Override

@@ -5,10 +5,10 @@
 // Generated on: 2019.08.27 at 12:04:59 PM WAT 
 //
 
-
 package com.ubn.devops.ubnncsintegration.ncsschema;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -21,99 +21,141 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 @JacksonXmlRootElement(localName = "ePaymentConfirmation")
 public class EPaymentConfirmation {
 
-	@JacksonXmlProperty(isAttribute=true)
+	@JacksonXmlProperty(isAttribute = true)
 	private String version;
-	
+	@JsonProperty("PaymentDate")
+	private Date paymentDate;
 	@JsonProperty("CustomsCode")
-    protected String customsCode;
-	@JsonProperty( "DeclarantCode")
-    protected String declarantCode;
-	@JsonProperty( "BankCode")
-    protected String bankCode;
-	@JsonProperty( "SadAsmt")
-    protected SadAsmt sadAsmt;
-	@JsonProperty( "Payment")
+	private String customsCode;
+	@JsonProperty("DeclarantCode")
+	private String declarantCode;
+	@JsonProperty("BankCode")
+	private String bankCode;
+	@JsonProperty("SadAsmt")
+	private SadAsmt sadAsmt;
+	@JsonProperty("Payment")
 	@JacksonXmlElementWrapper(useWrapping = false)
-    protected List<Payment> payment;
-	@JsonProperty( "TotalAmountToBePaid")
-    protected BigDecimal totalAmountToBePaid;
+	private List<Payment> payment;
+	@JsonProperty("TotalAmountToBePaid")
+	private BigDecimal totalAmountToBePaid;
+
 	/**
 	 * @return the customsCode
 	 */
 	public String getCustomsCode() {
 		return customsCode;
 	}
+
 	/**
 	 * @param customsCode the customsCode to set
 	 */
 	public void setCustomsCode(String customsCode) {
 		this.customsCode = customsCode;
 	}
+
 	/**
 	 * @return the declarantCode
 	 */
 	public String getDeclarantCode() {
 		return declarantCode;
 	}
+
 	/**
 	 * @param declarantCode the declarantCode to set
 	 */
 	public void setDeclarantCode(String declarantCode) {
 		this.declarantCode = declarantCode;
 	}
+
 	/**
 	 * @return the bankCode
 	 */
 	public String getBankCode() {
 		return bankCode;
 	}
+
 	/**
 	 * @param bankCode the bankCode to set
 	 */
 	public void setBankCode(String bankCode) {
 		this.bankCode = bankCode;
 	}
+
 	/**
 	 * @return the sadAsmt
 	 */
 	public SadAsmt getSadAsmt() {
 		return sadAsmt;
 	}
+
 	/**
 	 * @param sadAsmt the sadAsmt to set
 	 */
 	public void setSadAsmt(SadAsmt sadAsmt) {
 		this.sadAsmt = sadAsmt;
 	}
+
 	/**
 	 * @return the payment
 	 */
 	public List<Payment> getPayment() {
 		return payment;
 	}
+
 	/**
 	 * @param payment the payment to set
 	 */
 	public void setPayment(List<Payment> payment) {
 		this.payment = payment;
 	}
+
 	/**
 	 * @return the totalAmountToBePaid
 	 */
 	public BigDecimal getTotalAmountToBePaid() {
 		return totalAmountToBePaid;
 	}
+
 	/**
 	 * @param totalAmountToBePaid the totalAmountToBePaid to set
 	 */
 	public void setTotalAmountToBePaid(BigDecimal totalAmountToBePaid) {
 		this.totalAmountToBePaid = totalAmountToBePaid;
 	}
+
 	@Override
 	public String toString() {
 		return "EPaymentConfirmation [customsCode=" + customsCode + ", declarantCode=" + declarantCode + ", bankCode="
 				+ bankCode + ", sadAsmt=" + sadAsmt + ", payment=" + payment + ", totalAmountToBePaid="
 				+ totalAmountToBePaid + "]";
 	}
-    
+
+	/**
+	 * @return the version
+	 */
+	public String getVersion() {
+		return version;
+	}
+
+	/**
+	 * @param version the version to set
+	 */
+	public void setVersion(String version) {
+		this.version = version;
+	}
+
+	/**
+	 * @return the paymentDate
+	 */
+	public Date getPaymentDate() {
+		return paymentDate;
+	}
+
+	/**
+	 * @param paymentDate the paymentDate to set
+	 */
+	public void setPaymentDate(Date paymentDate) {
+		this.paymentDate = paymentDate;
+	}
+
 }

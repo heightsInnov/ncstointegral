@@ -33,6 +33,7 @@ public class PaymentDetails {
 	private String bankCode;
 	private String bankBranchCode;
 	private String formMNumber;
+	private String assessmentFilename;
 
 	private BigDecimal amount;
 	private String transactionstatus;
@@ -560,6 +561,20 @@ public class PaymentDetails {
 	 */
 	public void setVersion(String version) {
 		this.version = version;
+	}
+
+	/**
+	 * @return the assessmentFilename
+	 */
+	public String getAssessmentFilename() {
+		return assessmentFilename;
+	}
+
+	/**
+	 * @param assessmentFilename the assessmentFilename to set
+	 */
+	public void setAssessmentFilename(String assessmentFilename) {
+		this.assessmentFilename = assessmentFilename;
 	}
 
 }

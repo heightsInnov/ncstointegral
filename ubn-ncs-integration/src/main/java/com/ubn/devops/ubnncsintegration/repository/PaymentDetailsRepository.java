@@ -70,7 +70,8 @@ public class PaymentDetailsRepository {
 						new SqlParameter("P_TOTALAMOUNTTOBEPAID", Types.DECIMAL),
 						new SqlOutParameter("P_RESPONSECODE", Types.VARCHAR),
 						new SqlOutParameter("P_RESPONSEMSG", Types.VARCHAR), new SqlOutParameter("P_ID", Types.DECIMAL),
-						new SqlParameter("P_VERSION", Types.VARCHAR));
+						new SqlParameter("P_VERSION", Types.VARCHAR)
+						,new SqlParameter("P_FILENAME",Types.VARCHAR));
 				Map<String, Object> paramSource = new HashMap<>();
 				paramSource.put("P_SADYEAR", payment.getSadYear());
 				paramSource.put("P_CUSTOMSCODE", payment.getCustomsCode());
@@ -86,6 +87,7 @@ public class PaymentDetailsRepository {
 				paramSource.put("P_FORMMNUMBER", payment.getFormMNumber());
 				paramSource.put("P_TOTALAMOUNTTOBEPAID", payment.getTotalAmountToBePaid());
 				paramSource.put("P_VERSION", payment.getVersion());
+				paramSource.put("P_FILENAME", payment.getAssessmentFilename());
 				Map<String, Object> respValues = call.execute(paramSource);
 				if (!respValues.isEmpty()) {
 					String responsecode = respValues.get("P_RESPONSECODE").toString();

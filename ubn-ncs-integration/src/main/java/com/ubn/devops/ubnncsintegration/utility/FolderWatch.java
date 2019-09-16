@@ -50,6 +50,7 @@ public class FolderWatch {
 							case FileReaderResponse.EASSESSMENTNOTICE:
 								// Persist eAssessmentNotice to database
 								EAssessmentNotice eAssessmentNotice = (EAssessmentNotice) readerResponse.getObject(); 
+								eAssessmentNotice.setAssessmentFilename(event.context().toString());
 								PaymentDetails paymentDetails = paymentDetailsService.savePaymentDetails(eAssessmentNotice);
 								if (paymentDetails != null) {
 									//paymentDetailsService.acknowledgePaymentDetails(paymentDetails.getFormMNumber());

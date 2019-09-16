@@ -2,6 +2,7 @@ package com.ubn.devops.ubnncsintegration.serviceimpl;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,7 +69,6 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
 					PaymentDetailsResponse detailsResponse = new PaymentDetailsResponse();
 					detailsResponse.setAmount(model.getTotalAmountToBePaid());
 					detailsResponse.setCompanyName(model.getCompanyName());
-					detailsResponse.setFormMNumber(model.getFormMNumber());
 					detailsResponse.setDeclarantCode(model.getDeclarantCode());
 					detailsResponse.setDeclarantName(model.getDeclarantName());
 					response.setBody(detailsResponse);
@@ -133,14 +133,15 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
 								sadAsmt.setSadYear(details.getSadYear());
 								confirmation.setSadAsmt(sadAsmt);
 								confirmation.setTotalAmountToBePaid(details.getTotalAmountToBePaid());
-								CustomMarshaller.marshall(confirmation, pathConfig.getInfolder(),FileReaderResponse.EPAYMENTCONFIRMATION);
+								List<String> folders = Arrays.asList(pathConfig.getInfolder(),pathConfig.getPaymentrequest());
+								CustomMarshaller.marshall(confirmation, folders,FileReaderResponse.EPAYMENTCONFIRMATION);
 								response.setCode(ApiResponse.SUCCESSFUL);
-								response.setMessage("Successfully processed payment");
+								response.setMessage("Successfully processed payment. Response will be sent to you shortly");
 							}
 
 						} else if (status == 99 || status == 1) {
 			
-							log.info("dbError occured because: ".toString());
+							log.error("dbError occured because: ".toString());
 							response.setCode(ApiResponse.INVALID_REFERENCE);
 							response.setMessage("Reference invalid");
 						}
