@@ -295,15 +295,16 @@ public class PaymentDetailsRepository {
 			SimpleJdbcCall call = new SimpleJdbcCall(jdbcTemplate);
 			call.setSchemaName(SCHEMANAME);
 			call.setCatalogName(PACKAGENAME);
-			call.setProcedureName("UPDATESUCCESSFULVALIDATION");
+			call.setProcedureName("UPDATEWITHNCSRESPONSE");
 			call.declareParameters(new SqlParameter("P_SADYEAR", Types.INTEGER),
 					new SqlParameter("P_CUSTOMSCODE", Types.VARCHAR),
 					new SqlParameter("P_SADASSESSMENTSERIAL", Types.VARCHAR),
 					new SqlParameter("P_SADASSESSMENTNUMBER", Types.VARCHAR),
-					new SqlParameter("P_VERSION", Types.VARCHAR), new SqlParameter("P_NCS_RESPCODE", Types.VARCHAR),
+					new SqlParameter("P_VERSION", Types.VARCHAR),
+					new SqlParameter("P_NCS_RESPCODE", Types.VARCHAR),
 					new SqlParameter("P_NCS_RESPMSG", Types.VARCHAR),
 					new SqlOutParameter("P_RESPONSECODE", Types.VARCHAR),
-					new SqlOutParameter("P_RESPONSEMSG", Types.DECIMAL)
+					new SqlOutParameter("P_RESPONSEMSG", Types.VARCHAR)
 
 			);
 			Map<String, Object> paramSource = new HashMap<>();
@@ -311,7 +312,7 @@ public class PaymentDetailsRepository {
 			paramSource.put("P_CUSTOMSCODE", response.getCustomsCode());
 			paramSource.put("P_SADASSESSMENTSERIAL", response.getSadAsmt().getSadAssessmentSerial());
 			paramSource.put("P_SADASSESSMENTNUMBER", response.getSadAsmt().getSadAssessmentNumber());
-			paramSource.put("P_VERSION", response.getSadAsmt().getSadYear());
+			paramSource.put("P_VERSION", response.getVersion());
 			paramSource.put("P_NCS_RESPCODE", response.getTransactionStatus().value());
 			paramSource.put("P_NCS_RESPMSG", response.getInfo().getMessage());
 			Map<String, Object> respValues = call.execute(paramSource);

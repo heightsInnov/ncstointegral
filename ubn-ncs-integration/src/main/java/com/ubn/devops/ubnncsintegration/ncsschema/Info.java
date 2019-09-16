@@ -5,53 +5,30 @@
 // Generated on: 2019.08.27 at 12:06:09 PM WAT 
 //
 
-
 package com.ubn.devops.ubnncsintegration.ncsschema;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JacksonXmlRootElement(localName = "Info")
 public class Info {
 
-    @JsonProperty("Message")
-    private String message;
-
-    @JacksonXmlProperty(isAttribute=true)
-    private String errorCode;
-
+	@JsonProperty("Message")
+	private Message message;
 	/**
 	 * @return the message
 	 */
-	public String getMessage() {
+	public Message getMessage() {
 		return message;
 	}
 
 	/**
 	 * @param message the message to set
 	 */
-	public void setMessage(String message) {
+	public void setMessage(Message message) {
 		this.message = message;
 	}
-
-	/**
-	 * @return the errorCode
-	 */
-	public String getErrorCode() {
-		return errorCode;
-	}
-
-	/**
-	 * @param errorCode the errorCode to set
-	 */
-	public void setErrorCode(String errorCode) {
-		this.errorCode = errorCode;
-	}
-
-    
-    
 
 }
