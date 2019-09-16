@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
-import com.ubn.devops.ubnncsintegration.utility.Utils;
+import com.ubn.devops.ubnncsintegration.utility.FolderWatch;
 
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
@@ -18,7 +18,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 public class UbnNcsIntegrationApplication{
 	
 	@Autowired
-	private Utils utilities;
+	private FolderWatch folderWatch;
 	
 
 	public static void main(String[] args) {
@@ -28,7 +28,7 @@ public class UbnNcsIntegrationApplication{
 
 	@Scheduled(fixedDelay = 1500)
 	public void watchFolder() {
-		utilities.watchFolder();
+		folderWatch.watchFolder();
 	}
 
 

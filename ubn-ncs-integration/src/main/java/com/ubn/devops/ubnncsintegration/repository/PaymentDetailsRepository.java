@@ -36,9 +36,8 @@ public class PaymentDetailsRepository {
 	private Logger log = LoggerFactory.getLogger(this.getClass());
 
 	private String SCHEMANAME = PropsReader.getValue("db.schemaname");
-	
-	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
+	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
 	private final String PACKAGENAME = PropsReader.getValue("db.packagename");
 
@@ -65,15 +64,13 @@ public class PaymentDetailsRepository {
 						new SqlParameter("P_SADASSESSMENTNUMBER", Types.VARCHAR),
 						new SqlParameter("P_SADASSESSMENTDATE", Types.DATE),
 						new SqlParameter("P_COMPANYCODE", Types.VARCHAR),
-						new SqlParameter("P_COMPANYNAME", Types.VARCHAR), 
-						new SqlParameter("BANKCODE", Types.VARCHAR),
+						new SqlParameter("P_COMPANYNAME", Types.VARCHAR), new SqlParameter("BANKCODE", Types.VARCHAR),
 						new SqlParameter("BANKBRANCHCODE", Types.VARCHAR),
 						new SqlParameter("P_FORMMNUMBER", Types.VARCHAR),
 						new SqlParameter("P_TOTALAMOUNTTOBEPAID", Types.DECIMAL),
 						new SqlOutParameter("P_RESPONSECODE", Types.VARCHAR),
-						new SqlOutParameter("P_RESPONSEMSG", Types.VARCHAR),
-						new SqlOutParameter("P_ID", Types.DECIMAL),
-						new SqlParameter("P_VERSION",Types.VARCHAR));
+						new SqlOutParameter("P_RESPONSEMSG", Types.VARCHAR), new SqlOutParameter("P_ID", Types.DECIMAL),
+						new SqlParameter("P_VERSION", Types.VARCHAR));
 				Map<String, Object> paramSource = new HashMap<>();
 				paramSource.put("P_SADYEAR", payment.getSadYear());
 				paramSource.put("P_CUSTOMSCODE", payment.getCustomsCode());
@@ -96,7 +93,7 @@ public class PaymentDetailsRepository {
 						log.info("Successfully saved the payment details with declarant code: "
 								+ assessmentNotice.getDeclarantCode());
 						payment.setId(((BigDecimal) respValues.get("P_ID")).longValue());
-						for(TaxEntity tax:payment.getTaxes()) {
+						for (TaxEntity tax : payment.getTaxes()) {
 							tax.setPaymentDetailsId(payment.getId());
 							saveTax(tax);
 						}
@@ -147,7 +144,7 @@ public class PaymentDetailsRepository {
 	}
 
 	@SuppressWarnings("unchecked")
-	public PaymentDetails findPaymentDetails(String formMNumber) {
+	public PaymentDetails findPaymentDetails(PaymentProcessRequest request) {
 
 		PaymentDetails model = null;
 		try {
@@ -155,13 +152,21 @@ public class PaymentDetailsRepository {
 			call.setSchemaName(SCHEMANAME);
 			call.setCatalogName(PACKAGENAME);
 			call.setProcedureName("FINDPAYMENTDETAILS");
-			call.declareParameters(new SqlParameter("p_formM", Types.VARCHAR),
+			call.declareParameters(new SqlParameter("P_SADYEAR", Types.INTEGER),
+					new SqlParameter("P_CUSTOMSCODE", Types.VARCHAR),
+					new SqlParameter("P_SADASSESSMENTSERIAL", Types.VARCHAR),
+					new SqlParameter("P_SADASSESSMENTNUMBER", Types.VARCHAR),
+					new SqlParameter("P_VERSION", Types.VARCHAR),
 					new SqlOutParameter("p_responsemsg", Types.VARCHAR),
 					new SqlOutParameter("p_responsecode", Types.VARCHAR),
 					new SqlOutParameter("p_data", Types.REF_CURSOR));
 			call.addDeclaredRowMapper("p_data", new CustomMapper());
 			Map<String, Object> paramSource = new HashMap<>();
-			paramSource.put("p_formM", formMNumber);
+			paramSource.put("P_SADYEAR", request.getSadYear());
+			paramSource.put("P_CUSTOMSCODE", request.getCustomsCode());
+			paramSource.put("P_SADASSESSMENTSERIAL", request.getSadAssessmentSerial());
+			paramSource.put("P_SADASSESSMENTNUMBER", request.getSadAssessmentNumber());
+			paramSource.put("P_VERSION", request.getVersion());
 			Map<String, Object> result = call.execute(paramSource);
 			if (!result.isEmpty()) {
 				String rspCode = result.get("p_responsecode").toString();
@@ -172,7 +177,7 @@ public class PaymentDetailsRepository {
 							model = payments.get(0);
 							log.info("Successfully found payment details");
 						} else {
-							log.warn("payment details with unique code: " + formMNumber + " does  not exist");
+							log.warn("payment details with unique code: " + request.toString() + " does  not exist");
 						}
 					}
 				} else if (rspCode.equals("99")) {
@@ -180,14 +185,14 @@ public class PaymentDetailsRepository {
 				}
 			}
 		} catch (Exception ex) {
-			log.error("Error occured while trying to fetch payment details with unique code: " + formMNumber
+			log.error("Error occured while trying to fetch payment details with unique code: " + request.toString()
 
 					+ " because: " + ex.getMessage(), ex);
 		}
 		return model;
 	}
 
-	public int validateTransactionReference(String txnReference,String formMNumber) {
+	public int validateTransactionReference(PaymentProcessRequest request) {
 		int responseValue = 0;
 
 		try {
@@ -195,14 +200,21 @@ public class PaymentDetailsRepository {
 			call.setSchemaName(SCHEMANAME);
 			call.setCatalogName(PACKAGENAME);
 			call.setProcedureName("VALIDATETRANSREFERENCE");
-			call.declareParameters(new SqlParameter("p_txnreference", Types.VARCHAR),
-					new SqlParameter("p_formmnumber", Types.VARCHAR),
+			call.declareParameters(new SqlParameter("P_TXNREFERENCE", Types.VARCHAR),
+					new SqlParameter("P_SADYEAR", Types.INTEGER),
+					new SqlParameter("P_CUSTOMSCODE", Types.VARCHAR),
+					new SqlParameter("P_SADASSESSMENTSERIAL", Types.VARCHAR),
+					new SqlParameter("P_SADASSESSMENTNUMBER", Types.VARCHAR),
+					new SqlParameter("P_VERSION", Types.VARCHAR),
 					new SqlOutParameter("p_responsemsg", Types.VARCHAR),
 					new SqlOutParameter("p_responsecode", Types.VARCHAR));
 			Map<String, Object> paramSource = new HashMap<>();
-			paramSource.put("p_formmnumber", formMNumber);
-			paramSource.put("p_txnreference"
-					, txnReference);
+			paramSource.put("P_TXNREFERENCE", request.getExternalRef());
+			paramSource.put("P_SADYEAR", request.getSadYear());
+			paramSource.put("P_CUSTOMSCODE", request.getCustomsCode());
+			paramSource.put("P_SADASSESSMENTSERIAL", request.getSadAssessmentSerial());
+			paramSource.put("P_SADASSESSMENTNUMBER", request.getSadAssessmentNumber());
+			paramSource.put("P_VERSION", request.getVersion());
 			Map<String, Object> result = call.execute(paramSource);
 			if (!result.isEmpty()) {
 				String rspCode = result.get("p_responsecode").toString();
@@ -225,48 +237,55 @@ public class PaymentDetailsRepository {
 
 	public int updateSuccessfulValidation(PaymentProcessRequest request) {
 		int isUpdated = 0;
-	
-			log.info("Trying to update payment details After successful FCUBS ref validation with formMNumber:" + request.getFormMNumber() + " as acknowledge");
-			try {
-				SimpleJdbcCall call = new SimpleJdbcCall(jdbcTemplate);
-				call.setSchemaName(SCHEMANAME);
-				call.setCatalogName(PACKAGENAME);
-				call.setProcedureName("UPDATESUCCESSFULVALIDATION");
-				call.declareParameters(new SqlParameter("P_FORMMNUMBER", Types.VARCHAR),
-						new SqlParameter("P_TXNREF", Types.VARCHAR),
-						new SqlParameter("P_ACCTNO", Types.VARCHAR),
-						new SqlParameter("P_CUSTEMAIL", Types.VARCHAR),
-						new SqlParameter("P_AMOUNTPAID", Types.DECIMAL),
-						new SqlParameter("P_CHANNEL", Types.VARCHAR),
-						new SqlParameter("P_PAYMENTDATE", Types.TIMESTAMP),
-						new SqlOutParameter("P_RESPONSEMSG", Types.VARCHAR),
-						new SqlOutParameter("P_RESPONSECODE", Types.VARCHAR));
-				Map<String, Object> paramSource = new HashMap<>();
-				paramSource.put("P_FORMMNUMBER", request.getFormMNumber());
-				paramSource.put("P_TXNREF", request.getExternalRef());
-				paramSource.put("P_ACCTNO", request.getAccount());
-				paramSource.put("P_CUSTEMAIL", request.getCustomerEmail());
-				paramSource.put("P_AMOUNTPAID", new BigDecimal(request.getAmount()));
-				paramSource.put("P_CHANNEL", request.getChannel());
-				paramSource.put("P_PAYMENTDATE", sdf.format(request.getPostingDate()));
-				Map<String, Object> respValues = call.execute(paramSource);
-				if (!respValues.isEmpty()) {
-					String responsecode = respValues.get("P_RESPONSECODE").toString();
-					if (responsecode.equals("00")) {
-						isUpdated =1;
-						log.info("Successfully updated the payment details with formMNumber: " + request.getFormMNumber()
-								+ " as acknowledge");
 
-					} else if (responsecode.equals("99")) {
-						log.warn("db error occured with message: " + respValues.get("P_RESPONSEMSG"));
-					}
+		log.info("Trying to update payment details After successful FCUBS ref validation with formMNumber:"
+				+ request.toString() + " as acknowledge");
+		try {
+			SimpleJdbcCall call = new SimpleJdbcCall(jdbcTemplate);
+			call.setSchemaName(SCHEMANAME);
+			call.setCatalogName(PACKAGENAME);
+			call.setProcedureName("UPDATESUCCESSFULVALIDATION");
+			call.declareParameters(new SqlParameter("P_SADYEAR", Types.INTEGER),
+					new SqlParameter("P_CUSTOMSCODE", Types.VARCHAR),
+					new SqlParameter("P_SADASSESSMENTSERIAL", Types.VARCHAR),
+					new SqlParameter("P_SADASSESSMENTNUMBER", Types.VARCHAR),
+					new SqlParameter("P_VERSION", Types.VARCHAR), new SqlParameter("P_TXNREF", Types.VARCHAR),
+					new SqlParameter("P_ACCTNO", Types.VARCHAR), new SqlParameter("P_CUSTEMAIL", Types.VARCHAR),
+					new SqlParameter("P_AMOUNTPAID", Types.DECIMAL), new SqlParameter("P_CHANNEL", Types.VARCHAR),
+					new SqlParameter("P_PAYMENTDATE", Types.TIMESTAMP),
+					new SqlOutParameter("P_RESPONSEMSG", Types.VARCHAR),
+					new SqlOutParameter("P_RESPONSECODE", Types.VARCHAR));
+			Map<String, Object> paramSource = new HashMap<>();
+			paramSource.put("P_SADYEAR", request.getSadYear());
+			paramSource.put("P_CUSTOMSCODE", request.getCustomsCode());
+			paramSource.put("P_SADASSESSMENTSERIAL", request.getSadAssessmentSerial());
+			paramSource.put("P_SADASSESSMENTNUMBER", request.getSadAssessmentNumber());
+			paramSource.put("P_VERSION", request.getVersion());
+			paramSource.put("P_TXNREF", request.getExternalRef());
+			paramSource.put("P_ACCTNO", request.getAccount());
+			paramSource.put("P_CUSTEMAIL", request.getCustomerEmail());
+			paramSource.put("P_AMOUNTPAID", new BigDecimal(request.getAmount()));
+			paramSource.put("P_CHANNEL", request.getChannel());
+			paramSource.put("P_PAYMENTDATE", sdf.format(request.getPostingDate()));
+			Map<String, Object> respValues = call.execute(paramSource);
+			if (!respValues.isEmpty()) {
+				String responsecode = respValues.get("P_RESPONSECODE").toString();
+				if (responsecode.equals("00")) {
+					isUpdated = 1;
+					log.info("Successfully updated the payment details with request: " + request.toString()
+							+ " as acknowledge");
+
+				} else if (responsecode.equals("99")) {
+					log.warn("db error occured with message: " + respValues.get("P_RESPONSEMSG"));
 				}
+			}
 		} catch (Exception ex) {
-			log.info("error while updating details with payment info because: "+ex.getMessage(),ex);
+			log.info("error while updating details with successful validation response because: " + ex.getMessage(),
+					ex);
 		}
 		return isUpdated;
 	}
-	
+
 	public int updatePaymentWithNCSResponse(TransactionResponse response) {
 		int isUpdated = 0;
 		log.info("trying to update payment details with ");
@@ -279,13 +298,12 @@ public class PaymentDetailsRepository {
 					new SqlParameter("P_CUSTOMSCODE", Types.VARCHAR),
 					new SqlParameter("P_SADASSESSMENTSERIAL", Types.VARCHAR),
 					new SqlParameter("P_SADASSESSMENTNUMBER", Types.VARCHAR),
-					new SqlParameter("P_VERSION", Types.VARCHAR),
-					new SqlParameter("P_NCS_RESPCODE", Types.VARCHAR),
+					new SqlParameter("P_VERSION", Types.VARCHAR), new SqlParameter("P_NCS_RESPCODE", Types.VARCHAR),
 					new SqlParameter("P_NCS_RESPMSG", Types.VARCHAR),
 					new SqlOutParameter("P_RESPONSECODE", Types.VARCHAR),
 					new SqlOutParameter("P_RESPONSEMSG", Types.DECIMAL)
-					
-					);
+
+			);
 			Map<String, Object> paramSource = new HashMap<>();
 			paramSource.put("P_SADYEAR", response.getSadAsmt().getSadYear());
 			paramSource.put("P_CUSTOMSCODE", response.getCustomsCode());
@@ -293,26 +311,26 @@ public class PaymentDetailsRepository {
 			paramSource.put("P_SADASSESSMENTNUMBER", response.getSadAsmt().getSadAssessmentNumber());
 			paramSource.put("P_VERSION", response.getSadAsmt().getSadYear());
 			paramSource.put("P_NCS_RESPCODE", response.getTransactionStatus().value());
-			paramSource.put("P_NCS_RESPMSG", StringUtils.collectionToDelimitedString(response.getInfo().getMessage(),","));
+			paramSource.put("P_NCS_RESPMSG", response.getInfo().getMessage());
 			Map<String, Object> respValues = call.execute(paramSource);
-			if(!respValues.isEmpty()) {
+			if (!respValues.isEmpty()) {
 				String code = respValues.get("P_RESPONSECODE").toString();
-				if(code.equals("00")) {
-					isUpdated=1;
+				if (code.equals("00")) {
+					isUpdated = 1;
 					log.info("successfully updated payment with NCS response");
-				}else {
+				} else {
 					String errorMessage = respValues.get("P_RESPONSEMSG").toString();
-					log.warn("db error occured with error message: "+errorMessage);
+					log.warn("db error occured with error message: " + errorMessage);
 				}
-			}				
-		}catch(Exception ex) {
-			log.error("Error occured while trying to update payment with NCS response because: "+ex.getMessage(),ex);
+			}
+		} catch (Exception ex) {
+			log.error("Error occured while trying to update payment with NCS response because: " + ex.getMessage(), ex);
 		}
 		return isUpdated;
 	}
-	
+
 	public int saveTax(TaxEntity tax) {
-		int isSaved=0;
+		int isSaved = 0;
 		log.info("trying to save tax entity");
 		try {
 			SimpleJdbcCall call = new SimpleJdbcCall(jdbcTemplate);
@@ -320,8 +338,7 @@ public class PaymentDetailsRepository {
 			call.setCatalogName(PACKAGENAME);
 			call.setProcedureName("SAVETAX");
 			call.declareParameters(new SqlParameter("P_TAXCODE", Types.VARCHAR),
-					new SqlParameter("P_TAXAMOUNT", Types.VARCHAR),
-					new SqlParameter("P_PAYMENTID", Types.NUMERIC),
+					new SqlParameter("P_TAXAMOUNT", Types.VARCHAR), new SqlParameter("P_PAYMENTID", Types.NUMERIC),
 					new SqlOutParameter("P_RESPONSECODE", Types.VARCHAR),
 					new SqlOutParameter("P_RESPONSEMSG", Types.VARCHAR));
 			Map<String, Object> paramSource = new HashMap<>();
@@ -329,21 +346,22 @@ public class PaymentDetailsRepository {
 			paramSource.put("P_TAXAMOUNT", tax.getTaxAmount());
 			paramSource.put("P_PAYMENTID", tax.getPaymentDetailsId());
 			Map<String, Object> respValues = call.execute(paramSource);
-			if(!respValues.isEmpty()) {
+			if (!respValues.isEmpty()) {
 				String rspCode = respValues.get("P_RESPONSECODE").toString();
-				if(rspCode.equals("00")) {
+				if (rspCode.equals("00")) {
 					isSaved = 1;
 					log.info("successfully saved tax entity");
-				}else {
-					log.warn("db error occured while trying to save tax entity with error message: "+respValues.get("P_RESPONSEMSG").toString());
+				} else {
+					log.warn("db error occured while trying to save tax entity with error message: "
+							+ respValues.get("P_RESPONSEMSG").toString());
 				}
 			}
-		}catch(Exception ex) {
-			log.error("Error occured while trying to save tax entity because: "+ex.getMessage(),ex);
+		} catch (Exception ex) {
+			log.error("Error occured while trying to save tax entity because: " + ex.getMessage(), ex);
 		}
 		return isSaved;
 	}
-	
+
 	public List<SweepPaymentDetails> findFCUBSDetails(String reference, String code) {
 		List<SweepPaymentDetails> models = new ArrayList<>();
 		SweepPaymentDetails model = null;
@@ -376,7 +394,7 @@ public class PaymentDetailsRepository {
 							model.setDrcr_ind(rs.getString("DRCR_IND"));
 							model.setFormmnumber(rs.getString("FORMMNUMBER"));
 							model.setTask_code(code);
-							
+
 							models.add(model);
 						}
 						log.info("Successfully found sweep payment details");

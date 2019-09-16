@@ -55,12 +55,12 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
 
 	
 	@Override
-	public ApiResponse fetchPaymentDetails(String formMNumber) {
+	public ApiResponse fetchPaymentDetails(PaymentProcessRequest request) {
 		ApiResponse response = new ApiResponse(ApiResponse.SERVER_ERROR,
 				"Unable to process request right now. Please try again");
-		log.info("======Trying to fetch payment details using code: " + formMNumber + "======");
+		log.info("======Trying to fetch payment details using request: " + request.toString() + "======");
 		try {
-			PaymentDetails model = paymentRepo.findPaymentDetails(formMNumber);
+			PaymentDetails model = paymentRepo.findPaymentDetails(request);
 			if (model != null) {
 				if (!model.isPaid()) {
 					response.setCode(ApiResponse.SUCCESSFUL);
@@ -82,7 +82,7 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
 			}
 
 		} catch (Exception ex) {
-			log.error("Error occured while trying to fetch payment details with code: "+formMNumber+" because: " + ex.getMessage(), ex);
+			log.error("Error occured while trying to fetch payment details with request: "+request.toString()+" because: " + ex.getMessage(), ex);
 		}
 		return response;
 
@@ -100,13 +100,13 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
 		log.info("processing payment request with details: " + request.toString());
 		ApiResponse response = new ApiResponse(ApiResponse.SERVER_ERROR, "Unable to process request. Please try again");
 		try {
-			PaymentDetails details = paymentRepo.findPaymentDetails(request.getFormMNumber());
+			PaymentDetails details = paymentRepo.findPaymentDetails(request);
 			if (details != null) {
 				if (details.isPaid()) {
 					response.setCode(ApiResponse.ALREADY_PAID);
 					response.setMessage("This payment has already been made");
 				} else {
-					int respValue = paymentRepo.validateTransactionReference(request.getExternalRef(),request.getFormMNumber());
+					int respValue = paymentRepo.validateTransactionReference(request);
 					if (respValue == 1) {
 						response.setCode(ApiResponse.ALREADY_EXIST);
 						response.setMessage("This Reference has already been used.");

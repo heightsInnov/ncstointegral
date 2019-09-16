@@ -6,7 +6,6 @@ public class PaymentDetailsResponse {
 
 	private String companyName;
 	private BigDecimal amount;
-	private String formMNumber;
 	private String declarantCode;
 	private String declarantName;
 
@@ -40,20 +39,6 @@ public class PaymentDetailsResponse {
 	 */
 	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
-	}
-
-	/**
-	 * @return the formMNumber
-	 */
-	public String getFormMNumber() {
-		return formMNumber;
-	}
-
-	/**
-	 * @param formMNumber the formMNumber to set
-	 */
-	public void setFormMNumber(String formMNumber) {
-		this.formMNumber = formMNumber;
 	}
 
 	/**

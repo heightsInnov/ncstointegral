@@ -14,12 +14,16 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JacksonXmlRootElement(localName = "ePaymentConfirmation")
 public class EPaymentConfirmation {
 
+	@JacksonXmlProperty(isAttribute=true)
+	private String version;
+	
 	@JsonProperty("CustomsCode")
     protected String customsCode;
 	@JsonProperty( "DeclarantCode")

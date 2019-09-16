@@ -8,12 +8,9 @@
 
 package com.ubn.devops.ubnncsintegration.ncsschema;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -21,22 +18,40 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 public class Info {
 
     @JsonProperty("Message")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    private List<String> message = new ArrayList<>();
+    private String message;
+
+    @JacksonXmlProperty(isAttribute=true)
+    private String errorCode;
 
 	/**
 	 * @return the message
 	 */
-	public List<String> getMessage() {
+	public String getMessage() {
 		return message;
 	}
 
 	/**
 	 * @param message the message to set
 	 */
-	public void setMessage(List<String> message) {
+	public void setMessage(String message) {
 		this.message = message;
 	}
+
+	/**
+	 * @return the errorCode
+	 */
+	public String getErrorCode() {
+		return errorCode;
+	}
+
+	/**
+	 * @param errorCode the errorCode to set
+	 */
+	public void setErrorCode(String errorCode) {
+		this.errorCode = errorCode;
+	}
+
+    
     
 
 }

@@ -108,15 +108,16 @@ public class CustomMarshaller {
 
 	public static void main(String[] args) {
 		try {
-			String filePath = "C:\\Users\\lababatunde\\Documents\\TestData\\epay333695553658105.xml";
+			String filePath = "C:\\Users\\lababatunde\\Documents\\TestData\\epay3358698739543382.xml";
 			FileReaderResponse response = CustomMarshaller.readFile(filePath);
 			switch (response.getClassName()) {
 			case FileReaderResponse.EASSESSMENTNOTICE:
-				EAssessmentNotice notice = (EAssessmentNotice) response.getObject();
+				TransactionResponse notice = (TransactionResponse) response.getObject();
 				if (notice != null) {
-					System.out
-							.println("bankCode: " + notice.getBankCode() + " customsCode: " + notice.getCustomsCode());
-					System.out.println(notice.toString());
+					/*
+					 * System.out .println("bankCode: " + notice.getBankCode() + " customsCode: " +
+					 * notice.getCustomsCode()); System.out.println(notice.toString());
+					 */
 				}
 				break;
 			}

@@ -188,14 +188,14 @@ public class Encryptor {
 	}
 
 	public static void main(String[] args) { 
-		/*
-		 * String data ="pinchange@123"; Encryptor encryptor = new Encryptor(KEY);
-		 * String encrptedData = encryptor.encryptStringEncoded(data);
-		 * System.out.println("Encrypted: "+encrptedData);
-		 */ //String decryptedData =
-	  //encryptor.decryptStringEncoded(data);
-	  //System.out.println("Encrypted: "+decryptedData); 
-		System.out.println(System.getenv("WR_FILE"));
+		
+		  String data ="mhpyB4WQQ2SVKUXqLdjbLA==";
+		  Encryptor encryptor = new Encryptor(KEY);
+		 // String encrptedData = encryptor.encryptStringEncoded(data);
+		 //ystem.out.println("Encrypted: "+encrptedData);
+		 String decryptedData = encryptor.decryptStringEncoded(data);
+	  System.out.println("Encrypted: "+decryptedData); 
+		
 	  }
 	 
 }

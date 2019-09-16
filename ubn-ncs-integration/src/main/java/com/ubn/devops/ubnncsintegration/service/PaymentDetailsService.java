@@ -10,7 +10,7 @@ public interface PaymentDetailsService {
 	
 	public PaymentDetails savePaymentDetails(EAssessmentNotice assessmentNotice);
 	
-	public ApiResponse fetchPaymentDetails(String formMNumber);
+	public ApiResponse fetchPaymentDetails(PaymentProcessRequest request);
 	
 	public void acknowledgePaymentDetails(String formMNumber);
 	

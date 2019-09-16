@@ -64,7 +64,7 @@ public class FilePathsConfig {
 	 * @return the assessmentnotice
 	 */
 	public String getAssessmentnotice() {
-		return assessmentnotice;
+		return PropsReader.getValue(assessmentnotice);
 	}
 	
 	/**
