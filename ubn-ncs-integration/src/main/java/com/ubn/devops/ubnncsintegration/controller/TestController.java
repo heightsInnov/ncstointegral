@@ -13,17 +13,12 @@ public class TestController {
 	@Autowired
 	private FilePathsConfig config;
 
+	@Autowired
+	SweepRequestProcessor c;
 	
 	@GetMapping("/get-value")
 	public String getValue() {
 		
 		return config.getTokenurl();
 	}
-	
-	@GetMapping("/sweep")
-	public String getSweep() {
-		SweepRequestProcessor c = new SweepRequestProcessor();
-		return c.DoSweepPostingProcess("20190723133733", "R");
-	}
-
 }

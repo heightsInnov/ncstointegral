@@ -1,6 +1,7 @@
 package com.ubn.devops.ubnncsintegration.sweep;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -18,7 +19,7 @@ import com.ubn.devops.ubnncsintegration.model.SweepPaymentDetails;
 import com.ubn.devops.ubnncsintegration.model.SweepPersistAgent;
 import com.ubn.devops.ubnncsintegration.repository.PaymentDetailsRepository;
 import com.ubn.devops.ubnncsintegration.response.SweepReverseResponse;
-import com.ubn.devops.ubnncsintegration.serviceimpl.TokenGenerator;
+import com.ubn.devops.ubnncsintegration.serviceimpl.GenerateToken;
 import com.ubn.devops.ubnncsintegration.utility.PropsReader;
 
 @Component
@@ -43,24 +44,25 @@ public class SweepRequestProcessor {
 	private String accteqry_url = PropsReader.getValue("ncs.accteqry.url");
 
 	@Autowired
-	TokenGenerator tokenize;
+	GenerateToken tokenize;
 
 	@Autowired
 	SweepingAndPosting restService;
 
-	PaymentDetailsRepository paymentDetailsRepository = new PaymentDetailsRepository();
+	@Autowired
+	PaymentDetailsRepository paymentDetailsRepository;
 
-	public String DoSweepPostingProcess(String fcubs_reference, String task_code) {
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+	public String DoSweepPostingProcess(String fcubs_reference, int transcode) {
+		String task_code = transcode == 1 ? "S" : transcode == 0 ? "R" : "R";
 		List<SweepPersistAgent> persistData = new ArrayList<>();
 		SweepReverseResponse response = new SweepReverseResponse();
 		String resp = "01";
 		SweepReverseResponse accEnq;
-		String naration = "";
+		String naration = narations;
 
 		List<SweepPaymentDetails> requests = paymentDetailsRepository.findFCUBSDetails(fcubs_reference, task_code);
-
-		String narate = narations.replace("{Type}", "" != null ? "" : "").replace("{TargetIdentifier}",
-				requests.get(0).getFormmnumber());
 
 		try {
 			if (requests != null) {
@@ -71,9 +73,10 @@ public class SweepRequestProcessor {
 				SweepPersistAgent debitSweep;
 				SweepPersistAgent creditSweep;
 				SweepPersistAgent saveSweep;
+
 				if (task_code.equals("S")) {
 					for (SweepPaymentDetails request : requests) {
-						naration = narate.replace("{TypeDescription}", "recharge ");
+						naration = naration.replace("{action}", "sweep to");
 						accEnq = AccountEnquiryCheck(tsaaccountno);
 						if (accEnq != null & accEnq.getCode().equals("00")) {
 							account = (AccountEnquiry) accEnq.getData();
@@ -93,11 +96,11 @@ public class SweepRequestProcessor {
 							creditItem.put("narration", naration);
 							creditItem.put("instrumentNumber", "");
 							creditItem.put("amount", request.getLcy_amount());
-							creditItem.put("valueDate", new Date());
+							creditItem.put("valueDate", sdf.format(new Date()));
 							creditItem.put("crDrFlag", "C");
 							creditItem.put("feeOrCharges", false);
 
-							creditSweep.setCreditacccountnumber(tsaaccountno);
+							creditSweep.setAcccountnumber(tsaaccountno);
 							creditSweep.setBranchcode(account.getAccountBranchCode());
 							creditSweep.setAmount(request.getLcy_amount());
 							creditSweep.setDebitcreditindicator("C");
@@ -128,11 +131,11 @@ public class SweepRequestProcessor {
 							debititem.put("narration", naration);
 							debititem.put("instrumentNumber", "");
 							debititem.put("amount", request.getLcy_amount());
-							debititem.put("valueDate", new Date());
+							debititem.put("valueDate", sdf.format(new Date()));
 							debititem.put("crDrFlag", "D");
 							debititem.put("feeOrCharges", false);
 
-							debitSweep.setDebitacccountnumber(ubntransitgl);
+							debitSweep.setAcccountnumber(ubntransitgl);
 							debitSweep.setBranchcode(init_branch);
 							debitSweep.setAmount(request.getLcy_amount());
 							debitSweep.setDebitcreditindicator("D");
@@ -152,13 +155,16 @@ public class SweepRequestProcessor {
 						}
 					}
 				} else if (task_code.equals("R")) {
-					saveSweep = new SweepPersistAgent();
-					JSONObject item = new JSONObject();
+					JSONObject item;
+
 					for (SweepPaymentDetails request : requests) {
-						naration = narate.replace("{TypeDescription}", "bills payment ");
+						naration = naration.replace("{action}", "reversal from");
 						accEnq = AccountEnquiryCheck(request.getAc_no());
 						if (accEnq != null & accEnq.getCode().equals("00")) {
 							account = (AccountEnquiry) accEnq.getData();
+
+							item = new JSONObject();
+							saveSweep = new SweepPersistAgent();
 
 							String transid = String.valueOf(System.nanoTime());
 							item.put("transactionId", transid);
@@ -170,14 +176,14 @@ public class SweepRequestProcessor {
 							item.put("narration", naration);
 							item.put("instrumentNumber", "");
 							item.put("amount", request.getLcy_amount());
-							item.put("valueDate", new Date());
+							item.put("valueDate", sdf.format(new Date()));
 							if (request.getDrcr_ind().equals("D")) {
 								item.put("crDrFlag", "C");
-								saveSweep.setCreditacccountnumber(request.getAc_no());
+								saveSweep.setAcccountnumber(request.getAc_no());
 								saveSweep.setDebitcreditindicator("C");
 							} else if (request.getDrcr_ind().equals("C")) {
 								item.put("crDrFlag", "D");
-								saveSweep.setDebitacccountnumber(request.getAc_no());
+								saveSweep.setAcccountnumber(request.getAc_no());
 								saveSweep.setDebitcreditindicator("D");
 							}
 							item.put("feeOrCharges", false);
@@ -208,7 +214,7 @@ public class SweepRequestProcessor {
 				postingObject.put("initBranchCode", init_branch);
 				postingObject.put("paymentReference",
 						requests.get(0).getExternal_ref_no() + requests.get(0).getTask_code());
-				postingObject.put("transactionDate", new Date());
+				postingObject.put("transactionDate", sdf.format(new Date()));
 				postingObject.put("paymentTypeCode", "FT");
 				postingObject.put("externalSystemReference", "");
 				postingObject.put("batchItems", batchItems);
@@ -218,9 +224,14 @@ public class SweepRequestProcessor {
 			for (SweepPersistAgent saveSweep : persistData) {
 				saveSweep.setResponsecode(response.getCode());
 				saveSweep.setResponsemessage(response.getMessage());
-				saveSweep.setBatch_detail_id(response.getBody() != null ? response.getBody().split("|")[0] : "");
+				saveSweep.setBatch_detail_id(!response.getBody().equals("empty") && response.getBody().contains("|")
+						? response.getBody().split("|")[0]
+						: "empty");
 
-				saveSweep.setBatchid(response.getBody() != null ? response.getBody().split("|")[1] : "");
+				System.out.println(response.getBody().toString());
+				saveSweep.setBatchid(!response.getBody().equals("empty") && response.getBody().contains("|")
+						? response.getBody().split("|")[1]
+						: "empty");
 				saveSweep.setInitiatingbranch(init_branch);
 				saveSweep.setTransactioncurrency("NGN");
 

@@ -1,7 +1,6 @@
 package com.ubn.devops.ubnncsintegration.repository;
 
 import java.math.BigDecimal;
-import java.sql.ResultSet;
 import java.sql.Types;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -9,15 +8,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.StringUtils;
 
 import com.ubn.devops.ubnncsintegration.mapper.CustomMapper;
 import com.ubn.devops.ubnncsintegration.model.PaymentDetails;
@@ -365,40 +367,44 @@ public class PaymentDetailsRepository {
 		return isSaved;
 	}
 
+	
+
 	public List<SweepPaymentDetails> findFCUBSDetails(String reference, String code) {
 		List<SweepPaymentDetails> models = new ArrayList<>();
 		SweepPaymentDetails model = null;
-		ResultSet rs = null;
+//		ResultSet rs = null;
 		try {
 			SimpleJdbcCall call = new SimpleJdbcCall(jdbcTemplate);
 			call.setSchemaName(SCHEMANAME);
 			call.setCatalogName(PACKAGENAME);
-			call.setProcedureName("GETSWEEPPAYMENTDETAILS");
-			call.declareParameters(new SqlOutParameter("RESPONSE", Types.VARCHAR),
-					new SqlOutParameter("PAYMENTDETAILS", Types.REF_CURSOR));
-			Map<String, Object> paramSource = new HashMap<>();
-			paramSource.put("paymentref", reference);
-			paramSource.put("task_code", code);
+			call.withFunctionName("GETSWEEPPAYMENTDETAILS");
+//			call.declareParameters(new SqlOutParameter("PAYMENTDETAILS", Types.REF_CURSOR));
+			SqlParameterSource paramSource = new MapSqlParameterSource().addValue("paymentref", reference)
+					.addValue("task_code", code);
 			Map<String, Object> result = call.execute(paramSource);
 			if (!result.isEmpty()) {
-				String rspCode = result.get("RESPONSE").toString();
+				String rspCode = result.get("return").toString();
 				if (rspCode.equals("00")) {
 					if (result.get("PAYMENTDETAILS") != null) {
-						rs = (ResultSet) result.get("PAYMENTDETAILS");
-						while (rs.next()) {
-							model = new SweepPaymentDetails();
-							model.setAc_branch(rs.getString("AC_BRANCH"));
-							model.setAc_no(rs.getString("AC_NO"));
-							model.setAc_ccy(rs.getString("AC_CCY"));
-							model.setTrn_code(rs.getString("TRN_CODE"));
-							model.setLcy_amount(rs.getString("AMOUNT"));
-							model.setCust_gl(rs.getString("CUST_GL"));
-							model.setExternal_ref_no(rs.getString("EXTERNAL_REF_NO"));
-							model.setDrcr_ind(rs.getString("DRCR_IND"));
-							model.setFormmnumber(rs.getString("FORMMNUMBER"));
-							model.setTask_code(code);
+						ArrayList<?> list = (ArrayList<?>) result.get("PAYMENTDETAILS");
+						JSONArray rsArray = new JSONArray(list);
+						for (int i = 0; i < rsArray.length(); i++) {
+							JSONObject rs = rsArray.getJSONObject(i);
+							if (rs != null && rs.toString().startsWith("{")) {
+								model = new SweepPaymentDetails();
+								model.setAc_branch(rs.getString("AC_BRANCH"));
+								model.setAc_no(rs.getString("AC_NO"));
+								model.setAc_ccy(rs.getString("AC_CCY"));
+								model.setTrn_code(rs.getString("TRN_CODE"));
+								model.setLcy_amount(rs.getBigDecimal("AMOUNT").toString());
+								model.setCust_gl(rs.getString("CUST_GL"));
+								model.setExternal_ref_no(rs.getString("EXTERNAL_REF_NO"));
+								model.setDrcr_ind(rs.getString("DRCR_IND"));
+								model.setFormmnumber(rs.optString("FORMMNUMBER"));
+								model.setTask_code(code);
 
-							models.add(model);
+								models.add(model);
+							}
 						}
 						log.info("Successfully found sweep payment details");
 					} else {
@@ -420,36 +426,30 @@ public class PaymentDetailsRepository {
 			SimpleJdbcCall call = new SimpleJdbcCall(jdbcTemplate);
 			call.setSchemaName(SCHEMANAME);
 			call.setCatalogName(PACKAGENAME);
-			call.setProcedureName("PERSISTSWEEPDATA");
-			call.declareParameters(new SqlOutParameter("respcode", Types.VARCHAR));
-			Map<String, Object> paramSource = new HashMap<>();
-			paramSource.put("BATCH_ID", sweepAgent.getBatchid());
-			paramSource.put("INITIATING_BRANCH", sweepAgent.getInitiatingbranch());
-			paramSource.put("REQUEST_MODULE", sweepAgent.getRequestmodule());
-			paramSource.put("MODULE_CREDENTIALS", sweepAgent.getModulecredentials());
-			paramSource.put("CURRENCY", sweepAgent.getTransactioncurrency());
-			paramSource.put("DEBITACC", sweepAgent.getDebitacccountnumber());
-			paramSource.put("CREDITACC", sweepAgent.getCreditacccountnumber());
-			paramSource.put("BRANCH_CODE", sweepAgent.getBranchcode());
-			paramSource.put("SRAMOUNT", sweepAgent.getAmount());
-			paramSource.put("DEBITCREDITIND", sweepAgent.getDebitcreditindicator());
-			paramSource.put("GLCASAIND", sweepAgent.getGlcasaindicator());
-			paramSource.put("NEMONIC", sweepAgent.getMnemonic());
-			paramSource.put("NARATION", sweepAgent.getNarration());
-			paramSource.put("NCSREFERENCE", sweepAgent.getNcscustomreference());
-			paramSource.put("PAYMENT_REFERENCE", sweepAgent.getPaymentreference());
-			paramSource.put("TRANS_ID", sweepAgent.getTransactionid());
-			paramSource.put("RESP_CODE", sweepAgent.getResponsecode());
-			paramSource.put("RESP_MESG", sweepAgent.getResponsemessage());
-			paramSource.put("RESPONSE_TIME", sweepAgent.getResponsetime());
-			paramSource.put("UIDSS", sweepAgent.getUids());
-			paramSource.put("BATCHDETAILID", sweepAgent.getBatch_detail_id());
-			paramSource.put("PAYMENTTYPEID", sweepAgent.getPayment_type_id());
-			paramSource.put("SWEEPSTATUS", sweepAgent.getIssweeporreversal());
-			paramSource.put("NCSSTATUS", sweepAgent.getNcstransstatus());
+			call.withFunctionName("PERSISTSWEEPDATA");
+			SqlParameterSource paramSource = new MapSqlParameterSource().addValue("BATCH_ID", sweepAgent.getBatchid())
+					.addValue("INITIATING_BRANCH", sweepAgent.getInitiatingbranch())
+					.addValue("REQUEST_MODULE", sweepAgent.getRequestmodule())
+					.addValue("MODULE_CREDENTIALS", sweepAgent.getModulecredentials())
+					.addValue("CURRENCY", sweepAgent.getTransactioncurrency())
+					.addValue("ACCOUNT", sweepAgent.getAcccountnumber())
+					.addValue("BRANCH_CODE", sweepAgent.getBranchcode()).addValue("SRAMOUNT", sweepAgent.getAmount())
+					.addValue("DEBITCREDITIND", sweepAgent.getDebitcreditindicator())
+					.addValue("GLCASAIND", sweepAgent.getGlcasaindicator())
+					.addValue("NEMONIC", sweepAgent.getMnemonic()).addValue("NARATION", sweepAgent.getNarration())
+					.addValue("NCSREFERENCE", sweepAgent.getNcscustomreference())
+					.addValue("PAYMENT_REFERENCE", sweepAgent.getPaymentreference())
+					.addValue("TRANS_ID", sweepAgent.getTransactionid())
+					.addValue("RESP_CODE", sweepAgent.getResponsecode())
+					.addValue("RESP_MESG", sweepAgent.getResponsemessage())
+					.addValue("RESPONSE_TIME", sweepAgent.getResponsetime()).addValue("UIDSS", sweepAgent.getUids())
+					.addValue("BATCHDETAILID", sweepAgent.getBatch_detail_id())
+					.addValue("PAYMENTTYPEID", sweepAgent.getPayment_type_id())
+					.addValue("SWEEPSTATUS", sweepAgent.getIssweeporreversal())
+					.addValue("NCSSTATUS", sweepAgent.getNcstransstatus());
 			Map<String, Object> respValues = call.execute(paramSource);
 			if (!respValues.isEmpty()) {
-				String responsecode = respValues.get("p_responsecode").toString();
+				String responsecode = respValues.get("return").toString();
 				if (responsecode.equals("00")) {
 					log.info("Successfully set the payment details with declarant code: "
 							+ sweepAgent.getNcscustomreference() + " as acknowledge");
