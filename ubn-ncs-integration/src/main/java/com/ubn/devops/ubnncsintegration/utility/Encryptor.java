@@ -195,7 +195,6 @@ public class Encryptor {
 		 */ //String decryptedData =
 	  //encryptor.decryptStringEncoded(data);
 	  //System.out.println("Encrypted: "+decryptedData); 
-		System.out.println(System.getenv("WR_FILE"));
 	  }
 	 
 }
