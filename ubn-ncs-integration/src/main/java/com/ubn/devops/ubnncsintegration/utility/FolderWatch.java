@@ -6,6 +6,7 @@ import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 import com.ubn.devops.ubnncsintegration.config.FilePathsConfig;
 import com.ubn.devops.ubnncsintegration.model.PaymentDetails;
 import com.ubn.devops.ubnncsintegration.ncsschema.EAssessmentNotice;
+import com.ubn.devops.ubnncsintegration.ncsschema.SadAsmt;
 import com.ubn.devops.ubnncsintegration.ncsschema.TRS;
 import com.ubn.devops.ubnncsintegration.ncsschema.TransactionResponse;
 import com.ubn.devops.ubnncsintegration.service.PaymentDetailsService;
@@ -31,7 +33,9 @@ public class FolderWatch {
 
 	@Autowired
 	private PaymentDetailsService paymentDetailsService;
-	
+
+	// @Autowired
+
 	@Autowired
 	private Utils utils;
 
@@ -41,33 +45,34 @@ public class FolderWatch {
 			WatchKey watchKey;
 			while ((watchKey = watchService.take()) != null) {
 				for (WatchEvent<?> event : watchKey.pollEvents()) {
-					Path dir = (Path)watchKey.watchable();
-					filename =  dir.resolve(event.context().toString()).toString();
+					Path dir = (Path) watchKey.watchable();
+					filename = dir.resolve(event.context().toString()).toString();
 					if (isFileExists(filename)) {
 						FileReaderResponse readerResponse = CustomMarshaller.readFile(filename);
-						if(readerResponse!=null) {
-							switch(readerResponse.getClassName()) {
+						if (readerResponse != null) {
+							switch (readerResponse.getClassName()) {
 							case FileReaderResponse.EASSESSMENTNOTICE:
 								// Persist eAssessmentNotice to database
-								EAssessmentNotice eAssessmentNotice = (EAssessmentNotice) readerResponse.getObject(); 
+								EAssessmentNotice eAssessmentNotice = (EAssessmentNotice) readerResponse.getObject();
 								eAssessmentNotice.setAssessmentFilename(event.context().toString());
-								PaymentDetails paymentDetails = paymentDetailsService.savePaymentDetails(eAssessmentNotice);
+								PaymentDetails paymentDetails = paymentDetailsService
+										.savePaymentDetails(eAssessmentNotice);
 								if (paymentDetails != null) {
-									//paymentDetailsService.acknowledgePaymentDetails(paymentDetails.getFormMNumber());
+									// paymentDetailsService.acknowledgePaymentDetails(paymentDetails.getFormMNumber());
 									utils.moveFile(new File(filename), config.getAssessmentnotice());
 								}
 								break;
 							case FileReaderResponse.TRANSACTIONRESPONSE:
-								TransactionResponse transactionResponse = (TransactionResponse)readerResponse.getObject();
-								paymentDetailsService.updatePaymentWithNCSResponse(transactionResponse);
-								if(transactionResponse.getTransactionStatus().equals(TRS.OK)) {
+								TransactionResponse transactionResponse = (TransactionResponse) readerResponse
+										.getObject();
+								int isUpdated = paymentDetailsService.updatePaymentWithNCSResponse(transactionResponse);
+								if(isUpdated==1) {
+									paymentDetailsService.performSweeporRetract(transactionResponse);
 									utils.moveFile(new File(filename), config.getTransactionresponse());
-								}else {
-									//perform sweeping functions
 								}
 								break;
 							}
-							
+
 						}
 					}
 				}

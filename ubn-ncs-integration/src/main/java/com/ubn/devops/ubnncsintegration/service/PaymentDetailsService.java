@@ -10,7 +10,8 @@ public interface PaymentDetailsService {
 	
 	public PaymentDetails savePaymentDetails(EAssessmentNotice assessmentNotice);
 	
-	public ApiResponse fetchPaymentDetails(PaymentProcessRequest request);
+	public ApiResponse fetchPaymentDetails(int sadYear,String customsCode,String sadAssessmentSerial
+			,String sadAssessmentNumber,String version);
 	
 	public void acknowledgePaymentDetails(String formMNumber);
 	
@@ -20,6 +21,7 @@ public interface PaymentDetailsService {
 	
 	public int updatePaymentWithNCSResponse(TransactionResponse response);
 
+	public String performSweeporRetract(TransactionResponse response);
 	/*
 	 
 	 * public void queryTransaction(EPaymentQuery query);

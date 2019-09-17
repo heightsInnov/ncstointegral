@@ -62,8 +62,6 @@ public class Utils {
 								TransactionResponse response = (TransactionResponse) frResponse.getObject();
 								if (response != null) {
 									if (response.getTransactionStatus().equals(TRS.ERROR)) {
-										// update payment response
-										// paymentDetailsService.updatePaymentWithNCSResponse(response,formMNumber);
 										moveFile(new File(paymentResponsePath), config.getPaymentresponse());
 
 									}

@@ -148,7 +148,8 @@ public class PaymentDetailsRepository {
 	}
 
 	@SuppressWarnings("unchecked")
-	public PaymentDetails findPaymentDetails(PaymentProcessRequest request) {
+	public PaymentDetails findPaymentDetails(int sadYear,String customsCode,String sadAssessmentSerial
+					,String sadAssessmentNumber,String version) {
 
 		PaymentDetails model = null;
 		try {
@@ -161,16 +162,16 @@ public class PaymentDetailsRepository {
 					new SqlParameter("P_SADASSESSMENTSERIAL", Types.VARCHAR),
 					new SqlParameter("P_SADASSESSMENTNUMBER", Types.VARCHAR),
 					new SqlParameter("P_VERSION", Types.VARCHAR),
-					new SqlOutParameter("p_responsemsg", Types.VARCHAR),
-					new SqlOutParameter("p_responsecode", Types.VARCHAR),
-					new SqlOutParameter("p_data", Types.REF_CURSOR));
-			call.addDeclaredRowMapper("p_data", new CustomMapper());
+					new SqlOutParameter("P_RESPONSEMSG", Types.VARCHAR),
+					new SqlOutParameter("P_RESPONSECODE", Types.VARCHAR),
+					new SqlOutParameter("P_DATA", Types.REF_CURSOR));
+			call.addDeclaredRowMapper("P_DATA", new CustomMapper());
 			Map<String, Object> paramSource = new HashMap<>();
-			paramSource.put("P_SADYEAR", request.getSadYear());
-			paramSource.put("P_CUSTOMSCODE", request.getCustomsCode());
-			paramSource.put("P_SADASSESSMENTSERIAL", request.getSadAssessmentSerial());
-			paramSource.put("P_SADASSESSMENTNUMBER", request.getSadAssessmentNumber());
-			paramSource.put("P_VERSION", request.getVersion());
+			paramSource.put("P_SADYEAR", sadYear);
+			paramSource.put("P_CUSTOMSCODE", customsCode);
+			paramSource.put("P_SADASSESSMENTSERIAL", sadAssessmentSerial);
+			paramSource.put("P_SADASSESSMENTNUMBER", sadAssessmentNumber);
+			paramSource.put("P_VERSION", version);
 			Map<String, Object> result = call.execute(paramSource);
 			if (!result.isEmpty()) {
 				String rspCode = result.get("p_responsecode").toString();
@@ -181,7 +182,7 @@ public class PaymentDetailsRepository {
 							model = payments.get(0);
 							log.info("Successfully found payment details");
 						} else {
-							log.warn("payment details with unique code: " + request.toString() + " does  not exist");
+							log.warn("payment details does  not exist");
 						}
 					}
 				} else if (rspCode.equals("99")) {
@@ -189,9 +190,7 @@ public class PaymentDetailsRepository {
 				}
 			}
 		} catch (Exception ex) {
-			log.error("Error occured while trying to fetch payment details with unique code: " + request.toString()
-
-					+ " because: " + ex.getMessage(), ex);
+			log.error("Error occured while trying to fetch payment details with assessmentNumber:"+sadAssessmentNumber+" because: " + ex.getMessage(), ex);
 		}
 		return model;
 	}

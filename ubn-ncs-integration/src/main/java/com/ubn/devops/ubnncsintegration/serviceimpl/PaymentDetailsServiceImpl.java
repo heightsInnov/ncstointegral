@@ -21,6 +21,7 @@ import com.ubn.devops.ubnncsintegration.request.PaymentProcessRequest;
 import com.ubn.devops.ubnncsintegration.response.ApiResponse;
 import com.ubn.devops.ubnncsintegration.response.PaymentDetailsResponse;
 import com.ubn.devops.ubnncsintegration.service.PaymentDetailsService;
+import com.ubn.devops.ubnncsintegration.sweep.SweepRequestProcessor;
 import com.ubn.devops.ubnncsintegration.utility.CustomMarshaller;
 import com.ubn.devops.ubnncsintegration.utility.FileReaderResponse;
 import com.ubn.devops.ubnncsintegration.utility.RestService;
@@ -39,6 +40,9 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
 	
 	@Autowired
 	private FilePathsConfig pathConfig; 
+	
+	@Autowired
+	private SweepRequestProcessor processor;
 
 	@Override
 	public PaymentDetails savePaymentDetails(EAssessmentNotice assessmentNotice) {
@@ -56,12 +60,13 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
 
 	
 	@Override
-	public ApiResponse fetchPaymentDetails(PaymentProcessRequest request) {
+	public ApiResponse fetchPaymentDetails(int sadYear,String customsCode,String sadAssessmentSerial
+			,String sadAssessmentNumber,String version) {
 		ApiResponse response = new ApiResponse(ApiResponse.SERVER_ERROR,
 				"Unable to process request right now. Please try again");
-		log.info("======Trying to fetch payment details using request: " + request.toString() + "======");
+		log.info("======Trying to fetch payment details using assessmentNumber: " +sadAssessmentNumber + " and customsCode:"+customsCode+" and sadyear:"+sadYear+"======");
 		try {
-			PaymentDetails model = paymentRepo.findPaymentDetails(request);
+			PaymentDetails model = paymentRepo.findPaymentDetails(sadYear, customsCode, sadAssessmentSerial, sadAssessmentNumber, version);
 			if (model != null) {
 				if (!model.isPaid()) {
 					response.setCode(ApiResponse.SUCCESSFUL);
@@ -82,7 +87,7 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
 			}
 
 		} catch (Exception ex) {
-			log.error("Error occured while trying to fetch payment details with request: "+request.toString()+" because: " + ex.getMessage(), ex);
+			log.error("Error occured while trying to fetch payment details with assessmentNumber: " +sadAssessmentNumber + " and customsCode:"+customsCode+" and sadyear:"+sadYear+" because: " + ex.getMessage(), ex);
 		}
 		return response;
 
@@ -100,7 +105,7 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
 		log.info("processing payment request with details: " + request.toString());
 		ApiResponse response = new ApiResponse(ApiResponse.SERVER_ERROR, "Unable to process request. Please try again");
 		try {
-			PaymentDetails details = paymentRepo.findPaymentDetails(request);
+			PaymentDetails details = paymentRepo.findPaymentDetails(request.getSadYear(),request.getCustomsCode(),request.getSadAssessmentSerial(),request.getSadAssessmentNumber(),request.getVersion());
 			if (details != null) {
 				if (details.isPaid()) {
 					response.setCode(ApiResponse.ALREADY_PAID);
@@ -178,7 +183,25 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
 
 	@Override
 	public int updatePaymentWithNCSResponse(TransactionResponse response) {	
+		
 		return paymentRepo.updatePaymentWithNCSResponse(response);
+	}
+
+
+
+	@Override
+	public String performSweeporRetract(TransactionResponse response) {
+		String rsp = null;
+		try {
+			SadAsmt sadAsmt = response.getSadAsmt();
+			PaymentDetails details = paymentRepo.findPaymentDetails(sadAsmt.getSadYear(),response.getCustomsCode(), sadAsmt.getSadAssessmentSerial(), sadAsmt.getSadAssessmentNumber(), response.getVersion());
+			if(details!=null) {
+				rsp = processor.DoSweepPostingProcess(details.getFcubsPostingRef(), response.getTransactionStatus().value());
+			}
+		}catch(Exception ex) {
+			log.error("Error occured while performing sweep or retract function for response:"+response.toString()+" because: "+ex.getMessage(),ex);
+		}
+		return rsp;
 	}
 
 }
