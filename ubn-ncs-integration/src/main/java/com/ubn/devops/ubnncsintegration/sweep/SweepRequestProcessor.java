@@ -54,8 +54,8 @@ public class SweepRequestProcessor {
 
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-	public String DoSweepPostingProcess(String fcubs_reference, int transcode) {
-		String task_code = transcode == 1 ? "S" : transcode == 0 ? "R" : "R";
+	public String DoSweepPostingProcess(String fcubs_reference, String status_code) {
+		String task_code = status_code.toUpperCase().equals("OK") ? "S" : status_code.toUpperCase().equals("ERROR") ? "R" : "R";
 		List<SweepPersistAgent> persistData = new ArrayList<>();
 		SweepReverseResponse response = new SweepReverseResponse();
 		String resp = "01";
@@ -248,9 +248,14 @@ public class SweepRequestProcessor {
 		return resp;
 	}
 
-	private void SaveSweepTransaction(List<SweepPersistAgent> sweepData) {
-		for (SweepPersistAgent sweepAgent : sweepData) {
-			paymentDetailsRepository.persistSweepInfo(sweepAgent);
+	private String SaveSweepTransaction(List<SweepPersistAgent> sweepData) {
+		try {
+			for (SweepPersistAgent sweepAgent : sweepData) {
+				paymentDetailsRepository.persistSweepInfo(sweepAgent);
+			}
+			return "00";
+		} catch (Exception e) {
+			return "99";
 		}
 	}
 
