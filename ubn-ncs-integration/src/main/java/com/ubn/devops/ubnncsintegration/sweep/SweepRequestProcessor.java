@@ -55,7 +55,8 @@ public class SweepRequestProcessor {
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
 	public String DoSweepPostingProcess(String fcubs_reference, String status_code) {
-		String task_code = status_code.toUpperCase().equals("OK") ? "S" : status_code.toUpperCase().equals("ERROR") ? "R" : "R";
+		String task_code = status_code.toUpperCase().equals("OK") ? "S"
+				: status_code.toUpperCase().equals("ERROR") ? "R" : "R";
 		List<SweepPersistAgent> persistData = new ArrayList<>();
 		SweepReverseResponse response = new SweepReverseResponse();
 		String resp = "01";
@@ -239,7 +240,8 @@ public class SweepRequestProcessor {
 				saveSweep.setMnemonic("");
 			}
 			SaveSweepTransaction(persistData);
-
+			resp = paymentDetailsRepository.UpdatePayments(requests.get(0).getExternal_ref_no() + requests.get(0).getTask_code(), task_code);
+			
 		} catch (Exception e) {
 			logger.info(e.getMessage());
 			e.printStackTrace();
@@ -248,14 +250,22 @@ public class SweepRequestProcessor {
 	}
 
 	private String SaveSweepTransaction(List<SweepPersistAgent> sweepData) {
+		boolean flag = true;
+		String[] respArray = new String[sweepData.size()];
+		int i = 0;
 		try {
 			for (SweepPersistAgent sweepAgent : sweepData) {
-				paymentDetailsRepository.persistSweepInfo(sweepAgent);
+				respArray[i] = paymentDetailsRepository.persistSweepInfo(sweepAgent);
+				i++;
 			}
-			return "00";
+			for(int j = 0; j<respArray.length; j++) {
+				if(!respArray[j].equals("00"))
+					flag = false;
+			}
 		} catch (Exception e) {
-			return "99";
+			flag = false;
 		}
+		return !flag?"01":"00";
 	}
 
 	public SweepReverseResponse AccountEnquiryCheck(String accountNo) throws IOException {
@@ -264,9 +274,4 @@ public class SweepRequestProcessor {
 		SweepReverseResponse resp = restService.PostorSweep(accteqry_url + tokenize.getToken(token_url), jsonObject);
 		return resp;
 	}
-
-//	public static void main(String[] args) {
-//		SweepRequestProcessor r = new SweepRequestProcessor();
-//		r.DoSweepPostingProcess("20190723133733", "R");
-//	}
 }

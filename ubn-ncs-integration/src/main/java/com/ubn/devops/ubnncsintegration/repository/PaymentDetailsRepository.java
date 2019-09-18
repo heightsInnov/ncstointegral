@@ -20,6 +20,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 import com.ubn.devops.ubnncsintegration.mapper.PaymentDetailsMapper;
 import com.ubn.devops.ubnncsintegration.model.PaymentDetails;
@@ -42,6 +43,9 @@ public class PaymentDetailsRepository {
 	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
 	private final String PACKAGENAME = PropsReader.getValue("db.packagename");
+
+	@Autowired
+	private Utils utils;
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
@@ -366,7 +370,6 @@ public class PaymentDetailsRepository {
 		return isSaved;
 	}
 
-	
 
 	public List<SweepPaymentDetails> findFCUBSDetails(String reference, String code) {
 		List<SweepPaymentDetails> models = new ArrayList<>();
@@ -420,7 +423,8 @@ public class PaymentDetailsRepository {
 		return models;
 	}
 
-	public void persistSweepInfo(SweepPersistAgent sweepAgent) {
+	public String persistSweepInfo(SweepPersistAgent sweepAgent) {
+		String responsecode = "99";
 		try {
 			SimpleJdbcCall call = new SimpleJdbcCall(jdbcTemplate);
 			call.setSchemaName(SCHEMANAME);
@@ -448,7 +452,7 @@ public class PaymentDetailsRepository {
 					.addValue("NCSSTATUS", sweepAgent.getNcstransstatus());
 			Map<String, Object> respValues = call.execute(paramSource);
 			if (!respValues.isEmpty()) {
-				String responsecode = respValues.get("return").toString();
+				responsecode = respValues.get("return").toString();
 				if (responsecode.equals("00")) {
 					log.info("Successfully set the payment details with declarant code: "
 							+ sweepAgent.getNcscustomreference() + " as acknowledge");
@@ -462,5 +466,32 @@ public class PaymentDetailsRepository {
 			log.error("error occured while trying to set payment details as acknowledge becuase: " + ex.getMessage(),
 					ex);
 		}
+		return responsecode;
+	}
+	
+	public String UpdatePayments(String paymentref, String vresp) {
+		String responsecode = "01";
+		try {
+			SimpleJdbcCall call = new SimpleJdbcCall(jdbcTemplate);
+			call.setSchemaName(SCHEMANAME);
+			call.setCatalogName(PACKAGENAME);
+			call.withFunctionName("UPDATE_PAYMENTS");
+			SqlParameterSource paramSource = new MapSqlParameterSource()
+					.addValue("PAYMENT_REFERENCE", paymentref)
+					.addValue("CODE", vresp);
+			Map<String, Object> respValues = call.execute(paramSource);
+			if (!respValues.isEmpty()) {
+				responsecode = respValues.get("return").toString();
+				if (responsecode.equals("00")) {
+					log.info("Successfully updated payment tables!");
+				} else if (responsecode.equals("01")) {
+					log.warn("db error occured with message: " + responsecode);
+				}
+			}
+		} catch (Exception ex) {
+			log.error("error occured while trying to set payment details as acknowledge becuase: " + ex.getMessage(),
+					ex);
+		}
+		return responsecode;
 	}
 }
