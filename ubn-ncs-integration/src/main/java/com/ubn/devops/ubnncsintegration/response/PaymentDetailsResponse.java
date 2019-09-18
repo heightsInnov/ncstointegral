@@ -8,6 +8,10 @@ public class PaymentDetailsResponse {
 	private BigDecimal amount;
 	private String declarantCode;
 	private String declarantName;
+	private int sadYear;
+	private String sadAssessmentNumber;
+	private String sadAssessmentSerial;
+	private String customsCode;
 
 	public PaymentDetailsResponse() {
 
@@ -67,6 +71,62 @@ public class PaymentDetailsResponse {
 	 */
 	public void setDeclarantName(String declarantName) {
 		this.declarantName = declarantName;
+	}
+
+	/**
+	 * @return the sadYear
+	 */
+	public int getSadYear() {
+		return sadYear;
+	}
+
+	/**
+	 * @param sadYear the sadYear to set
+	 */
+	public void setSadYear(int sadYear) {
+		this.sadYear = sadYear;
+	}
+
+	/**
+	 * @return the sadAssessmentNumber
+	 */
+	public String getSadAssessmentNumber() {
+		return sadAssessmentNumber;
+	}
+
+	/**
+	 * @param sadAssessmentNumber the sadAssessmentNumber to set
+	 */
+	public void setSadAssessmentNumber(String sadAssessmentNumber) {
+		this.sadAssessmentNumber = sadAssessmentNumber;
+	}
+
+	/**
+	 * @return the sadAssessmentSerial
+	 */
+	public String getSadAssessmentSerial() {
+		return sadAssessmentSerial;
+	}
+
+	/**
+	 * @param sadAssessmentSerial the sadAssessmentSerial to set
+	 */
+	public void setSadAssessmentSerial(String sadAssessmentSerial) {
+		this.sadAssessmentSerial = sadAssessmentSerial;
+	}
+
+	/**
+	 * @return the customsCode
+	 */
+	public String getCustomsCode() {
+		return customsCode;
+	}
+
+	/**
+	 * @param customsCode the customsCode to set
+	 */
+	public void setCustomsCode(String customsCode) {
+		this.customsCode = customsCode;
 	}
 
 }

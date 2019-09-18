@@ -6,7 +6,6 @@ import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +14,6 @@ import org.springframework.stereotype.Component;
 import com.ubn.devops.ubnncsintegration.config.FilePathsConfig;
 import com.ubn.devops.ubnncsintegration.model.PaymentDetails;
 import com.ubn.devops.ubnncsintegration.ncsschema.EAssessmentNotice;
-import com.ubn.devops.ubnncsintegration.ncsschema.SadAsmt;
-import com.ubn.devops.ubnncsintegration.ncsschema.TRS;
 import com.ubn.devops.ubnncsintegration.ncsschema.TransactionResponse;
 import com.ubn.devops.ubnncsintegration.service.PaymentDetailsService;
 
@@ -34,10 +31,7 @@ public class FolderWatch {
 	@Autowired
 	private PaymentDetailsService paymentDetailsService;
 
-	// @Autowired
-
-	@Autowired
-	private Utils utils;
+	
 
 	public void watchFolder() {
 		String filename = null;
@@ -59,7 +53,7 @@ public class FolderWatch {
 										.savePaymentDetails(eAssessmentNotice);
 								if (paymentDetails != null) {
 									// paymentDetailsService.acknowledgePaymentDetails(paymentDetails.getFormMNumber());
-									utils.moveFile(new File(filename), config.getAssessmentnotice());
+									Utils.moveFile(new File(filename), config.getAssessmentnotice());
 								}
 								break;
 							case FileReaderResponse.TRANSACTIONRESPONSE:
@@ -68,7 +62,7 @@ public class FolderWatch {
 								int isUpdated = paymentDetailsService.updatePaymentWithNCSResponse(transactionResponse);
 								if(isUpdated==1) {
 									paymentDetailsService.performSweeporRetract(transactionResponse);
-									utils.moveFile(new File(filename), config.getTransactionresponse());
+									Utils.moveFile(new File(filename), config.getTransactionresponse());
 								}
 								break;
 							}

@@ -26,7 +26,7 @@ public class FilePathsConfig {
 	private String username="ncs.path.username";
 	private String password="ncs.path.password";
 	private String clientid="ncs.path.clientid";
-	private String cliensecret="ncs.path.cliensecret";
+	private String clientsecret="ncs.path.clientsecret";
 	
 	private String refvalidationurl="ncs.path.refvalidationurl";
 	
@@ -140,8 +140,8 @@ public class FilePathsConfig {
 	/**
 	 * @return the cliensecret
 	 */
-	public String getCliensecret() {
-		return encryptor.decryptStringEncoded(PropsReader.getValue(cliensecret));
+	public String getClientsecret() {
+		return encryptor.decryptStringEncoded(PropsReader.getValue(clientsecret));
 	}
 
 	public String getRefvalidationurl() {

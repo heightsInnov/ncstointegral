@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlTransient;
-
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -18,8 +16,11 @@ public class PaymentDetails {
 
 	private EAssessmentNotice assessmentNotice;
 
-	@XmlTransient
-	@JsonIgnore(false)
+	public static final int PAYED = 1;
+
+	public static final int PENDING = 0;
+
+	@JsonIgnore
 	private Long id;
 	private int sadYear;
 	private String customsCode;
@@ -43,18 +44,15 @@ public class PaymentDetails {
 	private String paymentChannelCode;
 	private String fcubsPostingRef;
 	private String isSweepedToTsa;
-	private String sweepFcubsPostRef;
-	private Date sweepDate;
-
 	private String customerEmail;
-	private String isPaymentReversed;
-	private String reversalFcubsRef;
-	private Date reversalDate;
 	private Date postingDate;
 
-	@XmlTransient
-	@JsonIgnore(false)
-	private boolean isPaid = false;
+	private String isSweptOrReversed;
+	private String sweeporReversedRef;
+	private Date sweepOrReversedDate;
+
+	@JsonIgnore
+	private int paymentStatus = 0;
 	private List<TaxEntity> taxes = new ArrayList<>();
 	private BigDecimal totalAmountToBePaid;
 	@JsonFormat(pattern = "dd-MM-yyyy hh:mm:ss a")
@@ -86,6 +84,7 @@ public class PaymentDetails {
 			this.bankCode = assessmentNotice.getBankCode();
 			this.formMNumber = assessmentNotice.getFormMNumber();
 			this.version = assessmentNotice.getVersion();
+			this.assessmentFilename=assessmentNotice.getAssessmentFilename();
 			for (Tax t : assessmentNotice.getTaxes().getTax()) {
 				TaxEntity taxEntity = new TaxEntity();
 				taxEntity.setTaxAmount(t.getTaxAmount());
@@ -380,34 +379,6 @@ public class PaymentDetails {
 	}
 
 	/**
-	 * @return the sweepFcubsPostRef
-	 */
-	public String getSweepFcubsPostRef() {
-		return sweepFcubsPostRef;
-	}
-
-	/**
-	 * @param sweepFcubsPostRef the sweepFcubsPostRef to set
-	 */
-	public void setSweepFcubsPostRef(String sweepFcubsPostRef) {
-		this.sweepFcubsPostRef = sweepFcubsPostRef;
-	}
-
-	/**
-	 * @return the sweepDate
-	 */
-	public Date getSweepDate() {
-		return sweepDate;
-	}
-
-	/**
-	 * @param sweepDate the sweepDate to set
-	 */
-	public void setSweepDate(Date sweepDate) {
-		this.sweepDate = sweepDate;
-	}
-
-	/**
 	 * @return the customerEmail
 	 */
 	public String getCustomerEmail() {
@@ -422,48 +393,6 @@ public class PaymentDetails {
 	}
 
 	/**
-	 * @return the isPaymentReversed
-	 */
-	public String getIsPaymentReversed() {
-		return isPaymentReversed;
-	}
-
-	/**
-	 * @param isPaymentReversed the isPaymentReversed to set
-	 */
-	public void setIsPaymentReversed(String isPaymentReversed) {
-		this.isPaymentReversed = isPaymentReversed;
-	}
-
-	/**
-	 * @return the reversalFcubsRef
-	 */
-	public String getReversalFcubsRef() {
-		return reversalFcubsRef;
-	}
-
-	/**
-	 * @param reversalFcubsRef the reversalFcubsRef to set
-	 */
-	public void setReversalFcubsRef(String reversalFcubsRef) {
-		this.reversalFcubsRef = reversalFcubsRef;
-	}
-
-	/**
-	 * @return the reversalDate
-	 */
-	public Date getReversalDate() {
-		return reversalDate;
-	}
-
-	/**
-	 * @param reversalDate the reversalDate to set
-	 */
-	public void setReversalDate(Date reversalDate) {
-		this.reversalDate = reversalDate;
-	}
-
-	/**
 	 * @return the postingDate
 	 */
 	public Date getPostingDate() {
@@ -475,20 +404,6 @@ public class PaymentDetails {
 	 */
 	public void setPostingDate(Date postingDate) {
 		this.postingDate = postingDate;
-	}
-
-	/**
-	 * @return the isPaid
-	 */
-	public boolean isPaid() {
-		return isPaid;
-	}
-
-	/**
-	 * @param isPaid the isPaid to set
-	 */
-	public void setPaid(boolean isPaid) {
-		this.isPaid = isPaid;
 	}
 
 	/**
@@ -575,6 +490,62 @@ public class PaymentDetails {
 	 */
 	public void setAssessmentFilename(String assessmentFilename) {
 		this.assessmentFilename = assessmentFilename;
+	}
+
+	/**
+	 * @return the paymentStatus
+	 */
+	public int getPaymentStatus() {
+		return paymentStatus;
+	}
+
+	/**
+	 * @param paymentStatus the paymentStatus to set
+	 */
+	public void setPaymentStatus(int paymentStatus) {
+		this.paymentStatus = paymentStatus;
+	}
+
+	/**
+	 * @return the isSweptOrReversed
+	 */
+	public String getIsSweptOrReversed() {
+		return isSweptOrReversed;
+	}
+
+	/**
+	 * @param isSweptOrReversed the isSweptOrReversed to set
+	 */
+	public void setIsSweptOrReversed(String isSweptOrReversed) {
+		this.isSweptOrReversed = isSweptOrReversed;
+	}
+
+	/**
+	 * @return the sweeporReversedRef
+	 */
+	public String getSweeporReversedRef() {
+		return sweeporReversedRef;
+	}
+
+	/**
+	 * @param sweeporReversedRef the sweeporReversedRef to set
+	 */
+	public void setSweeporReversedRef(String sweeporReversedRef) {
+		this.sweeporReversedRef = sweeporReversedRef;
+	}
+
+	/**
+	 * @return the sweepOrReversedDate
+	 */
+	public Date getSweepOrReversedDate() {
+		return sweepOrReversedDate;
+	}
+
+	/**
+	 * @param sweepOrReversedDate the sweepOrReversedDate to set
+	 */
+	public void setSweepOrReversedDate(Date sweepOrReversedDate) {
+		this.sweepOrReversedDate = sweepOrReversedDate;
 	}
 
 }

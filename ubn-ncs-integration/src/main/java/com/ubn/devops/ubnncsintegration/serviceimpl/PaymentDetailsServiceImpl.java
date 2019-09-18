@@ -68,7 +68,7 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
 		try {
 			PaymentDetails model = paymentRepo.findPaymentDetails(sadYear, customsCode, sadAssessmentSerial, sadAssessmentNumber, version);
 			if (model != null) {
-				if (!model.isPaid()) {
+				if (model.getPaymentStatus()==0) {
 					response.setCode(ApiResponse.SUCCESSFUL);
 					response.setMessage("Successful");
 					PaymentDetailsResponse detailsResponse = new PaymentDetailsResponse();
@@ -76,10 +76,14 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
 					detailsResponse.setCompanyName(model.getCompanyName());
 					detailsResponse.setDeclarantCode(model.getDeclarantCode());
 					detailsResponse.setDeclarantName(model.getDeclarantName());
+					detailsResponse.setCustomsCode(model.getCustomsCode());
+					detailsResponse.setSadYear(model.getSadYear());
+					detailsResponse.setSadAssessmentNumber(model.getSadAssessmentNumber());
+					detailsResponse.setSadAssessmentSerial(model.getSadAssessmentSerial());
 					response.setBody(detailsResponse);
 				} else {
 					response.setCode(ApiResponse.ALREADY_PAID);
-					response.setMessage("This Payment has already been made.");
+					response.setMessage("This Payment has already been made or in progress.");
 				}
 			} else {
 				response.setCode(ApiResponse.NOT_FOUND);
@@ -107,7 +111,7 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
 		try {
 			PaymentDetails details = paymentRepo.findPaymentDetails(request.getSadYear(),request.getCustomsCode(),request.getSadAssessmentSerial(),request.getSadAssessmentNumber(),request.getVersion());
 			if (details != null) {
-				if (details.isPaid()) {
+				if (details.getPaymentStatus()!=PaymentDetails.PENDING) {
 					response.setCode(ApiResponse.ALREADY_PAID);
 					response.setMessage("This payment has already been made");
 				} else {
@@ -138,6 +142,7 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
 								sadAsmt.setSadYear(details.getSadYear());
 								confirmation.setSadAsmt(sadAsmt);
 								confirmation.setTotalAmountToBePaid(details.getTotalAmountToBePaid());
+								confirmation.setPaymentDate(details.getPostingDate());
 								List<String> folders = Arrays.asList(pathConfig.getInfolder(),pathConfig.getPaymentrequest());
 								CustomMarshaller.marshall(confirmation, folders,FileReaderResponse.EPAYMENTCONFIRMATION);
 								response.setCode(ApiResponse.SUCCESSFUL);
@@ -146,7 +151,7 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
 
 						} else if (status == 99 || status == 1) {
 			
-							log.error("dbError occured because: ".toString());
+							log.error("Invalid reference");
 							response.setCode(ApiResponse.INVALID_REFERENCE);
 							response.setMessage("Reference invalid");
 						}
@@ -196,6 +201,7 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
 			SadAsmt sadAsmt = response.getSadAsmt();
 			PaymentDetails details = paymentRepo.findPaymentDetails(sadAsmt.getSadYear(),response.getCustomsCode(), sadAsmt.getSadAssessmentSerial(), sadAsmt.getSadAssessmentNumber(), response.getVersion());
 			if(details!=null) {
+				if(details.getPaymentStatus()==PaymentDetails.PAYED)
 				rsp = processor.DoSweepPostingProcess(details.getFcubsPostingRef(), response.getTransactionStatus().value());
 			}
 		}catch(Exception ex) {

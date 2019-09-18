@@ -179,17 +179,16 @@ public class SweepRequestProcessor {
 							item.put("valueDate", sdf.format(new Date()));
 							if (request.getDrcr_ind().equals("D")) {
 								item.put("crDrFlag", "C");
-								saveSweep.setAcccountnumber(request.getAc_no());
 								saveSweep.setDebitcreditindicator("C");
 							} else if (request.getDrcr_ind().equals("C")) {
 								item.put("crDrFlag", "D");
-								saveSweep.setAcccountnumber(request.getAc_no());
 								saveSweep.setDebitcreditindicator("D");
 							}
 							item.put("feeOrCharges", false);
 
 							batchItems.put(item);
-
+							
+							saveSweep.setAcccountnumber(request.getAc_no());
 							saveSweep.setBranchcode(account.getAccountBranchCode());
 							saveSweep.setAmount(request.getLcy_amount());
 							saveSweep.setGlcasaindicator(request.getAc_no().length() == 10 ? "CASA" : "GL");

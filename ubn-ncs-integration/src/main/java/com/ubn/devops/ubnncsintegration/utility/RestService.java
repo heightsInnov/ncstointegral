@@ -31,7 +31,7 @@ public class RestService {
 		String accessToken = null;
 		try {
 			String url = config.getTokenurl() + "username=" + config.getUsername() + "&password=" + config.getPassword()
-					+ "&client_id=" + config.getClientid() + "&client_secret=" + config.getCliensecret();
+					+ "&client_id=" + config.getClientid() + "&client_secret=" + config.getClientsecret();
 			RestResponse response = service.makeRequest(url, null, HttpMethods.POST, getHeaders());
 			if (response != null && response.getCode() == 200) {
 				JSONObject jsonObject = new JSONObject(response.getData());

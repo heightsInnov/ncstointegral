@@ -21,7 +21,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Repository;
 
-import com.ubn.devops.ubnncsintegration.mapper.CustomMapper;
+import com.ubn.devops.ubnncsintegration.mapper.PaymentDetailsMapper;
 import com.ubn.devops.ubnncsintegration.model.PaymentDetails;
 import com.ubn.devops.ubnncsintegration.model.SweepPaymentDetails;
 import com.ubn.devops.ubnncsintegration.model.SweepPersistAgent;
@@ -44,15 +44,12 @@ public class PaymentDetailsRepository {
 	private final String PACKAGENAME = PropsReader.getValue("db.packagename");
 
 	@Autowired
-	private Utils utils;
-
-	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
 	public PaymentDetails downloadPaymentDetails(EAssessmentNotice assessmentNotice) {
 		PaymentDetails paymentDetails = null;
 		try {
-			PaymentDetails payment = utils.convertReturnedAssessmentToEassesssmentEntity(assessmentNotice);
+			PaymentDetails payment = Utils.convertReturnedAssessmentToEassesssmentEntity(assessmentNotice);
 			if (payment != null) {
 				SimpleJdbcCall call = new SimpleJdbcCall(jdbcTemplate);
 				call.setSchemaName(SCHEMANAME);
@@ -165,7 +162,7 @@ public class PaymentDetailsRepository {
 					new SqlOutParameter("P_RESPONSEMSG", Types.VARCHAR),
 					new SqlOutParameter("P_RESPONSECODE", Types.VARCHAR),
 					new SqlOutParameter("P_DATA", Types.REF_CURSOR));
-			call.addDeclaredRowMapper("P_DATA", new CustomMapper());
+			call.addDeclaredRowMapper("P_DATA", new PaymentDetailsMapper());
 			Map<String, Object> paramSource = new HashMap<>();
 			paramSource.put("P_SADYEAR", sadYear);
 			paramSource.put("P_CUSTOMSCODE", customsCode);
@@ -174,10 +171,10 @@ public class PaymentDetailsRepository {
 			paramSource.put("P_VERSION", version);
 			Map<String, Object> result = call.execute(paramSource);
 			if (!result.isEmpty()) {
-				String rspCode = result.get("p_responsecode").toString();
+				String rspCode = result.get("P_RESPONSECODE").toString();
 				if (rspCode.equals("00")) {
-					if (result.get("p_data") != null) {
-						List<PaymentDetails> payments = (List<PaymentDetails>) result.get("p_data");
+					if (result.get("P_DATA") != null) {
+						List<PaymentDetails> payments = (List<PaymentDetails>) result.get("P_DATA");
 						if (!payments.isEmpty()) {
 							model = payments.get(0);
 							log.info("Successfully found payment details");
@@ -186,7 +183,7 @@ public class PaymentDetailsRepository {
 						}
 					}
 				} else if (rspCode.equals("99")) {
-					log.error("db error occured with message: " + result.get("p_responsemsg"));
+					log.error("db error occured with message: " + result.get("P_RESPONSEMSG"));
 				}
 			}
 		} catch (Exception ex) {
@@ -304,6 +301,7 @@ public class PaymentDetailsRepository {
 					new SqlParameter("P_VERSION", Types.VARCHAR),
 					new SqlParameter("P_NCS_RESPCODE", Types.VARCHAR),
 					new SqlParameter("P_NCS_RESPMSG", Types.VARCHAR),
+					new SqlParameter("P_NCS_ERROR_CODE",Types.VARCHAR),
 					new SqlOutParameter("P_RESPONSECODE", Types.VARCHAR),
 					new SqlOutParameter("P_RESPONSEMSG", Types.VARCHAR)
 
@@ -314,8 +312,10 @@ public class PaymentDetailsRepository {
 			paramSource.put("P_SADASSESSMENTSERIAL", response.getSadAsmt().getSadAssessmentSerial());
 			paramSource.put("P_SADASSESSMENTNUMBER", response.getSadAsmt().getSadAssessmentNumber());
 			paramSource.put("P_VERSION", response.getVersion());
+			paramSource.put("P_NCS_ERROR_CODE", response.getInfo().getMessage().getErrorCode());
 			paramSource.put("P_NCS_RESPCODE", response.getTransactionStatus().value());
-			paramSource.put("P_NCS_RESPMSG", response.getInfo().getMessage());
+			paramSource.put("P_NCS_RESPMSG", response.getInfo().getMessage().getMessage());
+			
 			Map<String, Object> respValues = call.execute(paramSource);
 			if (!respValues.isEmpty()) {
 				String code = respValues.get("P_RESPONSECODE").toString();

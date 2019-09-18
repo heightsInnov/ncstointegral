@@ -1,88 +1,19 @@
 package com.ubn.devops.ubnncsintegration.utility;
 
 import java.io.File;
-import java.nio.file.WatchEvent;
-import java.nio.file.WatchKey;
-import java.nio.file.WatchService;
 
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-import com.ubn.devops.ubnncsintegration.config.FilePathsConfig;
 import com.ubn.devops.ubnncsintegration.model.PaymentDetails;
 import com.ubn.devops.ubnncsintegration.ncsschema.EAssessmentNotice;
-import com.ubn.devops.ubnncsintegration.ncsschema.TRS;
-import com.ubn.devops.ubnncsintegration.ncsschema.TransactionResponse;
-import com.ubn.devops.ubnncsintegration.service.PaymentDetailsService;
 
-@Component
 public class Utils {
 
-	private Logger log = LoggerFactory.getLogger(this.getClass());
+	private static  Logger log = LoggerFactory.getLogger(Utils.class);
 
-	@Autowired
-	private FilePathsConfig config;
-
-	@Autowired
-	private WatchService watchService;
-
-	@Autowired
-	private PaymentDetailsService paymentDetailsService;
-
-	public void watchFolder() {
-		EAssessmentNotice eAssessmentNotice = null;
-		String filename = null;
-		try {
-			WatchKey watchKey;
-			while ((watchKey = watchService.take()) != null) {
-				for (WatchEvent<?> event : watchKey.pollEvents()) {
-					filename = config.getRootfolder() + event.context();
-					FileReaderResponse frResponse = CustomMarshaller.readFile(filename);
-					if (frResponse != null) {
-						switch (frResponse.getClassName()) {
-						case FileReaderResponse.EASSESSMENTNOTICE:
-							eAssessmentNotice = (EAssessmentNotice) frResponse.getObject();
-							if (eAssessmentNotice != null) {
-								// Persist eAssessmentNotice to database
-								PaymentDetails paymentDetails = paymentDetailsService
-										.savePaymentDetails(eAssessmentNotice);
-								if (paymentDetails != null) {
-									moveFile(new File(filename), config.getAssessmentnotice());
-									paymentDetailsService.acknowledgePaymentDetails(paymentDetails.getFormMNumber());
-								}
-							}
-							break;							
-						case FileReaderResponse.TRANSACTIONRESPONSE:
-							String name = event.context().toString();
-							if (!name.startsWith(FileReaderResponse.TRANSACTIONRESPONSE)) {
-								String paymentResponsePath = config.getRootfolder() + event.context();
-								TransactionResponse response = (TransactionResponse) frResponse.getObject();
-								if (response != null) {
-									if (response.getTransactionStatus().equals(TRS.ERROR)) {
-										moveFile(new File(paymentResponsePath), config.getPaymentresponse());
-
-									}
-								}
-							}
-
-							break;
-						}
-					}
-
-				}
-
-				watchKey.reset();
-			}
-
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
+	
 	/*
 	 * private boolean isFileExists(String filepath) { boolean exists = false; try {
 	 * File file = new File(filepath); if (file.exists()) exists = true; } catch
@@ -90,7 +21,7 @@ public class Utils {
 	 * + " exists because: " + ex.getMessage()); } return exists; }
 	 */
 
-	public PaymentDetails convertReturnedAssessmentToEassesssmentEntity(EAssessmentNotice notice) {
+	public static PaymentDetails convertReturnedAssessmentToEassesssmentEntity(EAssessmentNotice notice) {
 		PaymentDetails assessmentNotice = null;
 		try {
 			if (notice != null) {
@@ -102,7 +33,7 @@ public class Utils {
 		return assessmentNotice;
 	}
 
-	public void moveFile(File theFile, String directory) {
+	public static void moveFile(File theFile, String directory) {
 		try {
 			FileUtils.moveFileToDirectory(theFile, new File(directory), false);
 		} catch (Exception ex) {
