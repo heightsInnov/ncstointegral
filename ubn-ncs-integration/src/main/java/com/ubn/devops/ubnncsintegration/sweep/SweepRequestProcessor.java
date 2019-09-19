@@ -54,7 +54,7 @@ public class SweepRequestProcessor {
 
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-	public String DoSweepPostingProcess(String fcubs_reference, String status_code) {
+	public String DoSweepPostingProcess(String fcubs_reference, String status_code) { 
 		String task_code = status_code.toUpperCase().equals("OK") ? "S"
 				: status_code.toUpperCase().equals("ERROR") ? "R" : "R";
 		List<SweepPersistAgent> persistData = new ArrayList<>();
