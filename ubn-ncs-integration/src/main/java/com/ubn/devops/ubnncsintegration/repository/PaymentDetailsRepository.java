@@ -20,7 +20,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.StringUtils;
 
 import com.ubn.devops.ubnncsintegration.mapper.PaymentDetailsMapper;
 import com.ubn.devops.ubnncsintegration.model.PaymentDetails;
@@ -44,8 +43,6 @@ public class PaymentDetailsRepository {
 
 	private final String PACKAGENAME = PropsReader.getValue("db.packagename");
 
-	@Autowired
-	private Utils utils;
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
