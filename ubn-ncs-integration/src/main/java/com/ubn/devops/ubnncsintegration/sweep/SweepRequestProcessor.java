@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.json.JSONArray;
@@ -27,11 +29,15 @@ public class SweepRequestProcessor {
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	private String ubntransitgl = PropsReader.getValue("ncs.sweep.gl.account");
+//	private String ubntransitgl = PropsReader.getValue("ncs.sweep.gl.account");
 
-	private String ubntransitgl_name = PropsReader.getValue("ncs.sweep.gl.account.name");
+//	private String ubntransitgl_name = PropsReader.getValue("ncs.sweep.gl.account.name");
 
 	private String tsaaccountno = PropsReader.getValue("ncs.sweep.tsa.account");
+
+//	private String tsaaccountno_name = PropsReader.getValue("ncs.sweep.tsa.account.name");
+
+	private String tsaaccountno_branchcode = PropsReader.getValue("ncs.sweep.tsa.account.branchcode");
 
 	private String narations = PropsReader.getValue("ncs.sweep.trans.notification");
 
@@ -54,7 +60,7 @@ public class SweepRequestProcessor {
 
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-	public String DoSweepPostingProcess(String fcubs_reference, String status_code) { 
+	public String DoSweepPostingProcess(String fcubs_reference, String status_code) {
 		String task_code = status_code.toUpperCase().equals("OK") ? "S"
 				: status_code.toUpperCase().equals("ERROR") ? "R" : "R";
 		List<SweepPersistAgent> persistData = new ArrayList<>();
@@ -69,7 +75,7 @@ public class SweepRequestProcessor {
 			if (requests != null) {
 				JSONArray batchItems = new JSONArray();
 				JSONObject creditItem;
-				AccountEnquiry account;
+				AccountEnquiry account = null;
 				JSONObject debititem;
 				SweepPersistAgent debitSweep;
 				SweepPersistAgent creditSweep;
@@ -78,134 +84,137 @@ public class SweepRequestProcessor {
 				if (task_code.equals("S")) {
 					for (SweepPaymentDetails request : requests) {
 						naration = naration.replace("{action}", "sweep to");
-						accEnq = AccountEnquiryCheck(tsaaccountno);
-						if (accEnq != null & accEnq.getCode().equals("00")) {
-							account = (AccountEnquiry) accEnq.getData();
-
-							String transid = String.valueOf(System.nanoTime());
-
-							// Credit leg of Sweep
-							creditItem = new JSONObject();
-							creditSweep = new SweepPersistAgent();
-
-							creditItem.put("transactionId", transid);
-							creditItem.put("accountNumber", tsaaccountno);
-							creditItem.put("accountType", tsaaccountno.length() == 10 ? "CASA" : "GL");
-							creditItem.put("accountName", account.getAccountName());
-							creditItem.put("accountBranchCode", account.getAccountBranchCode());
-							creditItem.put("accountBankCode", "032");
-							creditItem.put("narration", naration);
-							creditItem.put("instrumentNumber", "");
-							creditItem.put("amount", request.getLcy_amount());
-							creditItem.put("valueDate", sdf.format(new Date()));
-							creditItem.put("crDrFlag", "C");
-							creditItem.put("feeOrCharges", false);
-
-							creditSweep.setAcccountnumber(tsaaccountno);
-							creditSweep.setBranchcode(account.getAccountBranchCode());
-							creditSweep.setAmount(request.getLcy_amount());
-							creditSweep.setDebitcreditindicator("C");
-							creditSweep.setNarration(naration);
-							creditSweep.setNcscustomreference(request.getFormmnumber());
-							creditSweep.setPaymentreference(
-									requests.get(0).getExternal_ref_no() + requests.get(0).getTask_code());
-							creditSweep.setTransactionid(transid);
-							creditSweep.setUids(String.valueOf(UUID.randomUUID()));
-							creditSweep.setPayment_type_id(
-									requests.get(0).getExternal_ref_no() + requests.get(0).getTask_code());
-							creditSweep.setIssweeporreversal("S");
-							creditSweep.setNcstransstatus("S");
-
-							batchItems.put(creditItem);
-							persistData.add(creditSweep);
-
-							// Debit leg of Sweep
-							debititem = new JSONObject();
-							debitSweep = new SweepPersistAgent();
-
-							debititem.put("transactionId", transid);
-							debititem.put("accountNumber", ubntransitgl);
-							debititem.put("accountType", "GL");
-							debititem.put("accountName", ubntransitgl_name);
-							debititem.put("accountBranchCode", init_branch);
-							debititem.put("accountBankCode", "032");
-							debititem.put("narration", naration);
-							debititem.put("instrumentNumber", "");
-							debititem.put("amount", request.getLcy_amount());
-							debititem.put("valueDate", sdf.format(new Date()));
-							debititem.put("crDrFlag", "D");
-							debititem.put("feeOrCharges", false);
-
-							debitSweep.setAcccountnumber(ubntransitgl);
-							debitSweep.setBranchcode(init_branch);
-							debitSweep.setAmount(request.getLcy_amount());
-							debitSweep.setDebitcreditindicator("D");
-							debitSweep.setNarration(naration);
-							debitSweep.setNcscustomreference(request.getFormmnumber());
-							debitSweep.setPaymentreference(
-									requests.get(0).getExternal_ref_no() + requests.get(0).getTask_code());
-							debitSweep.setTransactionid(transid);
-							debitSweep.setUids(String.valueOf(UUID.randomUUID()));
-							debitSweep.setPayment_type_id(
-									requests.get(0).getExternal_ref_no() + requests.get(0).getTask_code());
-							debitSweep.setIssweeporreversal("S");
-							debitSweep.setNcstransstatus("S");
-
-							batchItems.put(debititem);
-							persistData.add(debitSweep);
+						if (tsaaccountno.length() == 10) {
+							accEnq = AccountEnquiryCheck(tsaaccountno);
+							if (accEnq != null && accEnq.getCode().equals("00"))
+								account = (AccountEnquiry) accEnq.getData();
 						}
+
+						String transid = String.valueOf(System.nanoTime());
+						String bcode = account != null ? account.getAccountBranchCode() : tsaaccountno_branchcode;
+						// Credit leg of Sweep
+						creditItem = new JSONObject();
+						creditSweep = new SweepPersistAgent();
+
+						creditItem.put("transactionId", transid);
+						creditItem.put("accountNumber", tsaaccountno);
+						creditItem.put("accountType", tsaaccountno.length() == 10 ? "CASA" : "GL");
+//							creditItem.put("accountName", account!=null ?account.getAccountName():tsaaccountno_name);
+						creditItem.put("accountBranchCode", bcode);
+						creditItem.put("accountBankCode", "032");
+						creditItem.put("narration", naration);
+						creditItem.put("instrumentNumber", "");
+						creditItem.put("amount", request.getLcy_amount());
+						creditItem.put("valueDate", sdf.format(new Date()));
+						creditItem.put("crDrFlag", "C");
+						creditItem.put("feeOrCharges", false);
+
+						creditSweep.setAcccountnumber(tsaaccountno);
+						creditSweep.setBranchcode(bcode);
+						creditSweep.setAmount(request.getLcy_amount());
+						creditSweep.setDebitcreditindicator("C");
+						creditSweep.setNarration(naration);
+						creditSweep.setNcscustomreference(request.getFormmnumber());
+						creditSweep.setPaymentreference(
+								requests.get(0).getExternal_ref_no() + requests.get(0).getTask_code());
+						creditSweep.setTransactionid(transid);
+						creditSweep.setUids(String.valueOf(UUID.randomUUID()));
+						creditSweep.setPayment_type_id(
+								requests.get(0).getExternal_ref_no() + requests.get(0).getTask_code());
+						creditSweep.setIssweeporreversal("S");
+						creditSweep.setNcstransstatus("S");
+
+						batchItems.put(creditItem);
+						persistData.add(creditSweep);
+
+						// Debit leg of Sweep
+						debititem = new JSONObject();
+						debitSweep = new SweepPersistAgent();
+
+						debititem.put("transactionId", transid);
+						debititem.put("accountNumber", request.getAc_no());
+						debititem.put("accountType", "GL");
+//							debititem.put("accountName", ubntransitgl_name);
+						debititem.put("accountBranchCode", request.getAc_branch());
+						debititem.put("accountBankCode", "032");
+						debititem.put("narration", naration);
+						debititem.put("instrumentNumber", "");
+						debititem.put("amount", request.getLcy_amount());
+						debititem.put("valueDate", sdf.format(new Date()));
+						debititem.put("crDrFlag", "D");
+						debititem.put("feeOrCharges", false);
+
+						debitSweep.setAcccountnumber(request.getAc_no());
+						debitSweep.setBranchcode(request.getAc_branch());
+						debitSweep.setAmount(request.getLcy_amount());
+						debitSweep.setDebitcreditindicator("D");
+						debitSweep.setNarration(naration);
+						debitSweep.setNcscustomreference(request.getFormmnumber());
+						debitSweep.setPaymentreference(
+								requests.get(0).getExternal_ref_no() + requests.get(0).getTask_code());
+						debitSweep.setTransactionid(transid);
+						debitSweep.setUids(String.valueOf(UUID.randomUUID()));
+						debitSweep.setPayment_type_id(
+								requests.get(0).getExternal_ref_no() + requests.get(0).getTask_code());
+						debitSweep.setIssweeporreversal("S");
+						debitSweep.setNcstransstatus("S");
+
+						batchItems.put(debititem);
+						persistData.add(debitSweep);
 					}
 				} else if (task_code.equals("R")) {
 					JSONObject item;
 
 					for (SweepPaymentDetails request : requests) {
 						naration = naration.replace("{action}", "reversal from");
-						accEnq = AccountEnquiryCheck(request.getAc_no());
-						if (accEnq != null & accEnq.getCode().equals("00")) {
-							account = (AccountEnquiry) accEnq.getData();
 
-							item = new JSONObject();
-							saveSweep = new SweepPersistAgent();
-
-							String transid = String.valueOf(System.nanoTime());
-							item.put("transactionId", transid);
-							item.put("accountNumber", request.getAc_no());
-							item.put("accountType", request.getAc_no().length() == 10 ? "CASA" : "GL");
-							item.put("accountName", account.getAccountName());
-							item.put("accountBranchCode", account.getAccountBranchCode());
-							item.put("accountBankCode", "032");
-							item.put("narration", naration);
-							item.put("instrumentNumber", "");
-							item.put("amount", request.getLcy_amount());
-							item.put("valueDate", sdf.format(new Date()));
-							if (request.getDrcr_ind().equals("D")) {
-								item.put("crDrFlag", "C");
-								saveSweep.setDebitcreditindicator("C");
-							} else if (request.getDrcr_ind().equals("C")) {
-								item.put("crDrFlag", "D");
-								saveSweep.setDebitcreditindicator("D");
-							}
-							item.put("feeOrCharges", false);
-
-							batchItems.put(item);
-							
-							saveSweep.setAcccountnumber(request.getAc_no());
-							saveSweep.setBranchcode(account.getAccountBranchCode());
-							saveSweep.setAmount(request.getLcy_amount());
-							saveSweep.setGlcasaindicator(request.getAc_no().length() == 10 ? "CASA" : "GL");
-							saveSweep.setNarration(naration);
-							saveSweep.setNcscustomreference(request.getFormmnumber());
-							saveSweep.setPaymentreference(
-									requests.get(0).getExternal_ref_no() + requests.get(0).getTask_code());
-							saveSweep.setTransactionid(transid);
-							saveSweep.setUids(String.valueOf(UUID.randomUUID()));
-							saveSweep.setPayment_type_id(
-									requests.get(0).getExternal_ref_no() + requests.get(0).getTask_code());
-							saveSweep.setIssweeporreversal("R");
-							saveSweep.setNcstransstatus("F");
-
-							persistData.add(saveSweep);
+						if (request.getAc_no().length() == 10) {
+							accEnq = AccountEnquiryCheck(request.getAc_no());
+							if (accEnq != null & accEnq.getCode().equals("00"))
+								account = (AccountEnquiry) accEnq.getData();
 						}
+						item = new JSONObject();
+						saveSweep = new SweepPersistAgent();
+
+						String transid = String.valueOf(System.nanoTime());
+						item.put("transactionId", transid);
+						item.put("accountNumber", request.getAc_no());
+						item.put("accountType", request.getAc_no().length() == 10 ? "CASA" : "GL");
+//							item.put("accountName", account.getAccountName());
+						item.put("accountBranchCode", request.getAc_branch());
+						item.put("accountBankCode", "032");
+						item.put("narration", naration);
+						item.put("instrumentNumber", "");
+						item.put("amount", request.getLcy_amount());
+						item.put("valueDate", sdf.format(new Date()));
+						if (request.getDrcr_ind().equals("D")) {
+							item.put("crDrFlag", "C");
+							saveSweep.setAcccountnumber(request.getAc_no());
+							saveSweep.setDebitcreditindicator("C");
+						} else if (request.getDrcr_ind().equals("C")) {
+							item.put("crDrFlag", "D");
+							saveSweep.setAcccountnumber(request.getAc_no());
+							saveSweep.setDebitcreditindicator("D");
+						}
+						item.put("feeOrCharges", false);
+
+						batchItems.put(item);
+
+						saveSweep.setBranchcode(account.getAccountBranchCode());
+						saveSweep.setAmount(request.getLcy_amount());
+						saveSweep.setGlcasaindicator(request.getAc_no().length() == 10 ? "CASA" : "GL");
+						saveSweep.setNarration(naration);
+						saveSweep.setNcscustomreference(request.getFormmnumber());
+						saveSweep.setPaymentreference(
+								requests.get(0).getExternal_ref_no() + requests.get(0).getTask_code());
+						saveSweep.setTransactionid(transid);
+						saveSweep.setUids(String.valueOf(UUID.randomUUID()));
+						saveSweep.setPayment_type_id(
+								requests.get(0).getExternal_ref_no() + requests.get(0).getTask_code());
+						saveSweep.setIssweeporreversal("R");
+						saveSweep.setNcstransstatus("F");
+
+						persistData.add(saveSweep);
 					}
 				}
 				JSONObject postingObject = new JSONObject();
@@ -239,9 +248,10 @@ public class SweepRequestProcessor {
 				saveSweep.setModulecredentials("");
 				saveSweep.setMnemonic("");
 			}
-			SaveSweepTransaction(persistData);
-			resp = paymentDetailsRepository.UpdatePayments(requests.get(0).getExternal_ref_no() + requests.get(0).getTask_code(), task_code);
-			
+			Map<String, String> in_resp = SaveSweepTransaction(persistData);
+			resp = paymentDetailsRepository.UpdatePayments(
+					requests.get(0).getExternal_ref_no() + requests.get(0).getTask_code(), task_code,
+					in_resp.get("count"), in_resp.get("list"), response.getCode());
 		} catch (Exception e) {
 			logger.info(e.getMessage());
 			e.printStackTrace();
@@ -249,8 +259,8 @@ public class SweepRequestProcessor {
 		return resp;
 	}
 
-	private String SaveSweepTransaction(List<SweepPersistAgent> sweepData) {
-		boolean flag = true;
+	private Map<String, String> SaveSweepTransaction(List<SweepPersistAgent> sweepData) {
+		Map<String, String> response = new HashMap<String, String>();
 		String[] respArray = new String[sweepData.size()];
 		int i = 0;
 		try {
@@ -258,14 +268,17 @@ public class SweepRequestProcessor {
 				respArray[i] = paymentDetailsRepository.persistSweepInfo(sweepAgent);
 				i++;
 			}
-			for(int j = 0; j<respArray.length; j++) {
-				if(!respArray[j].equals("00"))
-					flag = false;
+			int count = 0;
+			for (int j = 0; j < respArray.length; j++) {
+				if (respArray[j].equals("00"))
+					count++;
 			}
+			response.put("list", String.valueOf(sweepData.size()));
+			response.put("count", String.valueOf(count));
 		} catch (Exception e) {
-			flag = false;
+			e.printStackTrace();
 		}
-		return !flag?"01":"00";
+		return response;
 	}
 
 	public SweepReverseResponse AccountEnquiryCheck(String accountNo) throws IOException {

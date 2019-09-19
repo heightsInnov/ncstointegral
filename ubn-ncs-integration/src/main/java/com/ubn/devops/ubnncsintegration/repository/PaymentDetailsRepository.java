@@ -1,3 +1,4 @@
+
 package com.ubn.devops.ubnncsintegration.repository;
 
 import java.math.BigDecimal;
@@ -368,6 +369,8 @@ public class PaymentDetailsRepository {
 	}
 
 
+
+
 	public List<SweepPaymentDetails> findFCUBSDetails(String reference, String code) {
 		List<SweepPaymentDetails> models = new ArrayList<>();
 		SweepPaymentDetails model = null;
@@ -466,7 +469,7 @@ public class PaymentDetailsRepository {
 		return responsecode;
 	}
 	
-	public String UpdatePayments(String paymentref, String vresp) {
+	public String UpdatePayments(String paymentref, String vresp, String siflag, String fcubscount,String trn_resp ) {
 		String responsecode = "01";
 		try {
 			SimpleJdbcCall call = new SimpleJdbcCall(jdbcTemplate);
@@ -475,7 +478,10 @@ public class PaymentDetailsRepository {
 			call.withFunctionName("UPDATE_PAYMENTS");
 			SqlParameterSource paramSource = new MapSqlParameterSource()
 					.addValue("PAYMENT_REFERENCE", paymentref)
-					.addValue("CODE", vresp);
+					.addValue("CODE", vresp)
+					.addValue("SIFLAG", siflag)
+					.addValue("FCUBSCOUNT", fcubscount)
+					.addValue("TRN_RESP", trn_resp);			
 			Map<String, Object> respValues = call.execute(paramSource);
 			if (!respValues.isEmpty()) {
 				responsecode = respValues.get("return").toString();
