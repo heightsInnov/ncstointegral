@@ -444,6 +444,7 @@ public class PaymentDetailsRepository {
 					.addValue("TRANS_ID", sweepAgent.getTransactionid())
 					.addValue("RESP_CODE", sweepAgent.getResponsecode())
 					.addValue("RESP_MESG", sweepAgent.getResponsemessage())
+					.addValue("UIDSS", sweepAgent.getUids())
 //					.addValue("RESPONSE_TIME", sweepAgent.getResponsetime()).addValue("UIDSS", sweepAgent.getUids())
 					.addValue("BATCHDETAILID", sweepAgent.getBatch_detail_id())
 					.addValue("PAYMENTTYPEID", sweepAgent.getPayment_type_id())

@@ -16,9 +16,9 @@ public class PaymentDetails {
 
 	private EAssessmentNotice assessmentNotice;
 
-	public static final int PAYED = 1;
+	public static final String PAYED = "1";
 
-	public static final int PENDING = 0;
+	public static final String PENDING = "0";
 
 	@JsonIgnore
 	private Long id;
@@ -52,7 +52,7 @@ public class PaymentDetails {
 	private Date sweepOrReversedDate;
 
 	@JsonIgnore
-	private int paymentStatus = 0;
+	private String paymentStatus = "0";
 	private List<TaxEntity> taxes = new ArrayList<>();
 	private BigDecimal totalAmountToBePaid;
 	@JsonFormat(pattern = "dd-MM-yyyy hh:mm:ss a")
@@ -495,14 +495,14 @@ public class PaymentDetails {
 	/**
 	 * @return the paymentStatus
 	 */
-	public int getPaymentStatus() {
+	public String getPaymentStatus() {
 		return paymentStatus;
 	}
 
 	/**
 	 * @param paymentStatus the paymentStatus to set
 	 */
-	public void setPaymentStatus(int paymentStatus) {
+	public void setPaymentStatus(String paymentStatus) {
 		this.paymentStatus = paymentStatus;
 	}
 

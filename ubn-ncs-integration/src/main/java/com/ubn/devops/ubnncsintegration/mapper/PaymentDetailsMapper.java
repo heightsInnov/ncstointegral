@@ -23,7 +23,7 @@ public class PaymentDetailsMapper implements RowMapper<PaymentDetails>{
 		payment.setDeclarantName(rs.getString("DECLARANT_NAME"));
 		payment.setFormMNumber(rs.getString("FORMMNUMBER"));
 		payment.setId((rs.getBigDecimal("ID")).longValue());
-		payment.setPaymentStatus(rs.getBigDecimal("PAYMENT_STATUS").intValue());
+		payment.setPaymentStatus(rs.getString("PAYMENT_STATUS"));
 		payment.setResponseCode(rs.getString("RESPONSE_CODE"));
 		payment.setResponseMessage(rs.getString("RESPONSE_MESSAGE"));
 		payment.setSadAssessmentDate(rs.getDate("SAD_ASSESSMENT_DATE").toString());

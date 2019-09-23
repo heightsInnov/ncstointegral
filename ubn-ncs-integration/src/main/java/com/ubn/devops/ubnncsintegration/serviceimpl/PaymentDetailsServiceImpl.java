@@ -68,7 +68,7 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
 		try {
 			PaymentDetails model = paymentRepo.findPaymentDetails(sadYear, customsCode, sadAssessmentSerial, sadAssessmentNumber, version);
 			if (model != null) {
-				if (model.getPaymentStatus()==0) {
+				if (model.getPaymentStatus().equals("0")) {
 					response.setCode(ApiResponse.SUCCESSFUL);
 					response.setMessage("Successful");
 					PaymentDetailsResponse detailsResponse = new PaymentDetailsResponse();
@@ -111,7 +111,7 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
 		try {
 			PaymentDetails details = paymentRepo.findPaymentDetails(request.getSadYear(),request.getCustomsCode(),request.getSadAssessmentSerial(),request.getSadAssessmentNumber(),request.getVersion());
 			if (details != null) {
-				if (details.getPaymentStatus()!=PaymentDetails.PENDING) {
+				if (!details.getPaymentStatus().equals(PaymentDetails.PENDING)) {
 					response.setCode(ApiResponse.ALREADY_PAID);
 					response.setMessage("This payment has already been made");
 				} else {
@@ -201,8 +201,8 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
 			SadAsmt sadAsmt = response.getSadAsmt();
 			PaymentDetails details = paymentRepo.findPaymentDetails(sadAsmt.getSadYear(),response.getCustomsCode(), sadAsmt.getSadAssessmentSerial(), sadAsmt.getSadAssessmentNumber(), response.getVersion());
 			if(details!=null) {
-				if(details.getPaymentStatus()==PaymentDetails.PAYED)
-				rsp = processor.DoSweepPostingProcess(details.getFcubsPostingRef(), response.getTransactionStatus().value());
+				if(details.getPaymentStatus().equals(PaymentDetails.PAYED))
+				   rsp = processor.DoSweepPostingProcess(details.getFcubsPostingRef(), response.getTransactionStatus().value());
 			}
 		}catch(Exception ex) {
 			log.error("Error occured while performing sweep or retract function for response:"+response.toString()+" because: "+ex.getMessage(),ex);

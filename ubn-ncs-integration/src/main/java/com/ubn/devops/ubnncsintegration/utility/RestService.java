@@ -50,6 +50,7 @@ public class RestService {
 	}
 
 	public int checkValidation(PaymentProcessRequest request) {
+		log.info("Checking the validity of the transaction: "+request.toString());
 		int status = ApiResponse.SERVER_ERROR;
 		
 		try {
