@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import com.ubn.devops.ubnncsintegration.model.AccountEnquiry;
 import com.ubn.devops.ubnncsintegration.model.SweepPaymentDetails;
+import com.ubn.devops.ubnncsintegration.model.SweepPaymentResponse;
 import com.ubn.devops.ubnncsintegration.model.SweepPersistAgent;
 import com.ubn.devops.ubnncsintegration.repository.PaymentDetailsRepository;
 import com.ubn.devops.ubnncsintegration.response.SweepReverseResponse;
@@ -60,12 +61,12 @@ public class SweepRequestProcessor {
 
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-	public String DoSweepPostingProcess(String fcubs_reference, String status_code) {
+	public SweepPaymentResponse DoSweepPostingProcess(String fcubs_reference, String status_code) {
+		SweepPaymentResponse resp = new SweepPaymentResponse();
 		String task_code = status_code.toUpperCase().equals("OK") ? "S"
 				: status_code.toUpperCase().equals("ERROR") ? "R" : "R";
 		List<SweepPersistAgent> persistData = new ArrayList<>();
 		SweepReverseResponse response = new SweepReverseResponse();
-		String resp = "01";
 		SweepReverseResponse accEnq;
 		String naration = narations;
 
@@ -251,6 +252,7 @@ public class SweepRequestProcessor {
 			resp = paymentDetailsRepository.UpdatePayments(
 					requests.get(0).getExternal_ref_no() + requests.get(0).getTask_code(), task_code,
 					in_resp.get("count"), in_resp.get("list"), response.getCode());
+			resp.setMiserve_response(response.getCode().equals("00") ? "00" : "99");
 		} catch (Exception e) {
 			logger.info(e.getMessage());
 			e.printStackTrace();

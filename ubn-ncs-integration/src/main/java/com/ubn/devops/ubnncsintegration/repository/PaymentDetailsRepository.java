@@ -25,6 +25,7 @@ import org.springframework.util.StringUtils;
 import com.ubn.devops.ubnncsintegration.mapper.CustomMapper;
 import com.ubn.devops.ubnncsintegration.model.PaymentDetails;
 import com.ubn.devops.ubnncsintegration.model.SweepPaymentDetails;
+import com.ubn.devops.ubnncsintegration.model.SweepPaymentResponse;
 import com.ubn.devops.ubnncsintegration.model.SweepPersistAgent;
 import com.ubn.devops.ubnncsintegration.model.TaxEntity;
 import com.ubn.devops.ubnncsintegration.ncsschema.EAssessmentNotice;
@@ -439,7 +440,8 @@ public class PaymentDetailsRepository {
 		return responsecode;
 	}
 	
-	public String UpdatePayments(String paymentref, String vresp, String siflag, String fcubscount,String trn_resp ) {
+	public SweepPaymentResponse UpdatePayments(String paymentref, String vresp, String siflag, String fcubscount,String trn_resp) {
+		SweepPaymentResponse response = new SweepPaymentResponse();
 		String responsecode = "01";
 		try {
 			SimpleJdbcCall call = new SimpleJdbcCall(jdbcTemplate);
@@ -460,11 +462,12 @@ public class PaymentDetailsRepository {
 				} else if (responsecode.equals("01")) {
 					log.warn("db error occured with message: " + responsecode);
 				}
+				response.setUpdate_response(responsecode);
 			}
 		} catch (Exception ex) {
 			log.error("error occured while trying to set payment details as acknowledge becuase: " + ex.getMessage(),
 					ex);
 		}
-		return responsecode;
+		return response;
 	}
 }
