@@ -24,6 +24,7 @@ import org.springframework.stereotype.Repository;
 import com.ubn.devops.ubnncsintegration.mapper.PaymentDetailsMapper;
 import com.ubn.devops.ubnncsintegration.model.PaymentDetails;
 import com.ubn.devops.ubnncsintegration.model.SweepPaymentDetails;
+import com.ubn.devops.ubnncsintegration.model.SweepPaymentResponse;
 import com.ubn.devops.ubnncsintegration.model.SweepPersistAgent;
 import com.ubn.devops.ubnncsintegration.model.TaxEntity;
 import com.ubn.devops.ubnncsintegration.ncsschema.EAssessmentNotice;
@@ -370,6 +371,7 @@ public class PaymentDetailsRepository {
 
 
 
+
 	public List<SweepPaymentDetails> findFCUBSDetails(String reference, String code) {
 		List<SweepPaymentDetails> models = new ArrayList<>();
 		SweepPaymentDetails model = null;
@@ -444,7 +446,6 @@ public class PaymentDetailsRepository {
 					.addValue("TRANS_ID", sweepAgent.getTransactionid())
 					.addValue("RESP_CODE", sweepAgent.getResponsecode())
 					.addValue("RESP_MESG", sweepAgent.getResponsemessage())
-					.addValue("UIDSS", sweepAgent.getUids())
 //					.addValue("RESPONSE_TIME", sweepAgent.getResponsetime()).addValue("UIDSS", sweepAgent.getUids())
 					.addValue("BATCHDETAILID", sweepAgent.getBatch_detail_id())
 					.addValue("PAYMENTTYPEID", sweepAgent.getPayment_type_id())
@@ -469,7 +470,8 @@ public class PaymentDetailsRepository {
 		return responsecode;
 	}
 	
-	public String UpdatePayments(String paymentref, String vresp, String siflag, String fcubscount,String trn_resp ) {
+	public SweepPaymentResponse UpdatePayments(String paymentref, String vresp, String siflag, String fcubscount,String trn_resp) {
+		SweepPaymentResponse response = new SweepPaymentResponse();
 		String responsecode = "01";
 		try {
 			SimpleJdbcCall call = new SimpleJdbcCall(jdbcTemplate);
@@ -490,12 +492,13 @@ public class PaymentDetailsRepository {
 				} else if (responsecode.equals("01")) {
 					log.warn("db error occured with message: " + responsecode);
 				}
+				response.setUpdate_response(responsecode);
 			}
 		} catch (Exception ex) {
 			log.error("error occured while trying to set payment details as acknowledge becuase: " + ex.getMessage(),
 					ex);
 		}
-		return responsecode;
+		return response;
 	}
-}
 
+}
