@@ -189,14 +189,14 @@ public class Encryptor {
 
 	public static void main(String[] args) { 
 		
-		/*
-		 * String data ="mhpyB4WQQ2SVKUXqLdjbLA=="; Encryptor encryptor = new
-		 * Encryptor(KEY); // String encrptedData =
-		 * encryptor.encryptStringEncoded(data);
-		 * //ystem.out.println("Encrypted: "+encrptedData); String decryptedData =
-		 * encryptor.decryptStringEncoded(data);
-		 * System.out.println("Encrypted: "+decryptedData);
-		 */
+		
+		  String data ="N9mke1aP3nsqPrg8Oje5PFbxY6/No0YIdHDLovXwXrWDWoW8WUfVxZ41zE2jezmsbKTTA3swBA7mYfXktmaHYZV8O5erB6pLUVBrBAlvVRBwdDNvhNysd2XMh/ehU/N4nvdH21ElH1ZsLuujnDMcIGfv1Ca1C4SNsOrisd4znS1Yb7Rvhb1S8to48POg5oXKKgElsHGzEml4lCo3J1o2vCZKhMApaJ8oWHXQ50hXg8qMAPYi39ErotV/wsrxpmeVzfILlLml2TbLbix21GSVAixpT6bL634oQvftEqcoCPsmzFzVnGY5+dT+dTBbxTT70xrhOJJcv9EOOm6hI7EQCiIRkc/0QFiAPkxPiiBK8Z0TqTXgb29rT1TH2HaNIkMvqdiU+K5eXGMQq9TjUHeLuGraUngp/P2p9fuxfHb5a7IcUuGlDaVKcp/vUHj10c9euf8oZsfMhwHx1gvW+G1CkZF196S8YEEaUTuDd9tf1tBnc/AzbfSL6vwJ4nmpr1t7eZ5oD5DqGoI5VTB4ZkNJqlSKLRaae76T0YcesDYRsf4GmwHInhmKhbaUl6Q8SbFgWb8Vk5Mva0nUTbgMaRbhRFcsZY9TGhAU";
+		  Encryptor encryptor = new Encryptor(KEY); // String encrptedData =
+		  //encryptor.encryptStringEncoded(data);
+		  //ystem.out.println("Encrypted: "+encrptedData); String decryptedData =
+		 // encryptor.decryptStringEncoded(data);
+		  System.out.println(encryptor.decryptStringEncoded(data));
+		 
 	  }
 	 
 }

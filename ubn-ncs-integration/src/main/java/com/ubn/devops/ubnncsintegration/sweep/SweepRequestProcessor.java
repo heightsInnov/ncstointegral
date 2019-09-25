@@ -83,6 +83,7 @@ public class SweepRequestProcessor {
 				SweepPersistAgent saveSweep;
 
 				if (task_code.equals("S")) {
+					String uuid = String.valueOf(UUID.randomUUID());
 					for (SweepPaymentDetails request : requests) {
 						naration = naration.replace("{action}", "sweep to");
 						if (tsaaccountno.length() == 10) {
@@ -119,7 +120,7 @@ public class SweepRequestProcessor {
 						creditSweep.setPaymentreference(
 								requests.get(0).getExternal_ref_no() + requests.get(0).getTask_code());
 						creditSweep.setTransactionid(transid);
-						creditSweep.setUids(String.valueOf(UUID.randomUUID()));
+						creditSweep.setUids(uuid);
 						creditSweep.setPayment_type_id(
 								requests.get(0).getExternal_ref_no() + requests.get(0).getTask_code());
 						creditSweep.setIssweeporreversal("S");
@@ -154,7 +155,7 @@ public class SweepRequestProcessor {
 						debitSweep.setPaymentreference(
 								requests.get(0).getExternal_ref_no() + requests.get(0).getTask_code());
 						debitSweep.setTransactionid(transid);
-						debitSweep.setUids(String.valueOf(UUID.randomUUID()));
+						debitSweep.setUids(uuid);
 						debitSweep.setPayment_type_id(
 								requests.get(0).getExternal_ref_no() + requests.get(0).getTask_code());
 						debitSweep.setIssweeporreversal("S");

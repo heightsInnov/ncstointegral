@@ -43,7 +43,6 @@ public class PaymentDetails {
 
 	private String paymentChannelCode;
 	private String fcubsPostingRef;
-	private String isSweepedToTsa;
 	private String customerEmail;
 	private Date postingDate;
 
@@ -364,20 +363,7 @@ public class PaymentDetails {
 		this.fcubsPostingRef = fcubsPostingRef;
 	}
 
-	/**
-	 * @return the isSweepedToTsa
-	 */
-	public String getIsSweepedToTsa() {
-		return isSweepedToTsa;
-	}
-
-	/**
-	 * @param isSweepedToTsa the isSweepedToTsa to set
-	 */
-	public void setIsSweepedToTsa(String isSweepedToTsa) {
-		this.isSweepedToTsa = isSweepedToTsa;
-	}
-
+	
 	/**
 	 * @return the customerEmail
 	 */

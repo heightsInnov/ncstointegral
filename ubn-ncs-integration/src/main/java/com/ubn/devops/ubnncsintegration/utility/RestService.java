@@ -15,6 +15,7 @@ import com.ubn.devops.restclient.serviceimpl.RestClientServiceImpl;
 import com.ubn.devops.ubnncsintegration.config.FilePathsConfig;
 import com.ubn.devops.ubnncsintegration.request.PaymentProcessRequest;
 import com.ubn.devops.ubnncsintegration.response.ApiResponse;
+import com.ubn.devops.ubnncsintegration.response.FcubsValidationResponse;
 
 @Component
 public class RestService {
@@ -49,23 +50,26 @@ public class RestService {
 		return headers;
 	}
 
-	public int checkValidation(PaymentProcessRequest request) {
+	public FcubsValidationResponse checkValidation(PaymentProcessRequest request) {
 		log.info("Checking the validity of the transaction: "+request.toString());
-		int status = ApiResponse.SERVER_ERROR;
-		
+		FcubsValidationResponse validationResponse = null;		
 		try {
 			String url= config.getRefvalidationurl()+getAccessToken();
 			
 			RestResponse response = service.makeRequest(url, request, HttpMethods.POST, getHeaders());
+			log.info("Validation request responded with: "+response.getData());
 			if(response!=null && response.getCode()==200) {
 				String data = response.getData();
 				JSONObject jsonResponse = new JSONObject(data);
-				status = jsonResponse.getInt("status");
+				validationResponse = new FcubsValidationResponse();
+				validationResponse.setStatus(jsonResponse.getInt("status"));
+				validationResponse.setMessage(jsonResponse.getString("message"));
+				
 			}
 		} catch (Exception ex) {
 			log.error("Error occured while trying to validate reference of FCUBS because: " + ex.getMessage());
 		}
-		return status;
+		return validationResponse;
 	}
 
 }

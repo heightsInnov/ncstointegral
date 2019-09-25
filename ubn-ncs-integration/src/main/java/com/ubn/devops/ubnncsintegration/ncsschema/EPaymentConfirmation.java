@@ -24,9 +24,8 @@ public class EPaymentConfirmation {
 
 	@JacksonXmlProperty(isAttribute = true)
 	private String version;
-	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
 	@JsonProperty("PaymentDate")
-	private Date paymentDate;
+	private String paymentDate;
 	@JsonProperty("CustomsCode")
 	private String customsCode;
 	@JsonProperty("DeclarantCode")
@@ -149,14 +148,14 @@ public class EPaymentConfirmation {
 	/**
 	 * @return the paymentDate
 	 */
-	public Date getPaymentDate() {
+	public String getPaymentDate() {
 		return paymentDate;
 	}
 
 	/**
 	 * @param paymentDate the paymentDate to set
 	 */
-	public void setPaymentDate(Date paymentDate) {
+	public void setPaymentDate(String paymentDate) {
 		this.paymentDate = paymentDate;
 	}
 

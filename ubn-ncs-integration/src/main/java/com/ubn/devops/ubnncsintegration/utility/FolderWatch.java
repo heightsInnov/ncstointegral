@@ -29,9 +29,7 @@ public class FolderWatch {
 	private WatchService watchService;
 
 	@Autowired
-	private PaymentDetailsService paymentDetailsService;
-
-	
+	private PaymentDetailsService paymentDetailsService;	
 
 	public void watchFolder() {
 		String filename = null;

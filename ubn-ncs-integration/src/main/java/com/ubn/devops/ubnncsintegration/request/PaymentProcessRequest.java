@@ -2,9 +2,6 @@ package com.ubn.devops.ubnncsintegration.request;
 
 import java.util.Date;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.OptBoolean;
-
 public class PaymentProcessRequest {
 
 	private String customerEmail;
@@ -21,8 +18,7 @@ public class PaymentProcessRequest {
 
 	private String account;
 
-	@JsonFormat(lenient = OptBoolean.TRUE,pattern = "dd/MM/yyyy hh:mm:ss")
-	private Date postingDate = new Date();
+	private Date postingDate;
 
 	private String amount;
 

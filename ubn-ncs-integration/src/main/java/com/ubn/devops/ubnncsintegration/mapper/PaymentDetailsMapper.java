@@ -34,7 +34,6 @@ public class PaymentDetailsMapper implements RowMapper<PaymentDetails>{
 		payment.setTransactionstatus(rs.getString("TRANSACTIONSTATUS"));
 		payment.setCustomerEmail(rs.getString("CUSTOMER_EMAIL"));
 		payment.setFcubsPostingRef(rs.getString("FCUBS_POSTING_REF"));
-		payment.setIsSweepedToTsa(rs.getString("IS_SWEEPED_TO_TSA"));
 		payment.setPaymentChannelCode(rs.getString("PAYMENT_CHANNEL_CODE"));
 		payment.setPostingDate(rs.getDate("PAYMENT_DATE"));
 		payment.setIsSweptOrReversed(rs.getString("IS_SWEPT_REVERSED"));

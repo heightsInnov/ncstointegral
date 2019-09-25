@@ -237,7 +237,7 @@ public class PaymentDetailsRepository {
 		return responseValue;
 	}
 
-	public int updateSuccessfulValidation(PaymentProcessRequest request) {
+	public int updateSuccessfulValidation(PaymentProcessRequest request,int validationRspCode,String validationRspMsg) {
 		int isUpdated = 0;
 
 		log.info("Trying to update payment details After successful FCUBS ref validation with formMNumber:"
@@ -255,6 +255,8 @@ public class PaymentDetailsRepository {
 					new SqlParameter("P_ACCTNO", Types.VARCHAR), new SqlParameter("P_CUSTEMAIL", Types.VARCHAR),
 					new SqlParameter("P_AMOUNTPAID", Types.DECIMAL), new SqlParameter("P_CHANNEL", Types.VARCHAR),
 					new SqlParameter("P_PAYMENTDATE", Types.TIMESTAMP),
+					new SqlParameter("P_VALID_RSP_CODE", Types.INTEGER),
+					new SqlParameter("P_VALID_RSP_MSG", Types.VARCHAR),
 					new SqlOutParameter("P_RESPONSEMSG", Types.VARCHAR),
 					new SqlOutParameter("P_RESPONSECODE", Types.VARCHAR));
 			Map<String, Object> paramSource = new HashMap<>();
@@ -269,6 +271,8 @@ public class PaymentDetailsRepository {
 			paramSource.put("P_AMOUNTPAID", new BigDecimal(request.getAmount()));
 			paramSource.put("P_CHANNEL", request.getChannel());
 			paramSource.put("P_PAYMENTDATE", sdf.format(request.getPostingDate()));
+			paramSource.put("P_VALID_RSP_CODE", validationRspCode);
+			paramSource.put("P_VALID_RSP_MSG",validationRspMsg);
 			Map<String, Object> respValues = call.execute(paramSource);
 			if (!respValues.isEmpty()) {
 				String responsecode = respValues.get("P_RESPONSECODE").toString();
@@ -446,6 +450,7 @@ public class PaymentDetailsRepository {
 					.addValue("TRANS_ID", sweepAgent.getTransactionid())
 					.addValue("RESP_CODE", sweepAgent.getResponsecode())
 					.addValue("RESP_MESG", sweepAgent.getResponsemessage())
+					.addValue("UIDSS", sweepAgent.getUids())
 //					.addValue("RESPONSE_TIME", sweepAgent.getResponsetime()).addValue("UIDSS", sweepAgent.getUids())
 					.addValue("BATCHDETAILID", sweepAgent.getBatch_detail_id())
 					.addValue("PAYMENTTYPEID", sweepAgent.getPayment_type_id())
@@ -499,6 +504,32 @@ public class PaymentDetailsRepository {
 					ex);
 		}
 		return response;
+	}
+		
+	public String updateWithSweepReverseResponse(String respCode,String paymentRef) {
+		String updateCode=null;
+		try {
+			SimpleJdbcCall call = new SimpleJdbcCall(jdbcTemplate);
+			call.setSchemaName(SCHEMANAME);
+			call.setCatalogName(PACKAGENAME);
+			call.withProcedureName("UPDATEWITHSWEEPREVERSERRESP");
+			SqlParameterSource paramSource = new MapSqlParameterSource()
+					.addValue("P_UPDATERESPONSE", respCode)
+					.addValue("P_EXTERNAL_REF", paymentRef);			
+			Map<String, Object> respValues = call.execute(paramSource);
+			if (!respValues.isEmpty()) {
+				updateCode = respValues.get("P_RESPONSECODE").toString();				
+				if (updateCode.equals("00")) {
+					log.info("Successfully updated payment tables!");
+				} else {
+					String errMessage = respValues.get("P_RESPONSEMSG").toString();
+					log.warn("db error occured with message: " + errMessage);
+				}
+			}
+		}catch(Exception ex) {
+			log.error("Error occured while trying to update details with sweep or reverse response code because: "+ex.getMessage(),ex);
+		}
+		return updateCode;
 	}
 
 }
