@@ -50,6 +50,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 		return new JwtTokenStore(accessTokenConverter());
 	}
 
+	@SuppressWarnings("deprecation")
 	@Bean
 	public JwtAccessTokenConverter accessTokenConverter(){
 		Resource publicresource = new ClassPathResource("publickey.txt");

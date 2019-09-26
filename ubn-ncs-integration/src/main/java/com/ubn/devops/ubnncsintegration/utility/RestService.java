@@ -14,7 +14,6 @@ import com.ubn.devops.restclient.model.RestResponse;
 import com.ubn.devops.restclient.serviceimpl.RestClientServiceImpl;
 import com.ubn.devops.ubnncsintegration.config.FilePathsConfig;
 import com.ubn.devops.ubnncsintegration.request.PaymentProcessRequest;
-import com.ubn.devops.ubnncsintegration.response.ApiResponse;
 import com.ubn.devops.ubnncsintegration.response.FcubsValidationResponse;
 
 @Component
